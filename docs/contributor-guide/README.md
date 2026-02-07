@@ -7,7 +7,7 @@ This directory contains detailed guidance for contributing to the Regen Agentic 
 - [skill-organization.md](./skill-organization.md) - How skills, contexts, and agents are organized
 - human-contributors.md - Detailed guide for human contributors *(planned)*
 - agentic-contributors.md - Detailed guide for AI agent contributors *(planned)*
-- living-language.md - Tone and style guide *(planned)*
+- [Living Language Tone skill](https://github.com/regen-network/regen-ai-core) - Tone and style guide *(available to core contributors)*
 
 ## Quick Navigation
 
@@ -15,8 +15,8 @@ This directory contains detailed guidance for contributing to the Regen Agentic 
 
 Start with the main [CONTRIBUTING.md](../../CONTRIBUTING.md) for an overview, then explore:
 - Phase-specific documentation in `/phase-1/`, `/phase-2/`, `/phase-3/`
-- Governance context in `/docs/governance/`
-- Integration guides in `/docs/integration/`
+- Governance context in `/docs/governance/` *(planned)*
+- Integration guides in `/docs/integration/` *(planned)*
 
 ### For Agents
 
