@@ -1,0 +1,10 @@
+{
+  "name": "agentic-tokenomics",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "verify": "node scripts/verify.mjs",
+    "build:index": "node scripts/build-mechanism-index.mjs",
+    "check:index": "node scripts/build-mechanism-index.mjs --check"
+  }
+}
