@@ -49,14 +49,14 @@ The $REGEN token is transitioning from an inflationary proof-of-stake model to a
 │          ├─────────────────────────────────────────────────────────────┐   │
 │          │                                                             │   │
 │          ▼                                                             │   │
-│    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐           │   │
-│    │ BURN POOL   │     │ VALIDATOR   │     │ COMMUNITY   │           │   │
-│    │   (30%)     │     │ FUND (40%)  │     │ POOL (30%)  │           │   │
-│    └─────────────┘     └─────────────┘     └─────────────┘           │   │
-│          │                   │                   │                    │   │
-│          ▼                   ▼                   ▼                    │   │
-│    Supply             Fixed           Governance-               │   │
-│    Reduction          Compensation    Directed Spend            │   │
+│    ┌───────────┐   ┌───────────┐   ┌───────────┐   ┌───────────┐   │   │
+│    │ BURN POOL │   │ VALIDATOR │   │ COMMUNITY │   │   AGENT   │   │   │
+│    │   (30%)   │   │ FUND (40%)│   │ POOL (25%)│   │ INFRA (5%)│   │   │
+│    └───────────┘   └───────────┘   └───────────┘   └───────────┘   │   │
+│          │               │               │               │         │   │
+│          ▼               ▼               ▼               ▼         │   │
+│    Supply          Fixed         Governance-       Automation │   │
+│    Reduction       Compensation  Directed Spend    Maintenance│   │
 │                                                                       │   │
 │    GOVERNANCE UTILITY                                                 │   │
 │          │                                                            │   │
