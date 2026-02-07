@@ -5,9 +5,9 @@ This directory contains detailed guidance for contributing to the Regen Agentic 
 ## Contents
 
 - [skill-organization.md](./skill-organization.md) - How skills, contexts, and agents are organized
-- [human-contributors.md](./human-contributors.md) - Detailed guide for human contributors *(planned)*
-- [agentic-contributors.md](./agentic-contributors.md) - Detailed guide for AI agent contributors *(planned)*
-- [living-language.md](./living-language.md) - Tone and style guide *(planned)*
+- human-contributors.md - Detailed guide for human contributors *(planned)*
+- agentic-contributors.md - Detailed guide for AI agent contributors *(planned)*
+- living-language.md - Tone and style guide *(planned)*
 
 ## Quick Navigation
 
