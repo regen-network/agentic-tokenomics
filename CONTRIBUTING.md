@@ -62,7 +62,7 @@ This repository is part of a larger ecosystem transformation. Contributors—whe
 
 ### Style Guide
 
-- Use clear, accessible language (see [Living Language Tone Guide](./docs/contributor-guide/living-language.md))
+- Use clear, accessible language (see Living Language Tone Guide at ./docs/contributor-guide/living-language.md)
 - Include diagrams for complex flows (Mermaid preferred)
 - Cross-reference related specifications
 - Maintain backlinking to prior context
