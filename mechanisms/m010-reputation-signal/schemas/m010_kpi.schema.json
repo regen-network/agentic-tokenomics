@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m010 KPI output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mechanism_id",
+    "scope",
+    "as_of",
+    "signals_emitted",
+    "subjects_touched",
+    "evidence_coverage_rate",
+    "median_event_latency_hours",
+    "sources_checked"
+  ],
+  "properties": {
+    "mechanism_id": {
+      "const": "m010"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "as_of": {
+      "type": "string",
+      "description": "ISO-8601 datetime with timezone (e.g., 2026-02-04T12:00:00Z)"
+    },
+    "signals_emitted": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "subjects_touched": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "evidence_coverage_rate": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "median_event_latency_hours": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0.0
+    },
+    "sources_checked": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "koi",
+        "ledger",
+        "web"
+      ],
+      "properties": {
+        "koi": {
+          "type": "boolean"
+        },
+        "ledger": {
+          "type": "boolean"
+        },
+        "web": {
+          "type": "boolean"
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}
