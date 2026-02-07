@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m010 signal item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "subject_type",
+    "subject_id",
+    "category",
+    "evidence",
+    "timestamp"
+  ],
+  "properties": {
+    "subject_type": {
+      "type": "string",
+      "enum": [
+        "CreditClass",
+        "Project",
+        "Verifier",
+        "Methodology",
+        "Address"
+      ]
+    },
+    "subject_id": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "endorsement_level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "signaler_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "koi_links",
+        "ledger_refs",
+        "web_links"
+      ],
+      "properties": {
+        "koi_links": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ledger_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "web_links": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
