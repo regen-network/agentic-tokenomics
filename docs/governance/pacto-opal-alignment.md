@@ -136,7 +136,48 @@ Voice Councils enable humans to participate in governance through speech, with A
 
 ### Work Order Schema
 
+> **Implementation Note:** These type definitions should be coordinated with
+> [regen-data-standards](https://github.com/regen-network/regen-data-standards)
+> schemas to ensure alignment with established taxonomies and norms.
+
 ```typescript
+// Type Aliases
+type timestamp = string;           // ISO 8601 format
+type WorkOrderCategory = 'governance' | 'registry' | 'treasury' | 'technical';
+type Priority = 'urgent' | 'high' | 'normal' | 'low';
+type AgentId = string;             // e.g., "AGENT-001"
+type ActionType = 'analyze' | 'prepare' | 'execute' | 'report';
+type Duration = string;            // ISO 8601 duration, e.g., "P7D", "PT24H"
+type ExecutionStatus = 'pending' | 'in_progress' | 'completed' | 'failed';
+
+// Supporting Interfaces
+interface Constraint {
+  type: string;
+  value: any;
+  description: string;
+}
+
+interface Signer {
+  address: string;
+  role: string;
+  signed_at?: timestamp;
+  signature?: string;
+}
+
+interface ExecutionResult {
+  success: boolean;
+  outputs: Record<string, any>;
+  error?: string;
+}
+
+interface AuditEntry {
+  timestamp: timestamp;
+  action: string;
+  actor: string;                   // agent ID or human address
+  details: string;
+}
+
+// Work Order Interface
 interface WorkOrder {
   id: string;                    // Unique identifier
   session_id: string;            // Voice council session
@@ -181,9 +222,9 @@ interface WorkOrder {
 
 ## References
 
-- [PACTO Framework](https://www.notion.so/PACTO-framework-28b25b77eda180a499dafbf71583057d)
-- [Protocol Agent Specifications](https://www.notion.so/Protocol-Agent-9-1f325b77eda180ea8c10eb83327f5895)
-- [Regen Meta-Commons Coordination](https://regencommons.discourse.group/t/the-regen-meta-commons-coordination-network-nation/79)
+- [PACTO Framework](https://www.notion.so/PACTO-framework-28b25b77eda180a499dafbf71583057d) — *to be migrated to GitHub spec*
+- [Protocol Agent Specifications](https://github.com/regen-network/regen-agentc-synthesis/tree/main/01-protocol-politicians)
+- Regen Meta-Commons Coordination — *link pending: migrated from regencommons.discourse.group to regen coordination forum*
 
 ---
 

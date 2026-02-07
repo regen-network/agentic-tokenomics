@@ -256,7 +256,7 @@ Adaptive governance that learns and evolves with community needs.
 
 - [Phase 1-3 Specifications](../../phase-1/README.md)
 - [PACTO Framework](./pacto-opal-alignment.md)
-- [Protocol Agent Specifications](https://www.notion.so/Protocol-Agent-9-1f325b77eda180ea8c10eb83327f5895)
+- [Protocol Agent Specifications](https://github.com/regen-network/regen-agentc-synthesis/tree/main/01-protocol-politicians)
 - [Economic Reboot Roadmap](https://forum.regen.network/t/regen-economic-reboot-roadmap/567)
 
 ---
