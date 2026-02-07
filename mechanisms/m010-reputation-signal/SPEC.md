@@ -39,10 +39,7 @@ Regen ecosystem decisions (registry quality, governance, marketplace curation, a
 A decay factor is applied based on age of a signal using a configurable half-life:
 
 ```
-# as specified
-
-# decay_factor is scaled by 1000
-decay_factor = 1000 * (1/2)^(age / half_life)
+decay_factor = (1/2)^(age / half_life)
 ```
 
 Where:

@@ -17,7 +17,8 @@
     },
     "as_of": {
       "type": "string",
-      "description": "ISO-8601 datetime"
+      "description": "ISO-8601 datetime",
+      "format": "date-time"
     },
     "events": {
       "type": "array",
@@ -34,7 +35,8 @@
         ],
         "properties": {
           "timestamp": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           },
           "subject_type": {
             "enum": [

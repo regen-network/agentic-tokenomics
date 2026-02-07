@@ -1,5 +1,3 @@
-import { median } from "./m010_kpi.js";
-
 /**
  * v0 (advisory): Exponential decay with configurable half-life.
  * Default halfLifeHours = 14 * 24 = 336 hours

@@ -88,9 +88,6 @@ This repository contains the design specifications and implementation plans for 
 - **M010**: Reputation/Legitimacy Signaling
 - **M011**: Marketplace Curation & Quality Signals
 
-### Mechanisms (canonical specs)
-- [m010 — Reputation Signal (v0 advisory)](mechanisms/m010-reputation-signal/SPEC.md)
-
 ### Agent Personas
 - **AGENT-001**: Registry Reviewer
 - **AGENT-002**: Governance Analyst

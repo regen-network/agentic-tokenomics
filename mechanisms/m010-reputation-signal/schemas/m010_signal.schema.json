@@ -36,15 +36,15 @@
       "type": "string"
     },
     "timestamp": {
-      "type": "string"
+      "type": "string",
+      "format": "date-time"
     },
     "evidence": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "koi_links",
-        "ledger_refs",
-        "web_links"
+        "ledger_refs"
       ],
       "properties": {
         "koi_links": {
