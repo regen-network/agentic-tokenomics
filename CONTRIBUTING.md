@@ -62,7 +62,7 @@ This repository is part of a larger ecosystem transformation. Contributors—whe
 
 ### Style Guide
 
-- Use clear, accessible language (see Living Language Tone Guide at ./docs/contributor-guide/living-language.md)
+- Use clear, accessible language (see the [Living Language Tone skill](https://github.com/regen-network/regen-ai-core), available to core contributors)
 - Include diagrams for complex flows (Mermaid preferred)
 - Cross-reference related specifications
 - Maintain backlinking to prior context
@@ -148,9 +148,9 @@ agentic-tokenomics/
 ├── phase-5/                     # Operations & Evolution (planned)
 ├── docs/
 │   ├── contributor-guide/       # Contribution documentation
-│   ├── integration/             # External system integrations
-│   └── governance/              # Governance context and processes
-└── schemas/                     # Data schemas and ontology references
+│   ├── integration/             # External system integrations (planned)
+│   └── governance/              # Governance context and processes (planned)
+└── schemas/                     # Data schemas and ontology references (planned)
 ```
 
 ---
