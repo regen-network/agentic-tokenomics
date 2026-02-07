@@ -1,6 +1,6 @@
 # Regen Network Agentic Tokenomics & Governance System
 
-A comprehensive framework for building an 65-75% automated governance and tokenomics system for Regen Network, integrating AI agents with on-chain infrastructure.
+A comprehensive framework for building an 65-75% automated governance, ecological claims, crediting and contracting utility layer and tokenomics system for Regen Network, integrating AI agents with on-chain infrastructure.
 
 ## Project Overview
 
