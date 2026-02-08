@@ -224,7 +224,7 @@ interface WorkOrder {
 
 ## References
 
-- [PACTO Framework](https://github.com/regen-network/pacto)
+- [PACTO Framework](https://github.com/regen-network/pacto-framework)
 - [Protocol Agent Specifications](https://github.com/regen-network/regen-agentc-synthesis/tree/main/01-protocol-politicians)
 - [Regen Meta-Commons Coordination](https://hub.regencoordination.xyz/c/regen-commons/33) — migrated from regencommons.discourse.group ([migration proposal](https://hub.regencoordination.xyz/t/proposal-migrate-regen-commons-discourse-to-regen-coordination-forum/355))
 
