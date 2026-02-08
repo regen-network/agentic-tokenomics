@@ -139,7 +139,7 @@ Voice Councils enable humans to participate in governance through speech, with A
 > **Implementation Note:** These type definitions are coordinated with
 > [regen-data-standards](https://github.com/regen-network/regen-data-standards)
 > schemas to ensure alignment with established taxonomies and norms.
-> Formal LinkML schemas proposed in [regen-data-standards#50](https://github.com/regen-network/regen-data-standards/pull/50).
+> Formal LinkML schemas proposed in [regen-data-standards#51](https://github.com/regen-network/regen-data-standards/pull/51).
 > JSON Schema for validation: [`schemas/work-order.schema.json`](../../schemas/work-order.schema.json).
 
 ```typescript
