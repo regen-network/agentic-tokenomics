@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://regen.network/schemas/work-order.schema.json",
+  "title": "WorkOrder",
+  "description": "PACTO Voice Council Work Order. Conforms to the canonical TypeScript interface from pacto-opal-alignment.md with additive extensions for governance routing and OPAL coherence tracking.",
+  "type": "object",
+  "required": ["id", "session_id", "created_at", "intent", "specification", "authorization", "execution"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^WO-\\d{4}-\\d{2}-\\d{2}-\\d{3}$",
+      "description": "Unique identifier in WO-YYYY-MM-DD-NNN format"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Voice council session identifier"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 creation timestamp"
+    },
+    "intent": {
+      "type": "object",
+      "required": ["description", "category", "priority"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Natural language description of the work order intent"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["governance", "registry", "treasury", "technical"],
+          "description": "Work order category"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["urgent", "high", "normal", "low"],
+          "description": "Priority level"
+        }
+      },
+      "additionalProperties": false
+    },
+    "specification": {
+      "type": "object",
+      "required": ["agent_target", "action_type", "parameters", "constraints", "timeout"],
+      "properties": {
+        "agent_target": {
+          "type": "string",
+          "pattern": "^AGENT-\\d{3}$",
+          "description": "Target agent identifier (e.g., AGENT-001)"
+        },
+        "action_type": {
+          "type": "string",
+          "enum": ["analyze", "prepare", "execute", "report"],
+          "description": "Action type from the canonical ActionType vocabulary"
+        },
+        "parameters": {
+          "type": "object",
+          "description": "Action-specific parameters",
+          "additionalProperties": true
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "value", "description"],
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "value": {},
+              "description": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Execution constraints"
+        },
+        "timeout": {
+          "type": "string",
+          "description": "ISO 8601 duration (e.g., P7D, PT24H)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "authorization": {
+      "type": "object",
+      "required": ["required_signatures", "signers", "threshold_met"],
+      "properties": {
+        "required_signatures": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of signatures required"
+        },
+        "signers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["address", "role"],
+            "properties": {
+              "address": {
+                "type": "string",
+                "description": "Signer wallet address (empty string when unknown)"
+              },
+              "role": {
+                "type": "string",
+                "description": "Signer role description"
+              },
+              "signed_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 timestamp when signed"
+              },
+              "signature": {
+                "type": "string",
+                "description": "Signature data"
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "List of required signers"
+        },
+        "threshold_met": {
+          "type": "boolean",
+          "description": "Whether the signature threshold has been met"
+        },
+        "signature_deadline": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 deadline for collecting signatures"
+        }
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": ["status", "audit_trail"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "completed", "failed"],
+          "description": "Current execution status (spec values only; extended lifecycle states tracked via audit_trail entries)"
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "result": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean"
+            },
+            "outputs": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["success", "outputs"],
+          "additionalProperties": false
+        },
+        "audit_trail": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["timestamp", "action", "actor", "details"],
+            "properties": {
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "action": {
+                "type": "string"
+              },
+              "actor": {
+                "type": "string",
+                "description": "Agent ID or human address"
+              },
+              "details": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "governance_layer": {
+      "type": "string",
+      "enum": ["L1", "L2", "L3", "L4"],
+      "description": "Governance routing classification. L1=fully automated, L2=agentic+oversight, L3=human-in-loop (default), L4=constitutional"
+    },
+    "opal_scores": {
+      "type": "object",
+      "properties": {
+        "ontology": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "philosophy": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "architecture": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "language": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "action": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "overall": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false,
+      "description": "OPAL coherence scores (0.0-1.0 per dimension, null if not yet scored)"
+    },
+    "declared_positions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["speaker", "position", "context"],
+        "properties": {
+          "speaker": {
+            "type": "string",
+            "description": "Speaker name from transcript"
+          },
+          "position": {
+            "type": "string",
+            "description": "Declared position (e.g., yes, no, abstain, conditional)"
+          },
+          "context": {
+            "type": "string",
+            "description": "Transcript excerpt providing context"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Declared voting positions from transcript (NOT verified on-chain votes)"
+    }
+  },
+  "additionalProperties": true
+}
