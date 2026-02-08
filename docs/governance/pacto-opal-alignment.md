@@ -136,9 +136,11 @@ Voice Councils enable humans to participate in governance through speech, with A
 
 ### Work Order Schema
 
-> **Implementation Note:** These type definitions should be coordinated with
+> **Implementation Note:** These type definitions are coordinated with
 > [regen-data-standards](https://github.com/regen-network/regen-data-standards)
 > schemas to ensure alignment with established taxonomies and norms.
+> Formal LinkML schemas proposed in [regen-data-standards#50](https://github.com/regen-network/regen-data-standards/pull/50).
+> JSON Schema for validation: [`schemas/work-order.schema.json`](../../schemas/work-order.schema.json).
 
 ```typescript
 // Type Aliases
@@ -224,7 +226,7 @@ interface WorkOrder {
 
 - [PACTO Framework](https://www.notion.so/PACTO-framework-28b25b77eda180a499dafbf71583057d) — *to be migrated to GitHub spec*
 - [Protocol Agent Specifications](https://github.com/regen-network/regen-agentc-synthesis/tree/main/01-protocol-politicians)
-- Regen Meta-Commons Coordination — *link pending: migrated from regencommons.discourse.group to regen coordination forum*
+- [Regen Meta-Commons Coordination](https://hub.regencoordination.xyz/c/regen-commons/33) — migrated from regencommons.discourse.group ([migration proposal](https://hub.regencoordination.xyz/t/proposal-migrate-regen-commons-discourse-to-regen-coordination-forum/355))
 
 ---
 
