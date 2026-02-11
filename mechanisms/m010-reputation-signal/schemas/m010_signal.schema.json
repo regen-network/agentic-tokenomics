@@ -35,6 +35,20 @@
     "signaler_id": {
       "type": "string"
     },
+    "status": {
+      "type": "string",
+      "enum": [
+        "submitted",
+        "active",
+        "challenged",
+        "resolved_valid",
+        "resolved_invalid",
+        "withdrawn",
+        "invalidated"
+      ],
+      "default": "active",
+      "description": "Signal lifecycle state. See SPEC.md section 6.1 for state machine."
+    },
     "timestamp": {
       "type": "string",
       "format": "date-time"
