@@ -158,10 +158,22 @@ agent_infrastructure:
 
 ---
 
+## Protocol Specifications
+
+The economic architecture described in this synthesis is formalized in four protocol-level mechanism specifications:
+
+| Mechanism | Spec | Covers |
+|-----------|------|--------|
+| M012 | [Fixed Cap Dynamic Supply](../../phase-2/2.6-economic-reboot-mechanisms.md#protocol-specification-m012) | Hard cap, mint/burn algorithm, ecological coupling |
+| M013 | [Value-Based Fee Routing](../../phase-2/2.6-economic-reboot-mechanisms.md#protocol-specification-m013) | Fee schedule, pool distribution, burn routing |
+| M014 | [Authority Validator Governance](../../phase-2/2.6-economic-reboot-mechanisms.md#protocol-specification-m014) | PoA transition, validator composition, compensation |
+| M015 | [Contribution-Weighted Rewards](../../phase-2/2.6-economic-reboot-mechanisms.md#protocol-specification-m015) | Activity tracking, distribution, stability tier |
+
 ## References
 
 - [Max Semenchuk Model Comparison](https://maxsemenchuk.github.io/regen-model-comparison/)
 - [Economic Reboot Roadmap](https://forum.regen.network/t/regen-economic-reboot-roadmap/567)
+- [Network Coordination Architecture (forum/19#67)](https://forum.regen.network/t/regen-tokenomics-wg/19/67)
 - [Comprehensive Governance Proposal](https://www.notion.so/regennetwork/Draft-Comprehensive-Proposal-Regen-Network-Governance-Economic-Architecture-Upgrade-2fb25b77eda180af8742debdfaed0b3c)
 
 ---
