@@ -95,6 +95,7 @@ Enable agents to provide actionable recommendations, introduce voice council par
 | B.3 | Voice Council infrastructure MVP | ⏳ Planned |
 | B.4 | Work Order signing protocol v1 | ⏳ Planned |
 | B.5 | PACTO pilot integration | ⏳ Planned |
+| B.6 | OPAL coherence scoring operational | ⏳ Planned |
 
 ### New Capabilities
 
@@ -109,6 +110,12 @@ agent_governance_augmentation:
     - transcribe: [council_sessions]
     - extract: [decision_intents, action_items]
     - prepare: [work_orders_for_signature]
+
+  opal_coherence_scoring:
+    - evaluate: [proposals_and_work_orders per OPAL rubric]
+    - score: [5_dimensions × weighted_criteria → 0.0-1.0]
+    - route: [governance_layer_assignment based on thresholds]
+    - see: docs/governance/pacto-opal-alignment.md
 
   restrictions_maintained:
     - no_autonomous_voting
