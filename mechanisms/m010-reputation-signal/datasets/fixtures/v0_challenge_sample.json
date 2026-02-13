@@ -1,0 +1,203 @@
+{
+  "mechanism_id": "m010",
+  "scope": "v0_advisory_challenge_replay",
+  "as_of": "2026-02-10T12:00:00Z",
+  "description": "Fixture exercising the challenge workflow: 8 signals with varied statuses including challenged, resolved_valid, resolved_invalid, and invalidated.",
+  "events": [
+    {
+      "signal_id": "signal-1",
+      "timestamp": "2026-02-08T09:00:00Z",
+      "subject_type": "CreditClass",
+      "subject_id": "C01-001",
+      "category": "registry_quality",
+      "endorsement_level": 4,
+      "signaler_id": "signaler_1",
+      "status": "active",
+      "evidence": {
+        "koi_links": ["koi://note/class-review-1"],
+        "ledger_refs": ["ledger://tx/2001"]
+      }
+    },
+    {
+      "signal_id": "signal-2",
+      "timestamp": "2026-02-07T14:00:00Z",
+      "subject_type": "Project",
+      "subject_id": "P-regen-042",
+      "category": "delivery_risk",
+      "endorsement_level": 5,
+      "signaler_id": "signaler_2",
+      "status": "challenged",
+      "evidence": {
+        "koi_links": ["koi://note/project-endorsement"],
+        "ledger_refs": ["ledger://tx/2002"]
+      }
+    },
+    {
+      "signal_id": "signal-3",
+      "timestamp": "2026-02-06T10:00:00Z",
+      "subject_type": "Verifier",
+      "subject_id": "V-DeltaMRV",
+      "category": "attestation_quality",
+      "endorsement_level": 2,
+      "signaler_id": "signaler_3",
+      "status": "resolved_invalid",
+      "evidence": {
+        "koi_links": [],
+        "ledger_refs": ["ledger://tx/2003"]
+      }
+    },
+    {
+      "signal_id": "signal-4",
+      "timestamp": "2026-02-05T16:00:00Z",
+      "subject_type": "Methodology",
+      "subject_id": "METH-SoilCarbon-v3",
+      "category": "method_rigor",
+      "endorsement_level": 4,
+      "signaler_id": "signaler_4",
+      "status": "resolved_valid",
+      "evidence": {
+        "koi_links": ["koi://note/method-review"],
+        "ledger_refs": ["ledger://tx/2004"]
+      }
+    },
+    {
+      "signal_id": "signal-5",
+      "timestamp": "2026-02-04T08:00:00Z",
+      "subject_type": "Address",
+      "subject_id": "regen1abcd...wxyz",
+      "category": "operator_trust",
+      "endorsement_level": 3,
+      "signaler_id": "signaler_1",
+      "status": "invalidated",
+      "evidence": {
+        "koi_links": ["koi://note/address-trust"],
+        "ledger_refs": []
+      }
+    },
+    {
+      "signal_id": "signal-6",
+      "timestamp": "2026-02-03T12:00:00Z",
+      "subject_type": "CreditClass",
+      "subject_id": "C01-001",
+      "category": "registry_quality",
+      "endorsement_level": 3,
+      "signaler_id": "signaler_2",
+      "status": "withdrawn",
+      "evidence": {
+        "koi_links": [],
+        "ledger_refs": ["ledger://tx/2006"]
+      }
+    },
+    {
+      "signal_id": "signal-7",
+      "timestamp": "2026-02-02T18:00:00Z",
+      "subject_type": "Project",
+      "subject_id": "P-regen-042",
+      "category": "delivery_risk",
+      "endorsement_level": 4,
+      "signaler_id": "signaler_4",
+      "status": "active",
+      "evidence": {
+        "koi_links": ["koi://note/project-2"],
+        "ledger_refs": ["ledger://tx/2007"]
+      }
+    },
+    {
+      "signal_id": "signal-8",
+      "timestamp": "2026-02-01T06:00:00Z",
+      "subject_type": "Verifier",
+      "subject_id": "V-DeltaMRV",
+      "category": "attestation_quality",
+      "endorsement_level": 5,
+      "signaler_id": "signaler_1",
+      "status": "active",
+      "evidence": {
+        "koi_links": ["koi://note/verifier-strong"],
+        "ledger_refs": ["ledger://tx/2008"]
+      }
+    }
+  ],
+  "challenges": [
+    {
+      "challenge_id": "ch-001",
+      "signal_id": "signal-2",
+      "challenger_id": "challenger_1",
+      "category": "delivery_risk",
+      "rationale": "Project P-regen-042 has missed its Q4 2025 milestone delivery by 3 months with no update from the project admin. The endorsement of 5/5 on delivery_risk is unsupported by current evidence.",
+      "severity": "HIGH",
+      "requested_outcome": "INVALIDATE",
+      "evidence": {
+        "koi_links": ["koi://note/project-delay-report"],
+        "ledger_refs": ["ledger://tx/milestone-miss"],
+        "web_links": []
+      },
+      "timestamp": "2026-02-09T10:00:00Z",
+      "status": "pending"
+    },
+    {
+      "challenge_id": "ch-002",
+      "signal_id": "signal-3",
+      "challenger_id": "challenger_2",
+      "category": "attestation_quality",
+      "rationale": "Verifier V-DeltaMRV was found to have submitted attestations without conducting site visits as required by the methodology. Multiple project developers have reported no in-person verification occurred.",
+      "severity": "CRITICAL",
+      "requested_outcome": "INVALIDATE",
+      "evidence": {
+        "koi_links": ["koi://note/verifier-complaint-1", "koi://note/verifier-complaint-2"],
+        "ledger_refs": ["ledger://tx/attestation-audit"],
+        "web_links": ["https://forum.regen.network/t/example-verifier-concern/999"]
+      },
+      "timestamp": "2026-02-07T08:00:00Z",
+      "status": "resolved_invalid",
+      "resolution": {
+        "resolved_by": "admin_1",
+        "resolved_at": "2026-02-09T14:00:00Z",
+        "outcome": "INVALID",
+        "rationale": "Evidence confirms verifier did not conduct required site visits. Signal endorsement_level=2 was based on incomplete assessment. Signal invalidated per challenge evidence."
+      }
+    },
+    {
+      "challenge_id": "ch-003",
+      "signal_id": "signal-4",
+      "challenger_id": "challenger_1",
+      "category": "method_rigor",
+      "rationale": "Challenge claims METH-SoilCarbon-v3 has insufficient baseline measurement requirements, but the methodology document clearly specifies 3-year baseline with annual sampling.",
+      "severity": "LOW",
+      "requested_outcome": "FLAG_FOR_REVIEW",
+      "evidence": {
+        "koi_links": ["koi://note/method-concern"],
+        "ledger_refs": [],
+        "web_links": []
+      },
+      "timestamp": "2026-02-06T12:00:00Z",
+      "status": "resolved_valid",
+      "resolution": {
+        "resolved_by": "admin_1",
+        "resolved_at": "2026-02-08T09:00:00Z",
+        "outcome": "VALID",
+        "rationale": "Methodology document at koi://method/soil-carbon-v3 confirms adequate baseline requirements. Challenge evidence does not support the claim. Signal restored."
+      }
+    }
+  ],
+  "expected_outputs": {
+    "description": "Only signals with status 'active' or 'resolved_valid' contribute to score. Challenged, resolved_invalid, withdrawn, and invalidated signals are excluded.",
+    "contributing_signals": [
+      "signal-1 (active, endorsement=4)",
+      "signal-4 (resolved_valid, endorsement=4)",
+      "signal-7 (active, endorsement=4)",
+      "signal-8 (active, endorsement=5)"
+    ],
+    "excluded_signals": [
+      "signal-2 (challenged — pending)",
+      "signal-3 (resolved_invalid)",
+      "signal-5 (invalidated)",
+      "signal-6 (withdrawn)"
+    ],
+    "challenge_kpis": {
+      "challenges_filed": 3,
+      "challenge_rate": 0.375,
+      "challenge_success_rate": 0.5,
+      "avg_resolution_time_hours": 49.0
+    }
+  }
+}

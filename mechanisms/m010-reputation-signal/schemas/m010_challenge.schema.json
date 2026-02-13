@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m010 challenge event",
+  "description": "Schema for a challenge filed against an m010 reputation signal. See SPEC.md section 6.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "challenge_id",
+    "signal_id",
+    "challenger_id",
+    "category",
+    "rationale",
+    "evidence",
+    "timestamp",
+    "status"
+  ],
+  "properties": {
+    "challenge_id": {
+      "type": "string",
+      "description": "Unique identifier for this challenge"
+    },
+    "signal_id": {
+      "type": "string",
+      "description": "ID of the signal being challenged"
+    },
+    "challenger_id": {
+      "type": "string",
+      "description": "Address of the challenger"
+    },
+    "category": {
+      "type": "string",
+      "description": "Must match the challenged signal's category"
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 50,
+      "description": "Human-readable reason for the challenge (min 50 chars)"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+      "description": "Optional severity classification"
+    },
+    "requested_outcome": {
+      "type": "string",
+      "enum": ["INVALIDATE", "DOWNGRADE", "FLAG_FOR_REVIEW"],
+      "description": "Optional requested resolution"
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["koi_links", "ledger_refs"],
+      "properties": {
+        "koi_links": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "KOI knowledge links supporting the challenge"
+        },
+        "ledger_refs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "On-chain references supporting the challenge"
+        },
+        "web_links": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Optional web references"
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of challenge submission"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "resolved_valid", "resolved_invalid", "escalated"],
+      "description": "Challenge resolution status"
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Present only after challenge is resolved",
+      "properties": {
+        "resolved_by": {
+          "type": "string",
+          "description": "v0: admin address; v1: arbiter_dao ID"
+        },
+        "resolved_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": ["VALID", "INVALID"]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Rationale for the resolution decision"
+        }
+      },
+      "required": ["resolved_by", "resolved_at", "outcome", "rationale"]
+    }
+  }
+}

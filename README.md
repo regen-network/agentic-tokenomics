@@ -53,6 +53,7 @@ This repository contains the design specifications and implementation plans for 
 - Governance process formalization (5 processes)
 - Agent orchestration architecture (4 agents)
 - Data schema & integration specification
+- Economic Reboot mechanism specifications (4 protocols)
 
 ### Phase 3: Implementation & Testing (Planned)
 - Smart contract development
@@ -87,6 +88,12 @@ This repository contains the design specifications and implementation plans for 
 - **M009**: Service Provision Escrow
 - **M010**: Reputation/Legitimacy Signaling
 - **M011**: Marketplace Curation & Quality Signals
+
+### Economic Reboot Mechanisms
+- **M012**: Fixed Cap Dynamic Supply
+- **M013**: Value-Based Fee Routing
+- **M014**: Authority Validator Governance (PoA Transition)
+- **M015**: Contribution-Weighted Rewards
 
 ### Agent Personas
 - **AGENT-001**: Registry Reviewer
@@ -154,7 +161,8 @@ regen-agentic-tokenomics/
 │   ├── 2.2-agentic-workflows.md
 │   ├── 2.3-governance-processes.md
 │   ├── 2.4-agent-orchestration.md
-│   └── 2.5-data-schema-integration.md
+│   ├── 2.5-data-schema-integration.md
+│   └── 2.6-economic-reboot-mechanisms.md
 ├── phase-3/
 │   ├── README.md
 │   ├── 3.1-smart-contract-specs.md

@@ -13,6 +13,7 @@ Phase 2 translates Phase 1 discoveries into detailed technical specifications re
 | 2.3 | Governance Process Formalization | ✅ Complete |
 | 2.4 | Agent Orchestration Architecture | ✅ Complete |
 | 2.5 | Data Schema & Integration Specification | ✅ Complete |
+| 2.6 | Economic Reboot Mechanism Specifications | ✅ Complete |
 
 ## Key Outputs
 
@@ -24,6 +25,14 @@ Phase 2 translates Phase 1 discoveries into detailed technical specifications re
 | M009 | Service Provision Escrow | New | High |
 | M010 | Reputation/Legitimacy Signaling | New | Medium |
 | M011 | Marketplace Curation | Enhancement | Medium |
+
+### Economic Reboot Mechanisms (4 Protocols)
+| ID | Name | Type | Complexity |
+|----|------|------|------------|
+| M012 | Fixed Cap Dynamic Supply | New | High |
+| M013 | Value-Based Fee Routing | New | Medium |
+| M014 | Authority Validator Governance | New | High |
+| M015 | Contribution-Weighted Rewards | New | High |
 
 ### Agentic Workflows (12 Workflows)
 | Agent | Workflows | Automation Level |
@@ -57,6 +66,7 @@ Phase 2 translates Phase 1 discoveries into detailed technical specifications re
 3. [Governance Processes](./2.3-governance-processes.md)
 4. [Agent Orchestration](./2.4-agent-orchestration.md)
 5. [Data Schema & Integration](./2.5-data-schema-integration.md)
+6. [Economic Reboot Mechanisms](./2.6-economic-reboot-mechanisms.md)
 
 ## Dependencies Identified
 
@@ -71,6 +81,10 @@ Phase 2 translates Phase 1 discoveries into detailed technical specifications re
 - New x/attestation module (M008)
 - New x/reputation module (M010)
 - CosmWasm contracts (M009, M011)
+- New x/supply module or x/mint modification (M012)
+- New x/feerouter module (M013)
+- Modified x/staking + new x/authority module (M014)
+- New x/rewards module or x/distribution extension (M015)
 
 ## Ready for Phase 3
 

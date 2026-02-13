@@ -235,7 +235,7 @@
         }
       },
       "additionalProperties": false,
-      "description": "OPAL coherence scores (0.0-1.0 per dimension, null if not yet scored)"
+      "description": "OPAL coherence scores (0.0-1.0 per dimension, null if not yet scored). Scoring algorithm defined in docs/governance/pacto-opal-alignment.md § OPAL Coherence Scoring Algorithm. Scores are computed by AGENT-002 using per-dimension rubrics with weighted criteria, and may be overridden by human reviewers."
     },
     "declared_positions": {
       "type": "array",

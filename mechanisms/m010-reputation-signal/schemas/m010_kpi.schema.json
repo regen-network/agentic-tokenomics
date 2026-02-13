@@ -64,6 +64,41 @@
         }
       }
     },
+    "challenge_kpis": {
+      "type": "object",
+      "description": "Challenge workflow metrics (section 6.7 of SPEC.md). Optional in v0; required when challenge workflow is active.",
+      "additionalProperties": false,
+      "properties": {
+        "challenges_filed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total challenges filed in this period"
+        },
+        "challenge_rate": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "challenges_filed / total_active_signals"
+        },
+        "avg_resolution_time_hours": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "description": "Mean hours from challenge to resolution"
+        },
+        "challenge_success_rate": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "resolved_invalid / (resolved_valid + resolved_invalid)"
+        },
+        "admin_resolution_timeout_rate": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "auto_escalated / total_challenges"
+        }
+      }
+    },
     "notes": {
       "type": "string"
     }
