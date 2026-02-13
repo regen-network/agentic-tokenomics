@@ -5,6 +5,7 @@
   "description": "Fixture exercising the challenge workflow: 8 signals with varied statuses including challenged, resolved_valid, resolved_invalid, and invalidated.",
   "events": [
     {
+      "signal_id": "signal-1",
       "timestamp": "2026-02-08T09:00:00Z",
       "subject_type": "CreditClass",
       "subject_id": "C01-001",
@@ -18,6 +19,7 @@
       }
     },
     {
+      "signal_id": "signal-2",
       "timestamp": "2026-02-07T14:00:00Z",
       "subject_type": "Project",
       "subject_id": "P-regen-042",
@@ -31,6 +33,7 @@
       }
     },
     {
+      "signal_id": "signal-3",
       "timestamp": "2026-02-06T10:00:00Z",
       "subject_type": "Verifier",
       "subject_id": "V-DeltaMRV",
@@ -44,6 +47,7 @@
       }
     },
     {
+      "signal_id": "signal-4",
       "timestamp": "2026-02-05T16:00:00Z",
       "subject_type": "Methodology",
       "subject_id": "METH-SoilCarbon-v3",
@@ -57,6 +61,7 @@
       }
     },
     {
+      "signal_id": "signal-5",
       "timestamp": "2026-02-04T08:00:00Z",
       "subject_type": "Address",
       "subject_id": "regen1abcd...wxyz",
@@ -70,6 +75,7 @@
       }
     },
     {
+      "signal_id": "signal-6",
       "timestamp": "2026-02-03T12:00:00Z",
       "subject_type": "CreditClass",
       "subject_id": "C01-001",
@@ -83,6 +89,7 @@
       }
     },
     {
+      "signal_id": "signal-7",
       "timestamp": "2026-02-02T18:00:00Z",
       "subject_type": "Project",
       "subject_id": "P-regen-042",
@@ -96,6 +103,7 @@
       }
     },
     {
+      "signal_id": "signal-8",
       "timestamp": "2026-02-01T06:00:00Z",
       "subject_type": "Verifier",
       "subject_id": "V-DeltaMRV",

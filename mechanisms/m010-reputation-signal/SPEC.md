@@ -90,7 +90,7 @@ This section specifies how reputation signals are contested, resolved, and — w
 ### 6.1 Signal Lifecycle State Machine
 
 ```
-States: {SUBMITTED, ACTIVE, CHALLENGED, RESOLVED_VALID, RESOLVED_INVALID, WITHDRAWN, INVALIDATED}
+States: {SUBMITTED, ACTIVE, CHALLENGED, ESCALATED, RESOLVED_VALID, RESOLVED_INVALID, WITHDRAWN, INVALIDATED}
 
 SUBMITTED → ACTIVE
   trigger: activation_delay_passed(24h) AND no_challenge_filed
@@ -134,6 +134,26 @@ CHALLENGED → RESOLVED_INVALID
     - signaler's accuracy_record updated (affects future signal weight in v1)
     - resolution rationale recorded in audit log
 
+CHALLENGED → ESCALATED
+  trigger: resolution_deadline_expired AND challenge.status == pending
+  guard: no admin/arbiter resolution submitted within deadline
+  action:
+    - escalate to governance Layer 3 vote
+    - emit EventChallengeEscalated
+    - notify governance module
+  note: ESCALATED is a distinct state from CHALLENGED because:
+    1. The resolution authority changes (admin/arbiter → governance)
+    2. The timeline changes (governance voting period, not admin deadline)
+    3. Visibility changes (escalated challenges appear in governance queue)
+
+ESCALATED → RESOLVED_VALID
+  trigger: governance.vote(VALID)
+  action: signal contribution RESTORED, challenge.close()
+
+ESCALATED → RESOLVED_INVALID
+  trigger: governance.vote(INVALID)
+  action: signal contribution PERMANENTLY REMOVED, challenge.close()
+
 ACTIVE → WITHDRAWN
   trigger: signaler.withdraw(signal_id)
   guard: signaler owns the signal, signal is not currently CHALLENGED
@@ -155,6 +175,7 @@ ACTIVE → INVALIDATED
   note: admin invalidation is a powerful override; v1 adds governance checks
 
 Terminal states: RESOLVED_INVALID, WITHDRAWN, INVALIDATED (no further transitions)
+Note: ESCALATED is non-terminal — it resolves to RESOLVED_VALID or RESOLVED_INVALID via governance
 ```
 
 ### 6.2 Challenge Participants
@@ -261,6 +282,7 @@ During and after challenge:
 | SUBMITTED | None (not yet active) | Activation delay prevents premature impact |
 | ACTIVE | Full contribution per section 5 | Normal operation |
 | CHALLENGED | **Paused** (0 contribution) | Presumption of caution during dispute |
+| ESCALATED | **Paused** (0 contribution) | Governance resolution pending; same caution as CHALLENGED |
 | RESOLVED_VALID | Full contribution restored | Challenge dismissed; signal vindicated |
 | RESOLVED_INVALID | Permanently removed | Signal found to be invalid |
 | WITHDRAWN | Removed (non-punitive) | Voluntary withdrawal |
