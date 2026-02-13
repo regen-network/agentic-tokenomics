@@ -124,9 +124,14 @@ regen-agentic-tokenomics/
 ├── package.json
 ├── WG_BULK_PACK.md
 ├── docs/
+│   ├── CONTRIBUTOR_NAV.md
+│   ├── DEPENDENCIES.md
 │   ├── MECHANISM_CONSUMERS.md
 │   ├── MECHANISM_INDEX.md
 │   ├── RELEASE.md
+│   ├── architecture/
+│   │   ├── STACK_MAP.md
+│   │   └── STACK_MAP.mmd
 │   ├── contributor-guide/
 │   └── governance/
 ├── mechanisms/
@@ -163,6 +168,8 @@ regen-agentic-tokenomics/
 ```
 
 ## Contributing
+
+See [`docs/CONTRIBUTOR_NAV.md`](docs/CONTRIBUTOR_NAV.md) for where changes should land and how to keep PRs small and reviewable.
 
 This project is developed in collaboration with Regen Network community. Contributions, feedback, and discussion are welcome.
 
