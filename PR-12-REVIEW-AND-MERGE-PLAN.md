@@ -178,8 +178,25 @@ In `phase-2/2.6-economic-reboot-mechanisms.md`, in the M012 Supply Algorithm sec
       effect: higher stability tier commitment → faster regrowth
       source: M015 stability tier commitments
 
-    NOTE: During PoA transition (M014 Phase 2-3), whichever multiplier
-    yields the higher value is used, ensuring no regrowth disruption.
+    Transition logic (M014 Phase 2-3):
+      During the PoA transition window, both multipliers are computed
+      and the higher value is selected via a simple max() function:
+
+        effective_multiplier = max(staking_multiplier, stability_multiplier)
+
+      This prevents a regrowth discontinuity as S_staked declines during
+      the unbonding period while S_stability_committed ramps up.
+
+      Phase-gated behavior:
+        - Pre-M014 activation:  effective_multiplier = staking_multiplier
+        - M014 Phase 1-2 (coexistence): effective_multiplier = max(staking, stability)
+        - M014 Phase 3+ (PoS disabled):  effective_multiplier = stability_multiplier
+          (staking_multiplier removed from computation; S_staked = 0)
+
+      The phase gate is determined by the M014 module state:
+        - if m014.state == INACTIVE:     use staking_multiplier only
+        - if m014.state == TRANSITION:   use max(staking, stability)
+        - if m014.state in {ACTIVE, EQUILIBRIUM}: use stability_multiplier only
 ```
 
 Also add to Open Questions:
@@ -258,17 +275,39 @@ In M015 Security Invariants, expand invariant 5:
 
 #### U7: Challenge Schema Escalation Status
 
-In `mechanisms/m010-reputation-signal/schemas/m010_challenge.schema.json`, the `"escalated"` status should be kept (it's a valid workflow state when auto-escalation occurs). Add to SPEC.md section 6.5 under "Admin safeguards (v0)":
+In `mechanisms/m010-reputation-signal/schemas/m010_challenge.schema.json`, the `"escalated"` status should be kept (it's a valid workflow state when auto-escalation occurs).
+
+**Placement**: Add a new subsection to SPEC.md within the **challenge state transitions** section (section 6.1 or 6.2, alongside the existing state machine), rather than under "Admin safeguards (v0)" in section 6.5. This keeps all state transition definitions co-located for clarity. (Per Gemini review feedback on logical document structure.)
+
+Add to SPEC.md **section 6.1** (Signal Lifecycle State Machine), after the existing CHALLENGED transitions:
 
 ```
-Note: When a challenge auto-escalates due to resolution timeout, its status
-transitions to ESCALATED. An escalated challenge follows the governance
-(Layer 3) resolution process rather than admin resolution.
-
-CHALLENGED → ESCALATED (added transition):
+CHALLENGED → ESCALATED (added state + transition):
   trigger: resolution_deadline_expired AND challenge.status == pending
+  guard: no admin/arbiter resolution submitted within deadline
   action: escalate to governance Layer 3 vote,
-          emit EventChallengeEscalated
+          emit EventChallengeEscalated,
+          notify governance module
+
+ESCALATED → RESOLVED_VALID
+  trigger: governance.vote(VALID)
+  action: signal contribution RESTORED, challenge.close()
+
+ESCALATED → RESOLVED_INVALID
+  trigger: governance.vote(INVALID)
+  action: signal contribution PERMANENTLY REMOVED, challenge.close()
+
+Note: ESCALATED is a distinct state from CHALLENGED because:
+1. The resolution authority changes (admin/arbiter → governance)
+2. The timeline changes (governance voting period, not admin deadline)
+3. Visibility changes (escalated challenges appear in governance queue)
+```
+
+Also add to the challenge status enum documentation in section 6.1:
+```
+States: {SUBMITTED, ACTIVE, CHALLENGED, ESCALATED, RESOLVED_VALID, RESOLVED_INVALID, WITHDRAWN, INVALIDATED}
+                                          ^^^^^^^^^
+                                          (added — timeout auto-escalation to governance)
 ```
 
 #### U8: Sequence Diagram Fix
