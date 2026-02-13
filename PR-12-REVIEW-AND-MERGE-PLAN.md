@@ -128,7 +128,7 @@ All correct. No action needed — just confirming we validated.
 #### L3: M009 Event Name Typo
 
 **File**: `phase-2/2.1-token-utility-mechanisms.md` (M009 Implementation Notes)
-**Line**: `EventMilestonSubmitted` (missing 'e' — should be `EventMilestoneSubmitted`)
+EventMilestoneSubmitted (missing 'e' — should be EventMilestoneSubmitted)
 
 #### L4: Work Order Schema `opal_scores` Field
 
