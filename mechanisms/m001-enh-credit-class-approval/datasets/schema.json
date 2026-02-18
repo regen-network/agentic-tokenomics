@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m001-enh replay dataset",
+  "type": "object",
+  "required": [
+    "mechanism_id",
+    "scope",
+    "as_of",
+    "proposals"
+  ],
+  "properties": {
+    "mechanism_id": {
+      "const": "m001-enh"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "as_of": {
+      "type": "string",
+      "description": "ISO-8601 datetime",
+      "format": "date-time"
+    },
+    "proposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "proposal_id",
+          "proposer",
+          "credit_type",
+          "methodology_iri",
+          "admin_address",
+          "status",
+          "submit_time"
+        ],
+        "properties": {
+          "proposal_id": {
+            "type": "string"
+          },
+          "proposer": {
+            "type": "string"
+          },
+          "credit_type": {
+            "type": "string",
+            "enum": ["C", "KSH", "BT", "MBS", "USS"]
+          },
+          "methodology_iri": {
+            "type": "string"
+          },
+          "admin_address": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["DRAFT", "AGENT_REVIEW", "VOTING", "APPROVED", "REJECTED", "EXPIRED"]
+          },
+          "agent_score": {
+            "type": "object",
+            "properties": {
+              "score": { "type": "integer", "minimum": 0, "maximum": 1000 },
+              "confidence": { "type": "integer", "minimum": 0, "maximum": 1000 },
+              "recommendation": { "type": "string", "enum": ["APPROVE", "CONDITIONAL", "REJECT"] },
+              "factors": {
+                "type": "object",
+                "properties": {
+                  "methodology_quality": { "type": "integer" },
+                  "admin_reputation": { "type": "integer" },
+                  "novelty": { "type": "integer" },
+                  "completeness": { "type": "integer" }
+                }
+              }
+            }
+          },
+          "outcome": {
+            "type": "object",
+            "properties": {
+              "result": { "type": "string" },
+              "deposit_refunded": { "type": "string" },
+              "deposit_slashed": { "type": "string" }
+            }
+          },
+          "override": {
+            "type": "object",
+            "properties": {
+              "overrider": { "type": "string" },
+              "override_time": { "type": "string", "format": "date-time" },
+              "rationale": { "type": "string" }
+            }
+          },
+          "submit_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decision_time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}

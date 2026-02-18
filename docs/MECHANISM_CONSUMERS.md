@@ -18,3 +18,20 @@ This document maps **mechanism IDs** to known **consumers** (agents, digests, sc
 - Heartbeat replay runner: `scripts/replay-m010.mjs` (regen-heartbeat)
 - Heartbeat stub runner: `scripts/stub-run-signal-agent.mjs` (regen-heartbeat)
 - Heartbeat validator: `scripts/validate-signal-agent.mjs` (regen-heartbeat)
+
+## m001-enh — Credit Class Approval Voting Enhancement
+**Canonical spec**
+- `mechanisms/m001-enh-credit-class-approval/SPEC.md`
+
+**Outputs**
+- KPI JSON block schema: `mechanisms/m001-enh-credit-class-approval/schemas/m001_kpi.schema.json`
+- Agent score schema: `mechanisms/m001-enh-credit-class-approval/schemas/m001_agent_score.schema.json`
+- Proposal lifecycle schema: `mechanisms/m001-enh-credit-class-approval/schemas/m001_proposal.schema.json`
+
+**Datasets (deterministic)**
+- Replay fixtures: `mechanisms/m001-enh-credit-class-approval/datasets/fixtures/v0_sample.json`
+- Rejection scenarios: `mechanisms/m001-enh-credit-class-approval/datasets/fixtures/v0_rejection_sample.json`
+
+**Known consumers**
+- Heartbeat character: `signal-agent` (regen-heartbeat) — consumes agent scores for governance digest
+- Governance workflows: GOV-001 Credit Class Creator Allowlist process (phase-2/2.3)

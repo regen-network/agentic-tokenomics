@@ -1,0 +1,137 @@
+{
+  "mechanism_id": "m001-enh",
+  "scope": "v0_advisory_replay",
+  "as_of": "2026-02-18T12:00:00Z",
+  "proposals": [
+    {
+      "proposal_id": "prop-001",
+      "proposer": "regen1qx7yt3e4wk5gk2xnhzrvn0cf",
+      "credit_type": "C",
+      "methodology_iri": "koi://methodology/soil-carbon-sequestration-v4",
+      "admin_address": "regen1qx7yt3e4wk5gk2xnhzrvn0cf",
+      "status": "APPROVED",
+      "agent_score": {
+        "score": 776,
+        "confidence": 1000,
+        "recommendation": "APPROVE",
+        "factors": {
+          "methodology_quality": 850,
+          "admin_reputation": 720,
+          "novelty": 600,
+          "completeness": 1000
+        }
+      },
+      "outcome": {
+        "result": "APPROVED",
+        "deposit_refunded": "1000",
+        "deposit_slashed": "0"
+      },
+      "submit_time": "2026-02-01T09:00:00Z",
+      "decision_time": "2026-02-10T14:00:00Z"
+    },
+    {
+      "proposal_id": "prop-002",
+      "proposer": "regen1abc123xyz456",
+      "credit_type": "KSH",
+      "methodology_iri": "koi://methodology/kenyan-smallholder-agroforestry-v2",
+      "admin_address": "regen1abc123xyz456",
+      "status": "APPROVED",
+      "agent_score": {
+        "score": 665,
+        "confidence": 500,
+        "recommendation": "CONDITIONAL",
+        "factors": {
+          "methodology_quality": 700,
+          "admin_reputation": 500,
+          "novelty": 800,
+          "completeness": 750
+        }
+      },
+      "outcome": {
+        "result": "APPROVED",
+        "deposit_refunded": "1000",
+        "deposit_slashed": "0"
+      },
+      "submit_time": "2026-02-03T10:00:00Z",
+      "decision_time": "2026-02-12T16:00:00Z"
+    },
+    {
+      "proposal_id": "prop-003",
+      "proposer": "regen1newaddr000111",
+      "credit_type": "C",
+      "methodology_iri": "koi://methodology/duplicate-carbon-offset-v1",
+      "admin_address": "regen1newaddr000111",
+      "status": "REJECTED",
+      "agent_score": {
+        "score": 280,
+        "confidence": 500,
+        "recommendation": "CONDITIONAL",
+        "factors": {
+          "methodology_quality": 200,
+          "admin_reputation": 500,
+          "novelty": 0,
+          "completeness": 500
+        }
+      },
+      "outcome": {
+        "result": "REJECTED",
+        "deposit_refunded": "800",
+        "deposit_slashed": "200"
+      },
+      "submit_time": "2026-02-05T08:00:00Z",
+      "decision_time": "2026-02-13T12:00:00Z"
+    },
+    {
+      "proposal_id": "prop-004",
+      "proposer": "regen1marine789qrs",
+      "credit_type": "BT",
+      "methodology_iri": "koi://methodology/biodiversity-token-marine-v1",
+      "admin_address": "regen1marine789qrs",
+      "status": "EXPIRED",
+      "agent_score": {
+        "score": 690,
+        "confidence": 1000,
+        "recommendation": "CONDITIONAL",
+        "factors": {
+          "methodology_quality": 600,
+          "admin_reputation": 650,
+          "novelty": 900,
+          "completeness": 750
+        }
+      },
+      "outcome": {
+        "result": "EXPIRED",
+        "deposit_refunded": "950",
+        "deposit_slashed": "50"
+      },
+      "submit_time": "2026-02-07T11:00:00Z",
+      "decision_time": "2026-02-15T11:00:00Z"
+    },
+    {
+      "proposal_id": "prop-005",
+      "proposer": "regen1spammer999",
+      "credit_type": "C",
+      "methodology_iri": "koi://methodology/low-effort-stub",
+      "admin_address": "regen1spammer999",
+      "status": "REJECTED",
+      "agent_score": {
+        "score": 155,
+        "confidence": 750,
+        "recommendation": "CONDITIONAL",
+        "factors": {
+          "methodology_quality": 100,
+          "admin_reputation": 200,
+          "novelty": 150,
+          "completeness": 250
+        }
+      },
+      "outcome": {
+        "result": "REJECTED",
+        "deposit_refunded": "800",
+        "deposit_slashed": "200"
+      },
+      "submit_time": "2026-02-08T09:00:00Z",
+      "decision_time": "2026-02-16T09:00:00Z"
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m001-enh ClassCreatorProposal",
+  "description": "Credit class creator proposal lifecycle object. See SPEC.md section 6.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "proposal_id",
+    "proposer",
+    "credit_type",
+    "methodology_iri",
+    "admin_address",
+    "status",
+    "submit_time"
+  ],
+  "properties": {
+    "proposal_id": {
+      "type": "string",
+      "description": "Unique proposal identifier"
+    },
+    "proposer": {
+      "type": "string",
+      "description": "Bech32 address of the applicant"
+    },
+    "credit_type": {
+      "type": "string",
+      "enum": ["C", "KSH", "BT", "MBS", "USS"],
+      "description": "Requested credit type. Must exist in allowed_credit_types."
+    },
+    "methodology_iri": {
+      "type": "string",
+      "description": "IRI pointing to the methodology document"
+    },
+    "admin_address": {
+      "type": "string",
+      "description": "Bech32 address proposed as the credit class admin"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DRAFT", "AGENT_REVIEW", "VOTING", "APPROVED", "REJECTED", "EXPIRED"],
+      "description": "Proposal lifecycle state. See SPEC.md section 6."
+    },
+    "deposit": {
+      "type": "object",
+      "description": "Deposit locked in escrow (v1)",
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "type": "string",
+          "description": "Deposit amount in base denom (e.g., '1000000000')"
+        },
+        "denom": {
+          "type": "string",
+          "description": "Token denomination (e.g., 'uregen')"
+        }
+      }
+    },
+    "agent_score": {
+      "$ref": "m001_agent_score.schema.json",
+      "description": "Agent pre-screening score, if submitted"
+    },
+    "governance_proposal_id": {
+      "type": "string",
+      "description": "On-chain governance proposal ID, if promoted to VOTING"
+    },
+    "override": {
+      "type": "object",
+      "description": "Human override details, if agent rejection was overridden",
+      "additionalProperties": false,
+      "properties": {
+        "overrider": {
+          "type": "string",
+          "description": "Address of the validator/admin who overrode"
+        },
+        "override_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "rationale": {
+          "type": "string"
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "description": "Final outcome details",
+      "additionalProperties": false,
+      "properties": {
+        "result": {
+          "type": "string",
+          "enum": ["APPROVED", "REJECTED", "EXPIRED", "AUTO_REJECTED"]
+        },
+        "deposit_refunded": {
+          "type": "string",
+          "description": "Amount refunded to proposer"
+        },
+        "deposit_slashed": {
+          "type": "string",
+          "description": "Amount slashed to community pool"
+        },
+        "tally": {
+          "type": "object",
+          "description": "Vote tally (if went to VOTING)",
+          "properties": {
+            "yes_ratio": { "type": "number" },
+            "veto_ratio": { "type": "number" },
+            "quorum_met": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "submit_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of proposal submission"
+    },
+    "decision_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of final decision"
+    },
+    "metadata": {
+      "type": "string",
+      "description": "Additional application metadata"
+    }
+  }
+}

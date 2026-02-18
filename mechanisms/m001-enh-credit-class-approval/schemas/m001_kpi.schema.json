@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m001-enh KPI output",
+  "description": "KPI metrics for the credit class approval process. See SPEC.md section 12.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mechanism_id",
+    "scope",
+    "as_of",
+    "proposals_submitted",
+    "proposals_approved",
+    "proposals_rejected",
+    "approval_rate"
+  ],
+  "properties": {
+    "mechanism_id": {
+      "const": "m001-enh"
+    },
+    "scope": {
+      "type": "string",
+      "description": "Evaluation scope (e.g., 'v0_advisory')"
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 datetime for point-in-time evaluation"
+    },
+    "proposals_submitted": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total proposals submitted in period"
+    },
+    "proposals_approved": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Proposals that reached APPROVED status"
+    },
+    "proposals_rejected": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Proposals that reached REJECTED or AUTO_REJECTED status"
+    },
+    "proposals_expired": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Proposals that reached EXPIRED status (quorum not met)"
+    },
+    "approval_rate": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "approved / (approved + rejected + expired)"
+    },
+    "agent_scoring": {
+      "type": "object",
+      "description": "Agent pre-screening performance metrics",
+      "additionalProperties": false,
+      "properties": {
+        "proposals_scored": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Proposals that received an agent score"
+        },
+        "agent_accuracy": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Fraction of agent recommendations matching governance outcome"
+        },
+        "avg_score": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Mean agent score across all scored proposals"
+        },
+        "auto_reject_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Proposals auto-rejected by agent (score < 300, confidence > 900)"
+        },
+        "override_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Auto-rejections overridden by human"
+        }
+      }
+    },
+    "avg_time_to_decision_hours": {
+      "type": ["number", "null"],
+      "minimum": 0.0,
+      "description": "Mean hours from submit_time to decision_time"
+    },
+    "deposit_economics": {
+      "type": "object",
+      "description": "Deposit flow summary (v1 only)",
+      "additionalProperties": false,
+      "properties": {
+        "total_deposited": {
+          "type": "string",
+          "description": "Total REGEN deposited across all proposals"
+        },
+        "total_refunded": {
+          "type": "string",
+          "description": "Total REGEN refunded to proposers"
+        },
+        "total_slashed": {
+          "type": "string",
+          "description": "Total REGEN slashed to community pool"
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}
