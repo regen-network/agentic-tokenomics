@@ -1,0 +1,71 @@
+{
+  "description": "5 periods with different supply states for m012 Fixed Cap Dynamic Supply",
+  "config": {
+    "hard_cap": "221000000000000",
+    "r_base": 0.02,
+    "ecological_multiplier": 1.0,
+    "ecological_multiplier_enabled": false
+  },
+  "periods": [
+    {
+      "label": "Period 1: Normal period, 50% staked, eco disabled",
+      "supply_state": {
+        "current_supply": "150000000000000",
+        "hard_cap": "221000000000000",
+        "staked_amount": "75000000000000",
+        "stability_committed": "0",
+        "m014_state": "INACTIVE",
+        "ecological_multiplier_enabled": false
+      },
+      "burn_amount": "500000000000"
+    },
+    {
+      "label": "Period 2: High staking (90% staked)",
+      "supply_state": {
+        "current_supply": "180000000000000",
+        "hard_cap": "221000000000000",
+        "staked_amount": "162000000000000",
+        "stability_committed": "0",
+        "m014_state": "INACTIVE",
+        "ecological_multiplier_enabled": false
+      },
+      "burn_amount": "200000000000"
+    },
+    {
+      "label": "Period 3: Near-cap supply (supply at 99% of cap)",
+      "supply_state": {
+        "current_supply": "218790000000000",
+        "hard_cap": "221000000000000",
+        "staked_amount": "109395000000000",
+        "stability_committed": "0",
+        "m014_state": "INACTIVE",
+        "ecological_multiplier_enabled": false
+      },
+      "burn_amount": "100000000000"
+    },
+    {
+      "label": "Period 4: Large burn period",
+      "supply_state": {
+        "current_supply": "200000000000000",
+        "hard_cap": "221000000000000",
+        "staked_amount": "100000000000000",
+        "stability_committed": "0",
+        "m014_state": "INACTIVE",
+        "ecological_multiplier_enabled": false
+      },
+      "burn_amount": "5000000000000"
+    },
+    {
+      "label": "Period 5: Post-M014 with stability_multiplier",
+      "supply_state": {
+        "current_supply": "190000000000000",
+        "hard_cap": "221000000000000",
+        "staked_amount": "0",
+        "stability_committed": "114000000000000",
+        "m014_state": "ACTIVE",
+        "ecological_multiplier_enabled": false
+      },
+      "burn_amount": "300000000000"
+    }
+  ]
+}

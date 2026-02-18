@@ -1,0 +1,70 @@
+{
+  "description": "Expected outputs for vector_v0_sample.input.json, computed per SPEC.md section 5",
+  "periods": [
+    {
+      "label": "Period 1: Normal period, 50% staked, eco disabled",
+      "next_supply": "151630000000000",
+      "minted": "2130000000000",
+      "burned": "500000000000",
+      "regrowth_rate": 0.03,
+      "effective_multiplier": 1.5,
+      "staking_multiplier": 1.5,
+      "ecological_multiplier": 1.0,
+      "headroom_before": "71000000000000",
+      "headroom_after": "69370000000000",
+      "notes": "r = 0.02 * 1.5 * 1.0 = 0.03; M = 0.03 * 71T = 2.13T; S' = 150T + 2.13T - 0.5T = 151.63T"
+    },
+    {
+      "label": "Period 2: High staking (90% staked)",
+      "next_supply": "181358000000000",
+      "minted": "1558000000000",
+      "burned": "200000000000",
+      "regrowth_rate": 0.038,
+      "effective_multiplier": 1.9,
+      "staking_multiplier": 1.9,
+      "ecological_multiplier": 1.0,
+      "headroom_before": "41000000000000",
+      "headroom_after": "39642000000000",
+      "notes": "r = 0.02 * 1.9 * 1.0 = 0.038; M = 0.038 * 41T = 1.558T; S' = 180T + 1.558T - 0.2T = 181.358T"
+    },
+    {
+      "label": "Period 3: Near-cap supply (supply at 99% of cap)",
+      "next_supply": "218756300000000",
+      "minted": "66300000000",
+      "burned": "100000000000",
+      "regrowth_rate": 0.03,
+      "effective_multiplier": 1.5,
+      "staking_multiplier": 1.5,
+      "ecological_multiplier": 1.0,
+      "headroom_before": "2210000000000",
+      "headroom_after": "2243700000000",
+      "notes": "Near-cap: M = 0.03 * 2.21T = 66.3B; burn exceeds mint so supply decreases. S' = 218.79T + 66.3B - 100B = 218.7563T"
+    },
+    {
+      "label": "Period 4: Large burn period",
+      "next_supply": "195630000000000",
+      "minted": "630000000000",
+      "burned": "5000000000000",
+      "regrowth_rate": 0.03,
+      "effective_multiplier": 1.5,
+      "staking_multiplier": 1.5,
+      "ecological_multiplier": 1.0,
+      "headroom_before": "21000000000000",
+      "headroom_after": "25370000000000",
+      "notes": "Large burn: M = 0.03 * 21T = 630B; B = 5T >> M; net contraction. S' = 200T + 0.63T - 5T = 195.63T"
+    },
+    {
+      "label": "Period 5: Post-M014 with stability_multiplier",
+      "next_supply": "190692000000000",
+      "minted": "992000000000",
+      "burned": "300000000000",
+      "regrowth_rate": 0.032,
+      "effective_multiplier": 1.6,
+      "staking_multiplier": 1.0,
+      "ecological_multiplier": 1.0,
+      "headroom_before": "31000000000000",
+      "headroom_after": "30308000000000",
+      "notes": "Post-M014 ACTIVE: staking_mult ignored (S_staked=0 -> 1.0), stability_mult = 1 + 114T/190T = 1.6; r = 0.02 * 1.6 = 0.032; M = 0.032 * 31T = 992B"
+    }
+  ]
+}

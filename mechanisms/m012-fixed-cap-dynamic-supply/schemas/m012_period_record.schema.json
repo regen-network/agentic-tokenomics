@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m012 period record",
+  "description": "Per-period mint/burn record for the fixed cap dynamic supply mechanism. All token amounts are in uregen.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "period",
+    "timestamp",
+    "supply_before",
+    "supply_after",
+    "minted",
+    "burned",
+    "regrowth_rate",
+    "effective_multiplier"
+  ],
+  "properties": {
+    "period": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Period index (0-based)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 datetime of period computation"
+    },
+    "supply_before": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Supply at start of period in uregen"
+    },
+    "supply_after": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Supply at end of period in uregen"
+    },
+    "minted": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Tokens minted (regrowth) in this period in uregen"
+    },
+    "burned": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Tokens burned in this period in uregen"
+    },
+    "regrowth_rate": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Effective regrowth rate r = r_base * effective_multiplier * ecological_multiplier"
+    },
+    "effective_multiplier": {
+      "type": "number",
+      "minimum": 1.0,
+      "maximum": 2.0,
+      "description": "Phase-gated multiplier (staking, stability, or max of both)"
+    },
+    "staking_multiplier": {
+      "type": "number",
+      "minimum": 1.0,
+      "maximum": 2.0,
+      "description": "Staking participation multiplier: 1 + (S_staked / S_total)"
+    },
+    "stability_multiplier": {
+      "type": "number",
+      "minimum": 1.0,
+      "maximum": 2.0,
+      "description": "Stability commitment multiplier: 1 + (S_stability_committed / S_total)"
+    },
+    "ecological_multiplier": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Ecological multiplier (1.0 when disabled in v0)"
+    },
+    "headroom_before": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Cap headroom before period: hard_cap - supply_before (uregen)"
+    },
+    "headroom_after": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Cap headroom after period: hard_cap - supply_after (uregen)"
+    },
+    "m014_state": {
+      "type": "string",
+      "enum": ["INACTIVE", "TRANSITION", "ACTIVE", "EQUILIBRIUM"],
+      "description": "M014 module state at time of computation"
+    }
+  }
+}

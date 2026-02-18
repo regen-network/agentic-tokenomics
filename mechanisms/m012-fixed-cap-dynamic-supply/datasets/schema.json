@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m012 replay dataset",
+  "type": "object",
+  "required": [
+    "mechanism_id",
+    "scope",
+    "as_of",
+    "config",
+    "periods"
+  ],
+  "properties": {
+    "mechanism_id": {
+      "const": "m012"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "as_of": {
+      "type": "string",
+      "description": "ISO-8601 datetime",
+      "format": "date-time"
+    },
+    "config": {
+      "type": "object",
+      "required": ["hard_cap", "r_base"],
+      "properties": {
+        "hard_cap": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "Hard cap in uregen"
+        },
+        "r_base": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.10,
+          "description": "Base regrowth rate"
+        },
+        "ecological_multiplier": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Ecological multiplier (1.0 when disabled)"
+        },
+        "ecological_multiplier_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "periods": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "period",
+          "timestamp",
+          "supply_state",
+          "burn_amount"
+        ],
+        "properties": {
+          "period": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "supply_state": {
+            "type": "object",
+            "required": ["current_supply", "staked_amount", "m014_state"],
+            "properties": {
+              "current_supply": {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              },
+              "staked_amount": {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              },
+              "stability_committed": {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              },
+              "m014_state": {
+                "type": "string",
+                "enum": ["INACTIVE", "TRANSITION", "ACTIVE", "EQUILIBRIUM"]
+              },
+              "ecological_multiplier_enabled": {
+                "type": "boolean"
+              }
+            }
+          },
+          "burn_amount": {
+            "type": "string",
+            "pattern": "^[0-9]+$"
+          }
+        }
+      }
+    }
+  }
+}

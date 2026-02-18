@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m012 supply state",
+  "description": "Current supply state for the fixed cap dynamic supply mechanism. All token amounts are in uregen (1 REGEN = 1,000,000 uregen).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "current_supply",
+    "hard_cap",
+    "staked_amount",
+    "m014_state",
+    "ecological_multiplier_enabled"
+  ],
+  "properties": {
+    "current_supply": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Current circulating supply in uregen (string to support BigInt precision)"
+    },
+    "hard_cap": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Hard cap in uregen (default: 221000000000000)"
+    },
+    "staked_amount": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Currently staked amount in uregen"
+    },
+    "stability_committed": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Amount committed to stability tiers (M015) in uregen. Only used when m014_state != INACTIVE."
+    },
+    "m014_state": {
+      "type": "string",
+      "enum": ["INACTIVE", "TRANSITION", "ACTIVE", "EQUILIBRIUM"],
+      "description": "Current M014 module state, determines multiplier selection"
+    },
+    "ecological_multiplier_enabled": {
+      "type": "boolean",
+      "description": "Whether ecological multiplier is active (false in v0)"
+    },
+    "delta_co2": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Change in CO2 metric (ppm). Only used when ecological_multiplier_enabled is true."
+    },
+    "ecological_reference_value": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Reference value for ecological multiplier computation (default: 50 ppm)"
+    }
+  }
+}
