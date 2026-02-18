@@ -75,7 +75,8 @@ export function computeM014KPI({ as_of, validators, validator_fund_balance = nul
     validators_by_category.ecological_data_stewards >= 5;
 
   // Byzantine tolerance: active_count > 3f + 1
-  const active_count = validators_by_status.active;
+  // Include probation validators — they are still in the active set
+  const active_count = activeVals.length;
   const max_byzantine_f = Math.floor((active_count - 1) / 3);
   const tolerance_met = active_count > 0 && active_count >= 3 * max_byzantine_f + 1;
 

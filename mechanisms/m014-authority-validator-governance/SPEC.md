@@ -68,8 +68,8 @@ Confidence is derived from data availability:
 
 ### 5.4 Compensation allocation
 ```
-base_compensation_per_validator = (validator_fund_balance * 0.90) / active_validator_count / period
-performance_bonus_per_validator = (validator_fund_balance * 0.10) * (validator_score / total_scores) / period
+base_compensation_per_validator = (validator_fund_balance * 0.90) / active_validator_count
+performance_bonus_per_validator = (validator_fund_balance * 0.10) * (validator_score / total_scores)
 total_compensation = base_compensation + performance_bonus
 ```
 

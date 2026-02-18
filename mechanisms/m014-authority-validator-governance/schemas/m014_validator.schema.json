@@ -58,22 +58,22 @@
       "description": "Most recent performance evaluation",
       "properties": {
         "uptime": {
-          "type": "number",
+          "type": ["number", "null"],
           "minimum": 0.0,
           "maximum": 1.0,
-          "description": "blocks_signed / blocks_expected"
+          "description": "blocks_signed / blocks_expected (null if unavailable)"
         },
         "governance_participation": {
-          "type": "number",
+          "type": ["number", "null"],
           "minimum": 0.0,
           "maximum": 1.0,
-          "description": "votes_cast / proposals_available"
+          "description": "votes_cast / proposals_available (null if unavailable)"
         },
         "ecosystem_contribution": {
-          "type": "number",
+          "type": ["number", "null"],
           "minimum": 0.0,
           "maximum": 1.0,
-          "description": "AGENT-004 assessed contribution score"
+          "description": "AGENT-004 assessed contribution score (null if unavailable)"
         }
       }
     },

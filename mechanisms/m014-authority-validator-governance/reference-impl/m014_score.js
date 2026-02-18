@@ -61,14 +61,13 @@ export function computeM014Score({ validator, factors }) {
     }
   }
 
+  // When all factors present, use direct weighted sum.
+  // When some are missing, re-normalize based on available weights.
   const performance_score = totalWeight > 0
-    ? Number((weightedSum / totalWeight * 1.0).toFixed(4))
+    ? weightedSum / totalWeight
     : 0.0;
 
-  // Normalize to original weight basis when all factors present
-  const normalizedScore = availableCount === FACTOR_KEYS.length
-    ? Number(weightedSum.toFixed(4))
-    : performance_score;
+  const normalizedScore = Number(performance_score.toFixed(4));
 
   // Performance flags
   const flags = [];
@@ -147,4 +146,7 @@ function selfTest() {
   if (fail > 0) process.exit(1);
 }
 
-selfTest();
+// Run self-test if executed directly
+if (process.argv[1] === __filename) {
+  selfTest();
+}
