@@ -74,9 +74,9 @@ Evaluates the methodology document against required components:
 
 #### Admin reputation (`f_reputation`, 0–1000)
 Derived from M010 reputation signal for the admin address:
-- If M010 score exists: `f_reputation = m010_score` (already 0–1000 in v1; 0–1 × 1000 in v0)
+- If M010 score exists: `f_reputation = m010_score × 1000` (v0 M010 outputs 0–1; scale to 0–1000 for this formula. v1 M010 outputs 0–1000 directly.)
 - If no M010 score: `f_reputation = 500` (neutral default)
-- Historical proposal success rate is a secondary factor: `f_reputation = 0.7 × m010_score + 0.3 × (historical_pass_rate × 1000)`
+- Historical proposal success rate is a secondary factor: `f_reputation = 0.7 × scaled_m010 + 0.3 × (historical_pass_rate × 1000)`
 
 #### Novelty (`f_novelty`, 0–1000)
 Measures differentiation from existing credit classes:
@@ -102,7 +102,7 @@ confidence = (data_available_factors / total_factors) × 1000
 Where `data_available_factors` counts factors with non-default/non-estimated inputs:
 - M010 reputation score exists (not defaulted to 500)
 - Methodology document fully resolvable and parseable
-- At least 3 existing classes for meaningful similarity comparison
+- At least 3 existing classes for meaningful similarity comparison (threshold chosen to provide a minimum statistical basis for cosine similarity — with fewer classes, similarity scores are unreliable)
 - Historical proposal data available for admin address
 
 ### 5.4 Normalization

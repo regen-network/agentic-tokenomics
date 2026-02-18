@@ -77,8 +77,8 @@ function computeConfidence(factors) {
   const total = 4;
 
   if (factors.reputation_available) available++;
-  if (factors.methodology_resolvable !== false) available++;
-  if (factors.sufficient_classes !== false) available++;
+  if (factors.methodology_resolvable) available++;
+  if (factors.sufficient_classes) available++;
   if (factors.history_available) available++;
 
   return Math.round((available / total) * 1000);

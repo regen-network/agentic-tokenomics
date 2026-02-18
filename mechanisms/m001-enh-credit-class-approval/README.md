@@ -1,6 +1,6 @@
 # m001-enh — Credit Class Approval Voting Enhancement (v0 advisory)
 
-m001-enh enhances the Regen Network credit class creator allowlist with **agent pre-screening**, **tiered approval thresholds**, and **deposit escrow** (v1). It builds on the existing `x/ecocredit` governance process with structured quality assessment before community vote.
+m001-enh enhances the Regen Network credit class creator allowlist with **agent pre-screening**, **tiered approval thresholds**, and **deposit escrow**. It builds on the existing `x/ecocredit` governance process with structured quality assessment before community vote. Deposit escrow is a v1 feature; v0 is advisory scoring only.
 
 ## What it outputs
 - An **agent pre-screening score** (0–1000) with confidence (0–1000) and recommendation (APPROVE / CONDITIONAL / REJECT) per proposal.
