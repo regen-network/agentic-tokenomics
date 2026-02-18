@@ -1,6 +1,5 @@
 {
-  "$schema": "../../schemas/m015_kpi.schema.json",
-  "description": "Single distribution period (epoch 2026-W07) with 4 participants. Deterministic fixture — no MCP required.",
+  "description": "Single distribution period (epoch 2026-W07) with 4 participants. Deterministic fixture — no MCP required. NOTE: This is a replay dataset, not a KPI output; see schemas/ for output schemas.",
   "epoch": "2026-W07",
   "community_pool_inflow_uregen": 1000000000,
   "periods_per_year": 52,

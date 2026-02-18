@@ -100,7 +100,22 @@ For each distribution period (epoch):
   reward[p] = activity_pool * (activity_score[p] / total_score)
 ```
 
-### 5.4 Controls
+### 5.4 Design note: scoring units
+
+The activity score formula intentionally combines monetary values (uregen) with
+counts (votes, proposal credits) without normalization. This means monetary
+activities (credit purchases/retirements/facilitation at 0.80 combined weight)
+will dominate over governance activities (votes/proposals at 0.20 combined weight)
+in absolute score terms. This is deliberate: M015's primary objective is
+incentivizing ecological transactions (the network's core value proposition),
+with governance participation as a secondary but still-rewarded signal.
+
+v1 may introduce normalization (e.g., log-scaling monetary values, or normalizing
+all inputs to a common 0–1 range per epoch) if WG analysis shows governance
+participation is insufficiently incentivized. See OQ-M015-4 for related
+anti-gaming measures that may also address score balance.
+
+### 5.5 Controls
 - **Revenue constraint:** total distributions per period <= Community Pool inflow for that period.
 - **Stability cap:** stability tier allocation <= 30% of Community Pool inflow.
 - **Minimum transaction size:** governance may set a minimum transaction value for reward eligibility (OQ-M015-4).

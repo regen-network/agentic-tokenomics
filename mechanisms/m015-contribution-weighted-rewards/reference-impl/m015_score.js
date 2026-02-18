@@ -57,7 +57,6 @@ function computeProposalCredit(proposals) {
  * Compute the activity score for a single participant.
  *
  * @param {Object} opts
- * @param {Object} opts.participant - participant address
  * @param {Object} opts.activities
  * @param {number} opts.activities.credit_purchase_value - total purchase value in uregen
  * @param {number} opts.activities.credit_retirement_value - total retirement value in uregen
@@ -66,7 +65,7 @@ function computeProposalCredit(proposals) {
  * @param {Array<{passed: boolean, reached_quorum: boolean}>} opts.activities.proposals - proposals submitted
  * @returns {{ total_score: number, breakdown: Object }}
  */
-export function computeActivityScore({ participant, activities }) {
+export function computeActivityScore({ activities }) {
   const a = activities ?? {};
   const purchaseVal = a.credit_purchase_value ?? 0;
   const retireVal = a.credit_retirement_value ?? 0;
@@ -206,7 +205,7 @@ function selfTest() {
   // 2. Compute activity scores for each participant
   const scoredParticipants = [];
   for (const p of input.participants) {
-    const result = computeActivityScore({ participant: p.address, activities: p.activities });
+    const result = computeActivityScore({ activities: p.activities });
     scoredParticipants.push({ address: p.address, ...result });
     console.log(`Score ${p.address}: ${result.total_score}`);
   }
