@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "m011_collection_v0",
+  "title": "m011 curated collection",
+  "description": "Schema for an M011 curated collection lifecycle object.",
+  "type": "object",
+  "required": [
+    "collection_id",
+    "curator",
+    "name",
+    "bond",
+    "members",
+    "status"
+  ],
+  "properties": {
+    "collection_id": {
+      "type": "string",
+      "description": "Unique identifier for the collection."
+    },
+    "curator": {
+      "type": "string",
+      "description": "Bech32 address of the collection curator."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable collection name."
+    },
+    "description": {
+      "type": "string"
+    },
+    "bond": {
+      "type": "object",
+      "required": ["amount", "denom"],
+      "properties": {
+        "amount": { "type": "string", "pattern": "^[0-9]+$" },
+        "denom": { "type": "string" }
+      }
+    },
+    "bond_remaining": {
+      "type": "object",
+      "required": ["amount", "denom"],
+      "properties": {
+        "amount": { "type": "string", "pattern": "^[0-9]+$" },
+        "denom": { "type": "string" }
+      }
+    },
+    "criteria": {
+      "type": "object",
+      "properties": {
+        "min_project_reputation": { "type": ["integer", "null"] },
+        "min_class_reputation": { "type": ["integer", "null"] },
+        "allowed_credit_types": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "geographic_scope": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "min_vintage_year": { "type": ["integer", "null"] },
+        "max_vintage_year": { "type": ["integer", "null"] }
+      }
+    },
+    "members": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of batch denoms in this collection."
+    },
+    "quality_floor": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000,
+      "description": "Minimum quality score for batch inclusion."
+    },
+    "fee_share": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Curator's share of trades through collection."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PROPOSED", "ACTIVE", "SUSPENDED", "UNDER_REVIEW", "CLOSED"],
+      "description": "Current collection lifecycle status."
+    },
+    "trade_volume": { "type": "string", "description": "Cumulative trade volume (uregen)." },
+    "total_rewards": { "type": "string", "description": "Cumulative curator rewards (uregen)." },
+    "created_at": { "type": "string", "format": "date-time" },
+    "activated_at": { "type": ["string", "null"], "format": "date-time" },
+    "challenge": {
+      "type": ["object", "null"],
+      "properties": {
+        "challenger": { "type": "string" },
+        "batch_denom": { "type": "string" },
+        "reason": { "type": "string" },
+        "deposit": {
+          "type": "object",
+          "properties": {
+            "amount": { "type": "string" },
+            "denom": { "type": "string" }
+          }
+        },
+        "outcome": { "type": ["string", "null"], "enum": ["CURATOR_WINS", "CHALLENGER_WINS", null] },
+        "challenged_at": { "type": "string", "format": "date-time" },
+        "resolved_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    }
+  }
+}

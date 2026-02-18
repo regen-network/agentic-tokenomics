@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "m011_kpi_v0",
+  "title": "m011 KPI block",
+  "description": "Schema for M011 marketplace curation KPI metrics.",
+  "type": "object",
+  "required": [
+    "mechanism_id",
+    "scope",
+    "as_of",
+    "collections_active",
+    "collections_closed",
+    "collections_suspended",
+    "batches_scored",
+    "challenge_rate",
+    "curation_economics"
+  ],
+  "properties": {
+    "mechanism_id": { "const": "m011" },
+    "scope": { "type": "string" },
+    "as_of": { "type": "string", "format": "date-time" },
+    "collections_active": { "type": "integer", "minimum": 0 },
+    "collections_closed": { "type": "integer", "minimum": 0 },
+    "collections_suspended": { "type": "integer", "minimum": 0 },
+    "collections_under_review": { "type": "integer", "minimum": 0 },
+    "batches_scored": { "type": "integer", "minimum": 0 },
+    "avg_quality_score": { "type": ["number", "null"] },
+    "featured_batches": { "type": "integer", "minimum": 0 },
+    "challenge_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+    "challenge_outcome_breakdown": {
+      "type": ["object", "null"],
+      "properties": {
+        "curator_wins": { "type": "integer", "minimum": 0 },
+        "challenger_wins": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "curation_economics": {
+      "type": "object",
+      "required": ["total_bonded", "total_slashed", "total_curator_rewards", "total_trade_volume"],
+      "properties": {
+        "total_bonded": { "type": "string" },
+        "total_slashed": { "type": "string" },
+        "total_curator_rewards": { "type": "string" },
+        "total_trade_volume": { "type": "string" },
+        "avg_collection_size": { "type": ["number", "null"] }
+      }
+    },
+    "quality_score_distribution": {
+      "type": ["object", "null"],
+      "properties": {
+        "below_300": { "type": "integer" },
+        "300_to_599": { "type": "integer" },
+        "600_to_799": { "type": "integer" },
+        "800_plus": { "type": "integer" }
+      }
+    },
+    "credit_type_breakdown": {
+      "type": ["object", "null"],
+      "description": "Count of scored batches by credit type."
+    }
+  }
+}

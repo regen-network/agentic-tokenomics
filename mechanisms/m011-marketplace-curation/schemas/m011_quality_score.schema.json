@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "m011_quality_score_v0",
+  "title": "m011 credit batch quality score",
+  "description": "Schema for an M011 credit batch quality score output.",
+  "type": "object",
+  "required": ["score", "confidence", "factors"],
+  "properties": {
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000,
+      "description": "7-factor weighted composite quality score for a credit batch."
+    },
+    "confidence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000,
+      "description": "Data availability indicator (count of available signals / 7 × 1000)."
+    },
+    "factors": {
+      "type": "object",
+      "required": [
+        "project_reputation",
+        "class_reputation",
+        "vintage_freshness",
+        "verification_recency",
+        "seller_reputation",
+        "price_fairness",
+        "additionality_confidence"
+      ],
+      "properties": {
+        "project_reputation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "M010 reputation score for the project."
+        },
+        "class_reputation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "M010 reputation score for the credit class."
+        },
+        "vintage_freshness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Linear decay from issuance (1000) to 10 years (0)."
+        },
+        "verification_recency": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Linear decay from last verification (1000) to 3 years (0)."
+        },
+        "seller_reputation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "M010 reputation score for the seller address."
+        },
+        "price_fairness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "1000 at class median price, 0 at ±50% deviation."
+        },
+        "additionality_confidence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Methodology additionality assessment from credit class metadata."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "m011_dataset_v0",
+  "title": "m011 replay dataset",
+  "description": "Replay dataset for m011 Marketplace Curation — credit batch quality scores and curated collection lifecycle records.",
+  "type": "object",
+  "required": ["mechanism_id", "scope", "as_of"],
+  "properties": {
+    "mechanism_id": { "const": "m011" },
+    "scope": { "type": "string" },
+    "as_of": { "type": "string", "format": "date-time" },
+    "scored_batches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["batch_denom", "credit_type", "quality_score"],
+        "properties": {
+          "batch_denom": { "type": "string" },
+          "credit_type": { "type": "string" },
+          "class_id": { "type": "string" },
+          "project_id": { "type": "string" },
+          "seller": { "type": ["string", "null"] },
+          "quality_score": { "type": ["integer", "null"], "minimum": 0, "maximum": 1000 },
+          "confidence": { "type": ["integer", "null"], "minimum": 0, "maximum": 1000 },
+          "scored_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "collections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["collection_id", "curator", "name", "bond", "status"],
+        "properties": {
+          "collection_id": { "type": "string" },
+          "curator": { "type": "string" },
+          "name": { "type": "string" },
+          "bond": {
+            "type": "object",
+            "required": ["amount", "denom"],
+            "properties": {
+              "amount": { "type": "string" },
+              "denom": { "type": "string" }
+            }
+          },
+          "members": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PROPOSED", "ACTIVE", "SUSPENDED", "UNDER_REVIEW", "CLOSED"]
+          },
+          "trade_volume": { "type": "string" },
+          "total_rewards": { "type": "string" },
+          "challenge": {
+            "type": ["object", "null"],
+            "properties": {
+              "challenger": { "type": "string" },
+              "batch_denom": { "type": "string" },
+              "reason": { "type": "string" },
+              "outcome": { "type": ["string", "null"], "enum": ["CURATOR_WINS", "CHALLENGER_WINS", null] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

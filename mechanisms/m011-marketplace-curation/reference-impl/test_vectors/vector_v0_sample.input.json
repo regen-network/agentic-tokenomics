@@ -1,0 +1,130 @@
+{
+  "as_of": "2026-02-18T12:00:00Z",
+  "batches": [
+    {
+      "batch": {
+        "batch_denom": "C01-001-20250601-20260101-001",
+        "credit_type": "C",
+        "class_id": "C01",
+        "project_id": "P-regen-001",
+        "seller": "regen1seller01"
+      },
+      "factors": {
+        "project_reputation": 800,
+        "class_reputation": 750,
+        "vintage_freshness": 900,
+        "verification_recency": 850,
+        "seller_reputation": 700,
+        "price_fairness": 950,
+        "additionality_confidence": 800,
+        "project_reputation_available": true,
+        "class_reputation_available": true,
+        "seller_reputation_available": true,
+        "vintage_known": true,
+        "verification_date_known": true,
+        "price_data_available": true,
+        "methodology_available": true
+      }
+    },
+    {
+      "batch": {
+        "batch_denom": "C04-001-20240101-20241231-003",
+        "credit_type": "C",
+        "class_id": "C04",
+        "project_id": "P-regen-042",
+        "seller": "regen1seller02"
+      },
+      "factors": {
+        "project_reputation": 600,
+        "class_reputation": 700,
+        "vintage_freshness": 700,
+        "verification_recency": 600,
+        "seller_reputation": 500,
+        "price_fairness": 800,
+        "additionality_confidence": 650,
+        "project_reputation_available": true,
+        "class_reputation_available": true,
+        "seller_reputation_available": true,
+        "vintage_known": true,
+        "verification_date_known": true,
+        "price_data_available": true,
+        "methodology_available": true
+      }
+    },
+    {
+      "batch": {
+        "batch_denom": "BT01-001-20250301-20250901-001",
+        "credit_type": "BT",
+        "class_id": "BT01",
+        "project_id": "P-regen-050",
+        "seller": "regen1seller03"
+      },
+      "factors": {
+        "project_reputation": 400,
+        "class_reputation": 500,
+        "vintage_freshness": 950,
+        "verification_recency": 900,
+        "seller_reputation": 300,
+        "price_fairness": 600,
+        "additionality_confidence": 500,
+        "project_reputation_available": true,
+        "class_reputation_available": true,
+        "seller_reputation_available": false,
+        "vintage_known": true,
+        "verification_date_known": true,
+        "price_data_available": true,
+        "methodology_available": false
+      }
+    },
+    {
+      "batch": {
+        "batch_denom": "C09-001-20230601-20240101-002",
+        "credit_type": "C",
+        "class_id": "C09",
+        "project_id": "P-regen-099",
+        "seller": "regen1seller04"
+      },
+      "factors": {
+        "project_reputation": 900,
+        "class_reputation": 850,
+        "vintage_freshness": 500,
+        "verification_recency": 400,
+        "seller_reputation": 800,
+        "price_fairness": 1000,
+        "additionality_confidence": 900,
+        "project_reputation_available": true,
+        "class_reputation_available": true,
+        "seller_reputation_available": true,
+        "vintage_known": true,
+        "verification_date_known": true,
+        "price_data_available": true,
+        "methodology_available": true
+      }
+    },
+    {
+      "batch": {
+        "batch_denom": "KSH01-001-20250101-20250601-001",
+        "credit_type": "KSH",
+        "class_id": "KSH01",
+        "project_id": "P-regen-070",
+        "seller": "regen1seller05"
+      },
+      "factors": {
+        "project_reputation": 200,
+        "class_reputation": 300,
+        "vintage_freshness": 800,
+        "verification_recency": 200,
+        "seller_reputation": 100,
+        "price_fairness": 400,
+        "additionality_confidence": 300,
+        "project_reputation_available": false,
+        "class_reputation_available": true,
+        "seller_reputation_available": false,
+        "vintage_known": true,
+        "verification_date_known": false,
+        "price_data_available": true,
+        "methodology_available": false
+      }
+    }
+  ]
+}
