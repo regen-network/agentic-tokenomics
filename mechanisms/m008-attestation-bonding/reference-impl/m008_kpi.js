@@ -17,7 +17,7 @@ export function computeM008KPI({ as_of, attestations }) {
 
   const slash_rate = attestations_challenged > 0
     ? Number((attestations_slashed / attestations_challenged).toFixed(4))
-    : null;
+    : 0.0;
 
   // Bond economics
   const bonds = atts.map(a => parseInt(a.bond?.amount ?? "0", 10)).filter(b => b > 0);

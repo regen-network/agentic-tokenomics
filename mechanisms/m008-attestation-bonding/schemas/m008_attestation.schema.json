@@ -67,9 +67,10 @@
           }
         },
         "challenged_at": { "type": "string", "format": "date-time" },
-        "resolution": {
-          "type": "string",
-          "enum": ["ATTESTER_WINS", "CHALLENGER_WINS"]
+        "outcome": {
+          "type": ["string", "null"],
+          "enum": ["VALID", "INVALID", null],
+          "description": "Challenge resolution outcome (null if unresolved)"
         },
         "resolved_at": { "type": ["string", "null"], "format": "date-time" }
       }

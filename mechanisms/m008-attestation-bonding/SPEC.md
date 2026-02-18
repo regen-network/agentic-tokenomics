@@ -65,9 +65,11 @@ f_bond = min(1000, (bond_amount / min_bond[type]) × 500)
 Bonds at minimum get 500; bonds at 2× minimum get 1000 (capped).
 
 #### Attester reputation (`f_reputation`, 0–1000)
-- If M010 score exists: `f_reputation = m010_score`
+- If M010 score exists AND attester has track record (unchallenged_rate available):
+  `f_reputation = 0.7 × m010_score + 0.3 × (unchallenged_rate × 1000)`
+- If M010 score exists but no track record:
+  `f_reputation = m010_score`
 - If no M010 score: `f_reputation = 300` (cautious default, below neutral)
-- Track record adjustment: `f_reputation = 0.7 × m010_score + 0.3 × (unchallenged_rate × 1000)`
 
 #### Evidence completeness (`f_evidence`, 0–1000)
 Binary checklist by attestation type:
@@ -96,12 +98,20 @@ Factors: M010 reputation exists, IRI resolvable, attester has prior attestations
 ## 6. State machine
 
 ```
-States: {BONDED, ACTIVE, CHALLENGED, RESOLVED_VALID, RESOLVED_INVALID, RELEASED, SLASHED}
+States: {SUBMITTED, BONDED, ACTIVE, CHALLENGED, RESOLVED_VALID, SLASHED, RELEASED}
 
-Initial → BONDED
-  trigger: attester.create_attestation(type, iri, bond)
-  guard: bond >= min_bond[attestation_type]; attestation_type is valid
-  action: bond_pool.lock(bond), attestation.create(status=BONDED)
+Note: RESOLVED_INVALID is not a distinct state; an invalid resolution transitions
+      directly to SLASHED. RESOLVED_VALID is a terminal state; SLASHED is a terminal state.
+
+Initial → SUBMITTED
+  trigger: attester.submit_attestation(type, iri, bond)
+  guard: attestation_type is valid
+  action: attestation.create(status=SUBMITTED)
+
+SUBMITTED → BONDED
+  trigger: bond confirmed on-chain
+  guard: bond >= min_bond[attestation_type]
+  action: bond_pool.lock(bond), attestation.status = BONDED
 
 BONDED → ACTIVE
   trigger: activation_delay_passed(48h) AND no_challenge_submitted
@@ -126,7 +136,7 @@ CHALLENGED → RESOLVED_VALID
   action: attester.receive(bond + challenge_deposit - arbiter_fee)
          attestation.status = RESOLVED_VALID
 
-CHALLENGED → RESOLVED_INVALID
+CHALLENGED → SLASHED
   trigger: arbiter_dao.vote(INVALID) OR admin.resolve(INVALID) (v0)
   guard: quorum_met (v1), resolution_authority_verified
   action: challenger.receive(bond × 0.5 + challenge_deposit - arbiter_fee)
@@ -139,7 +149,7 @@ ACTIVE → RELEASED
   action: attester.receive(bond)
          attestation.status = RELEASED
 
-Terminal states: RESOLVED_VALID, RESOLVED_INVALID/SLASHED, RELEASED
+Terminal states: RESOLVED_VALID, SLASHED, RELEASED
 Note: RESOLVED_VALID attestations remain valid references; SLASHED attestations are permanently invalidated.
 ```
 
