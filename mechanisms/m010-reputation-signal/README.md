@@ -27,3 +27,7 @@ Canonical JSON schemas for m010 outputs live in `schemas/`.
 - `m010_signal.schema.json` — signal items with `status` lifecycle field
 - `m010_challenge.schema.json` — challenge events with evidence and resolution
 - `m010_kpi.schema.json` — KPI output including optional `challenge_kpis`
+
+## Reference implementation checks
+- Deterministic vectors are validated by `scripts/verify-m010-reference-impl.mjs`
+- `challenge_rate` is computed as `challenges_filed / signals_emitted` for replay-period KPI reporting

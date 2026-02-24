@@ -9,9 +9,11 @@ This document maps **mechanism IDs** to known **consumers** (agents, digests, sc
 **Outputs**
 - KPI JSON block schema: `mechanisms/m010-reputation-signal/schemas/m010_kpi.schema.json`
 - Signal item schema: `mechanisms/m010-reputation-signal/schemas/m010_signal.schema.json`
+- Challenge event schema: `mechanisms/m010-reputation-signal/schemas/m010_challenge.schema.json`
 
 **Datasets (deterministic)**
 - Replay fixtures: `mechanisms/m010-reputation-signal/datasets/fixtures/v0_sample.json`
+- Challenge replay fixture: `mechanisms/m010-reputation-signal/datasets/fixtures/v0_challenge_sample.json`
 
 **Known consumers**
 - Heartbeat character: `signal-agent` (regen-heartbeat)

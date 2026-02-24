@@ -16,7 +16,7 @@ A replay runner (e.g., in `regen-heartbeat`) can read a fixture file and compute
 
 The challenge fixture (`v0_challenge_sample.json`) additionally exercises:
 - Status-aware scoring: only `active` and `resolved_valid` signals contribute to score
-- Challenge KPIs: `challenges_filed`, `challenge_rate`, `challenge_success_rate`, `avg_resolution_time_hours`
+- Challenge KPIs: `challenges_filed`, `challenge_rate` (`challenges_filed / signals_emitted`), `challenge_success_rate`, `avg_resolution_time_hours`
 - The `expected_outputs` field documents which signals should be included/excluded
 
 These datasets are **advisory-only** and do not imply enforcement or on-chain actions.
