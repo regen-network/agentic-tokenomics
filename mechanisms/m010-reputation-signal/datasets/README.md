@@ -20,3 +20,10 @@ The challenge fixture (`v0_challenge_sample.json`) additionally exercises:
 - The `expected_outputs` field documents which signals should be included/excluded
 
 These datasets are **advisory-only** and do not imply enforcement or on-chain actions.
+
+## Integrity checks
+Dataset integrity is validated by `scripts/verify-m010-datasets.mjs`, including:
+- challenge-to-signal linkage (`challenge.signal_id` must reference an existing signal)
+- category consistency between challenge and targeted signal
+- resolution timestamp ordering and resolution presence rules by challenge status
+- consistency of `expected_outputs.contributing_signals` / `excluded_signals` with status-based contribution rules

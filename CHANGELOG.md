@@ -4,6 +4,7 @@
 ### Added
 - Units 11–20: canonical schemas, mechanism index generator, consumers mapping, WG bulk pack, repo templates, and verification scripts.
 - m010 reference implementation vector verifier (`scripts/verify-m010-reference-impl.mjs`) with challenge replay coverage.
+- m010 dataset integrity verifier (`scripts/verify-m010-datasets.mjs`) covering challenge linkage, lifecycle consistency, and expected output coherence.
 
 ### Changed
 - m010 scoring now excludes non-contributing signal states when `status` is present (`active`/`resolved_valid` only contribute).

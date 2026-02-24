@@ -43,10 +43,12 @@ requireFile("mechanisms/m010-reputation-signal/reference-impl/test_vectors/vecto
 requireFile("mechanisms/m010-reputation-signal/reference-impl/test_vectors/vector_v0_sample.expected.json");
 requireFile("mechanisms/m010-reputation-signal/reference-impl/test_vectors/vector_v0_challenge.expected.json");
 requireFile("scripts/verify-m010-reference-impl.mjs");
+requireFile("scripts/verify-m010-datasets.mjs");
 
 // Mechanism index check
 run("node", ["scripts/build-mechanism-index.mjs", "--check"]);
 run("node", ["scripts/verify-m010-reference-impl.mjs"]);
+run("node", ["scripts/verify-m010-datasets.mjs"]);
 
 // Basic schema sanity
 const kpiSchema = readJson("mechanisms/m010-reputation-signal/schemas/m010_kpi.schema.json");
