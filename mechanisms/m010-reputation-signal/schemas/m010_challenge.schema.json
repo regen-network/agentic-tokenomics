@@ -17,18 +17,22 @@
   "properties": {
     "challenge_id": {
       "type": "string",
+      "pattern": "^ch-[A-Za-z0-9._:-]+$",
       "description": "Unique identifier for this challenge"
     },
     "signal_id": {
       "type": "string",
+      "pattern": "^signal-[A-Za-z0-9._:-]+$",
       "description": "ID of the signal being challenged"
     },
     "challenger_id": {
       "type": "string",
+      "minLength": 1,
       "description": "Address of the challenger"
     },
     "category": {
       "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,63}$",
       "description": "Must match the challenged signal's category"
     },
     "rationale": {
@@ -53,17 +57,20 @@
       "properties": {
         "koi_links": {
           "type": "array",
-          "items": { "type": "string" },
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 },
           "description": "KOI knowledge links supporting the challenge"
         },
         "ledger_refs": {
           "type": "array",
-          "items": { "type": "string" },
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 },
           "description": "On-chain references supporting the challenge"
         },
         "web_links": {
           "type": "array",
-          "items": { "type": "string" },
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 },
           "description": "Optional web references"
         }
       }
@@ -85,6 +92,7 @@
       "properties": {
         "resolved_by": {
           "type": "string",
+          "minLength": 1,
           "description": "v0: admin address; v1: arbiter_dao ID"
         },
         "resolved_at": {
@@ -103,5 +111,73 @@
       },
       "required": ["resolved_by", "resolved_at", "outcome", "rationale"]
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": ["resolved_valid", "resolved_invalid"]
+          }
+        }
+      },
+      "then": {
+        "required": ["resolution"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": ["pending", "escalated"]
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": ["resolution"]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "resolved_valid"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "resolution": {
+            "properties": {
+              "outcome": {
+                "const": "VALID"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "resolved_invalid"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "resolution": {
+            "properties": {
+              "outcome": {
+                "const": "INVALID"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

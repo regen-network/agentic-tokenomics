@@ -10,6 +10,7 @@
 - m010 scoring now excludes non-contributing signal states when `status` is present (`active`/`resolved_valid` only contribute).
 - m010 KPI computation now emits `challenge_kpis` when challenge data is provided.
 - m010 replay dataset/schema alignment expanded to cover challenge fixtures and lifecycle statuses (including `escalated`).
+- m010 schemas are stricter on IDs/category formatting, evidence arrays, and challenge lifecycle guards (`status` ↔ `resolution`/`outcome` consistency).
 
 ### Notes
 - This repo is primarily specification content; changes are intended to be deterministic and offline-friendly.

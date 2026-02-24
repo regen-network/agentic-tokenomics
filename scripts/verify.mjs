@@ -56,12 +56,24 @@ if (!kpiSchema.required || !kpiSchema.required.includes("mechanism_id")) {
   console.error("KPI schema missing required fields.");
   process.exit(4);
 }
+const challengeKpiRequired = kpiSchema.properties?.challenge_kpis?.required ?? [];
+if (!challengeKpiRequired.includes("challenge_rate")) {
+  console.error("KPI schema missing required challenge KPI fields.");
+  process.exit(4);
+}
 
 const signalSchema = readJson("mechanisms/m010-reputation-signal/schemas/m010_signal.schema.json");
 const signalStatus = signalSchema.properties?.status?.enum ?? [];
 if (!signalStatus.includes("escalated")) {
   console.error("Signal schema missing escalated status.");
   process.exit(5);
+}
+
+const challengeSchema = readJson("mechanisms/m010-reputation-signal/schemas/m010_challenge.schema.json");
+const challengeGuards = challengeSchema.allOf ?? [];
+if (!Array.isArray(challengeGuards) || challengeGuards.length < 4) {
+  console.error("Challenge schema missing lifecycle guard clauses.");
+  process.exit(6);
 }
 
 console.log("agentic-tokenomics verify: PASS");
