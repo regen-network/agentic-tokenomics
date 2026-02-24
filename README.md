@@ -175,6 +175,10 @@ regen-agentic-tokenomics/
     └── build-mechanism-index.mjs
 ```
 
+## Ecosystem
+
+See [`docs/ECOSYSTEM.md`](docs/ECOSYSTEM.md) for a directory of projects building on this framework.
+
 ## Contributing
 
 See [`docs/CONTRIBUTOR_NAV.md`](docs/CONTRIBUTOR_NAV.md) for where changes should land and how to keep PRs small and reviewable.

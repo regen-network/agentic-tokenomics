@@ -11,6 +11,7 @@ Welcome to the Regen Network Agentic Tokenomics & Governance System. This reposi
 5. [Repository Structure](#repository-structure)
 6. [Progressive Access Tiers](#progressive-access-tiers)
 7. [Getting Started](#getting-started)
+8. [List Your Project](#list-your-project)
 
 ---
 
@@ -206,6 +207,12 @@ Contributors can progress through tiers via:
 - [Forum Discussions](https://forum.regen.network)
 - [KOI Knowledge Base](https://regen.gaiaai.xyz)
 - [Regen Heartbeat Digests](https://gaiaaiagent.github.io/regen-heartbeat/digests/)
+
+---
+
+## List Your Project
+
+Building on the Regen agentic tokenomics framework? Add your project to the [`docs/ECOSYSTEM.md`](docs/ECOSYSTEM.md) directory by opening a PR. Include your repo link, a one-line description, and any relevant status info.
 
 ---
 
