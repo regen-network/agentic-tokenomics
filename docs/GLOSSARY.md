@@ -77,6 +77,8 @@ A comprehensive reference of identifiers, terms, and acronyms used throughout th
 | **WF-MM-02** | Liquidity Monitoring & Reporting | Periodic (every 1h) or significant trade (>$10k) | Layer 1 |
 | **WF-MM-03** | Retirement Pattern Analysis | `MsgRetire` | Layer 1 |
 | **WF-MM-04** | Curation Quality Monitoring & Scoring | `SellOrderCreated`, periodic (daily), or `CollectionBatchAdded` (M011) | Layer 1-2 |
+| **WF-MM-05** | Fee Revenue Monitoring (M013) | `EventFeeCollected`, periodic (every 6h) | Layer 1 |
+| **WF-MM-06** | Supply Equilibrium Monitoring (M012) | `EventSupplyMint`, `EventSupplyBurn`, periodic (daily) | Layer 1 |
 
 ### Validator Monitor (AGENT-004)
 
@@ -85,6 +87,8 @@ A comprehensive reference of identifiers, terms, and acronyms used throughout th
 | **WF-VM-01** | Validator Performance Tracking | Periodic (every block) or `SlashEvent` | Layer 1 |
 | **WF-VM-02** | Delegation Flow Analysis | `MsgDelegate`, `MsgUndelegate`, or `MsgRedelegate` | Layer 1 |
 | **WF-VM-03** | Network Decentralization Monitoring | Periodic (daily) or `ValidatorSetChange` | Layer 1-3 |
+| **WF-VM-04** | Authority Validator Performance (M014) | `EventValidatorApproved`, periodic (every 12h) | Layer 1-2 |
+| **WF-VM-05** | Reward Distribution Monitoring (M015) | `EventRewardsDistributed`, periodic (daily) | Layer 1 |
 
 ---
 
