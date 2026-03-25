@@ -54,6 +54,11 @@ B[t] = burn_share * F[t]    (burning from fee revenue)
 r = r_base * effective_multiplier * ecological_multiplier
 r_base = 0.02 (2% per period)
 C = 221,000,000 REGEN (hard cap)
+
+Note: Current circulating supply (~224M) exceeds C. When S > C, headroom
+is negative and M[t] floors to 0 (per M012 Security Invariant 4). The
+system enters an initial pure-burn regime lasting approximately 3-6 months
+until burning reduces supply below C and regrowth minting resumes.
 ```
 
 **M013 Fee Collection:**
@@ -720,6 +725,8 @@ Sensitivity ratings:
 | Fee rate cap | fee_cap | 1000 | 500 | 1000 | bps (10%) | Medium |
 
 **Share sum constraint:** burn_share + val_share + comm_share + agent_share = 1.0 always.
+
+> **Note on baseline assumptions:** This simulation uses Model A distribution shares (30/40/25/5) as specified in Phase 2.6. The WG is actively debating alternatives — PR #55 (OQ-M013-1) recommends a compromise of {28/25/45/2}, and PR #49 uses that compromise for governance proposals. The simulation's parameter sweep covers the full range of viable distributions, so conclusions hold across models. Run the sweep with the `--shares` flag to test specific configurations.
 
 #### M014 Parameters (Validator Governance)
 
