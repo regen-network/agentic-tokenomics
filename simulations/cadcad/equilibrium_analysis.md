@@ -77,6 +77,24 @@ S* ≈ 219,846,154 REGEN
 
 The equilibrium supply is approximately 219.85M REGEN, about 1.15M below the cap.
 
+### 1.3.1 Governance Proposal Variant (burn_share = 0.15)
+
+The governance proposal drafts (docs/governance/needs-governance-proposals.md) recommend
+a reduced burn share of 15% with redistribution to community pool {15/30/50/5}. At this
+burn share:
+
+```
+S* = 221,000,000 - (0.15 * 500,000 * 0.01) / (0.026 * 0.05)
+S* = 221,000,000 - 750 / 0.0013
+S* = 221,000,000 - 576,923
+S* ≈ 220,423,077 REGEN
+```
+
+With 15% burn, equilibrium supply rises to ~220.42M — only 577K below the cap, vs 1.15M
+with 30% burn. The deflationary effect is halved. Validator income increases because the
+validator share rises from 40% to 30% of a larger non-burn pool. Run `python run_sweep.py
+--sweep burn_share_sweep` to see the full sensitivity curve.
+
 ### 1.4 Sensitivity of S* to Key Parameters
 
 Taking the partial derivative of `S*` with respect to each parameter:

@@ -24,7 +24,13 @@ baseline_params = {
     'fee_rate_trade_bps': 100,          # 1% marketplace trade fee
     'fee_rate_retirement_bps': 50,      # 0.5% retirement fee
     'fee_rate_transfer_bps': 10,        # 0.1% transfer fee
-    'burn_share': 0.30,                 # 30% to burn
+    # Distribution shares: baseline uses SPEC Model A (30/40/25/5).
+    # The OQ triage (PR #59) and governance proposals (PR #67) recommend
+    # a reduced burn share of 15% with redistribution {15/30/50/5}.
+    # The parameter sweep (burn_share_sweep) covers the full range [0, 0.35]
+    # so both configurations are validated. Re-run baseline with --burn-share 0.15
+    # to confirm sustainability at the proposed governance parameters.
+    'burn_share': 0.30,                 # 30% to burn (Model A default)
     'validator_share': 0.40,            # 40% to validators
     'community_share': 0.25,            # 25% to community pool
     'agent_share': 0.05,               # 5% to agent infra
