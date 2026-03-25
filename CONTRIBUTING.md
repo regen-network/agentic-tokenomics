@@ -61,6 +61,30 @@ This repository is part of a larger ecosystem transformation. Contributors—whe
 6. Merge after approval
 ```
 
+### Fork Sync & Measured PR Workflow
+
+Use this when contributing from a fork to keep `main` clean and PRs easy to review.
+
+```
+1. Add upstream once:
+   git remote add upstream https://github.com/regen-network/agentic-tokenomics.git
+2. Sync local main:
+   git checkout main
+   git fetch upstream origin
+   git reset --hard upstream/main
+   git push --force-with-lease origin main
+3. Create a scoped branch from main:
+   git checkout -b codex/<short-topic>
+4. Keep PR scope small:
+   one concern per PR, minimal file touch, tests included
+5. Rebase before opening/updating PR:
+   git fetch upstream
+   git rebase upstream/main
+   git push --force-with-lease origin codex/<short-topic>
+```
+
+Recommended PR size: ~100-300 LOC and one clearly stated outcome.
+
 ### Style Guide
 
 - Use clear, accessible language (see the [Living Language Tone skill](https://github.com/regen-network/regen-ai-core), available to core contributors)
