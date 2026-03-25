@@ -1,0 +1,103 @@
+{
+  "mechanism_id": "m008",
+  "scope": "v0_advisory",
+  "as_of": "2026-02-18T12:00:00Z",
+  "attestations": [
+    {
+      "attestation_id": "att-c01",
+      "attestation_type": "CreditIssuanceClaim",
+      "attestation_iri": "koi://attestation/carbon-issuance-batch-C02-disputed",
+      "attester": "regen1chal01attester",
+      "bond": { "amount": "2000", "denom": "uregen" },
+      "status": "CHALLENGED",
+      "quality_score": 450,
+      "submitted_at": "2025-12-01T10:00:00Z",
+      "activated_at": "2025-12-03T10:00:00Z",
+      "challenge": {
+        "challenger": "regen1challenger01",
+        "reason": "Baseline data inconsistent with satellite imagery for claimed issuance period",
+        "challenged_at": "2026-01-15T08:00:00Z",
+        "resolved_at": null,
+        "outcome": null
+      }
+    },
+    {
+      "attestation_id": "att-c02",
+      "attestation_type": "BaselineMeasurement",
+      "attestation_iri": "koi://attestation/soil-baseline-fabricated",
+      "attester": "regen1chal02attester",
+      "bond": { "amount": "1000", "denom": "uregen" },
+      "status": "SLASHED",
+      "quality_score": 280,
+      "submitted_at": "2025-10-01T09:00:00Z",
+      "activated_at": "2025-10-03T09:00:00Z",
+      "challenge": {
+        "challenger": "regen1challenger02",
+        "reason": "Measurement data does not match on-site verification; suspected fabrication",
+        "challenged_at": "2025-11-01T12:00:00Z",
+        "resolved_at": "2025-12-15T16:00:00Z",
+        "outcome": "INVALID"
+      }
+    },
+    {
+      "attestation_id": "att-c03",
+      "attestation_type": "MethodologyValidation",
+      "attestation_iri": "koi://attestation/methodology-review-biochar-v2",
+      "attester": "regen1chal03attester",
+      "bond": { "amount": "5000", "denom": "uregen" },
+      "status": "RESOLVED_VALID",
+      "quality_score": 820,
+      "submitted_at": "2025-09-15T11:00:00Z",
+      "activated_at": "2025-09-17T11:00:00Z",
+      "challenge": {
+        "challenger": "regen1challenger03",
+        "reason": "Questioned permanence assumptions in biochar sequestration model",
+        "challenged_at": "2025-10-20T14:00:00Z",
+        "resolved_at": "2025-12-01T10:00:00Z",
+        "outcome": "VALID"
+      }
+    },
+    {
+      "attestation_id": "att-c04",
+      "attestation_type": "ProjectBoundary",
+      "attestation_iri": "koi://attestation/project-boundary-overlap-detected",
+      "attester": "regen1chal04attester",
+      "bond": { "amount": "500", "denom": "uregen" },
+      "status": "RESOLVED_INVALID",
+      "quality_score": 310,
+      "submitted_at": "2025-08-01T08:00:00Z",
+      "activated_at": "2025-08-03T08:00:00Z",
+      "challenge": {
+        "challenger": "regen1challenger04",
+        "reason": "Project boundary overlaps with existing registered project P-regen-018",
+        "challenged_at": "2025-09-10T09:00:00Z",
+        "resolved_at": "2025-11-05T15:00:00Z",
+        "outcome": "INVALID"
+      }
+    },
+    {
+      "attestation_id": "att-c05",
+      "attestation_type": "CreditIssuanceClaim",
+      "attestation_iri": "koi://attestation/carbon-issuance-batch-C07-valid",
+      "attester": "regen1chal05attester",
+      "bond": { "amount": "3000", "denom": "uregen" },
+      "status": "ACTIVE",
+      "quality_score": 880,
+      "submitted_at": "2026-01-20T13:00:00Z",
+      "activated_at": "2026-01-22T13:00:00Z",
+      "challenge": null
+    },
+    {
+      "attestation_id": "att-c06",
+      "attestation_type": "BaselineMeasurement",
+      "attestation_iri": "koi://attestation/soil-baseline-plot-99",
+      "attester": "regen1chal06attester",
+      "bond": { "amount": "1500", "denom": "uregen" },
+      "status": "RELEASED",
+      "quality_score": 650,
+      "submitted_at": "2025-06-01T07:00:00Z",
+      "activated_at": "2025-06-03T07:00:00Z",
+      "challenge": null
+    }
+  ]
+}

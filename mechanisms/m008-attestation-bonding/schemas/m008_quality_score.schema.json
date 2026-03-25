@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m008 attestation quality score",
+  "description": "Quality score output for a bonded attestation. See SPEC.md section 5.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "attestation_id",
+    "score",
+    "confidence",
+    "factors",
+    "timestamp"
+  ],
+  "properties": {
+    "attestation_id": {
+      "type": "string",
+      "description": "Unique attestation identifier"
+    },
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000,
+      "description": "Weighted composite quality score (0-1000). See SPEC.md section 5.1."
+    },
+    "confidence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000,
+      "description": "Data availability confidence (0-1000). See SPEC.md section 5.3."
+    },
+    "factors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bond_adequacy", "attester_reputation", "evidence_completeness", "type_risk"],
+      "properties": {
+        "bond_adequacy": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Bond amount relative to minimum (weight: 0.3)"
+        },
+        "attester_reputation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "M010 reputation for attester address (weight: 0.3)"
+        },
+        "evidence_completeness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Attestation document completeness (weight: 0.25)"
+        },
+        "type_risk": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Attestation type risk factor (weight: 0.15)"
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

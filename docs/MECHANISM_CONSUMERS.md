@@ -35,3 +35,21 @@ This document maps **mechanism IDs** to known **consumers** (agents, digests, sc
 **Known consumers**
 - Heartbeat character: `signal-agent` (regen-heartbeat) — consumes agent scores for governance digest
 - Governance workflows: GOV-001 Credit Class Creator Allowlist process (phase-2/2.3)
+
+## m008 — Data Attestation Bonding
+**Canonical spec**
+- `mechanisms/m008-attestation-bonding/SPEC.md`
+
+**Outputs**
+- KPI JSON block schema: `mechanisms/m008-attestation-bonding/schemas/m008_kpi.schema.json`
+- Quality score schema: `mechanisms/m008-attestation-bonding/schemas/m008_quality_score.schema.json`
+- Attestation lifecycle schema: `mechanisms/m008-attestation-bonding/schemas/m008_attestation.schema.json`
+
+**Datasets (deterministic)**
+- Replay fixtures: `mechanisms/m008-attestation-bonding/datasets/fixtures/v0_sample.json`
+- Challenge scenarios: `mechanisms/m008-attestation-bonding/datasets/fixtures/v0_challenge_sample.json`
+
+**Known consumers**
+- Heartbeat character: `attestation-agent` (regen-heartbeat, planned)
+- KOI MCP: attestation quality lookups via `resolve_entity` / `get_entity_documents`
+- Ledger MCP: bond balance queries via `get_balance` / `get_all_balances`

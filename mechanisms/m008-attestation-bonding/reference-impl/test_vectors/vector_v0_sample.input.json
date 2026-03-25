@@ -1,0 +1,95 @@
+{
+  "as_of": "2026-02-18T12:00:00Z",
+  "attestations": [
+    {
+      "attestation": {
+        "attestation_id": "att-001",
+        "attestation_type": "BaselineMeasurement",
+        "attestation_iri": "koi://attestation/soil-baseline-plot-42",
+        "bond": { "amount": "1500", "denom": "uregen" }
+      },
+      "factors": {
+        "bond_adequacy": 750,
+        "attester_reputation": 680,
+        "evidence_completeness": 1000,
+        "type_risk": 600,
+        "reputation_available": true,
+        "iri_resolvable": true,
+        "has_prior_attestations": true,
+        "type_recognized": true
+      }
+    },
+    {
+      "attestation": {
+        "attestation_id": "att-002",
+        "attestation_type": "CreditIssuanceClaim",
+        "attestation_iri": "koi://attestation/carbon-issuance-batch-C04-2026",
+        "bond": { "amount": "2000", "denom": "uregen" }
+      },
+      "factors": {
+        "bond_adequacy": 500,
+        "attester_reputation": 820,
+        "evidence_completeness": 750,
+        "type_risk": 800,
+        "reputation_available": true,
+        "iri_resolvable": true,
+        "has_prior_attestations": true,
+        "type_recognized": true
+      }
+    },
+    {
+      "attestation": {
+        "attestation_id": "att-003",
+        "attestation_type": "ProjectBoundary",
+        "attestation_iri": "koi://attestation/project-boundary-P-regen-042",
+        "bond": { "amount": "500", "denom": "uregen" }
+      },
+      "factors": {
+        "bond_adequacy": 500,
+        "attester_reputation": 300,
+        "evidence_completeness": 500,
+        "type_risk": 400,
+        "reputation_available": false,
+        "iri_resolvable": true,
+        "has_prior_attestations": false,
+        "type_recognized": true
+      }
+    },
+    {
+      "attestation": {
+        "attestation_id": "att-004",
+        "attestation_type": "MethodologyValidation",
+        "attestation_iri": "koi://attestation/methodology-review-soil-carbon-v4",
+        "bond": { "amount": "10000", "denom": "uregen" }
+      },
+      "factors": {
+        "bond_adequacy": 1000,
+        "attester_reputation": 900,
+        "evidence_completeness": 1000,
+        "type_risk": 1000,
+        "reputation_available": true,
+        "iri_resolvable": true,
+        "has_prior_attestations": true,
+        "type_recognized": true
+      }
+    },
+    {
+      "attestation": {
+        "attestation_id": "att-005",
+        "attestation_type": "BaselineMeasurement",
+        "attestation_iri": "koi://attestation/weak-baseline-unresolvable",
+        "bond": { "amount": "1000", "denom": "uregen" }
+      },
+      "factors": {
+        "bond_adequacy": 500,
+        "attester_reputation": 300,
+        "evidence_completeness": 250,
+        "type_risk": 600,
+        "reputation_available": false,
+        "iri_resolvable": false,
+        "has_prior_attestations": false,
+        "type_recognized": true
+      }
+    }
+  ]
+}

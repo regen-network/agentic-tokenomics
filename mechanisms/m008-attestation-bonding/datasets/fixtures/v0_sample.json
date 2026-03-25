@@ -1,0 +1,67 @@
+{
+  "mechanism_id": "m008",
+  "scope": "v0_advisory",
+  "as_of": "2026-02-18T12:00:00Z",
+  "attestations": [
+    {
+      "attestation_id": "att-001",
+      "attestation_type": "BaselineMeasurement",
+      "attestation_iri": "koi://attestation/soil-baseline-plot-42",
+      "attester": "regen1abc123attester1",
+      "bond": { "amount": "1500", "denom": "uregen" },
+      "status": "ACTIVE",
+      "quality_score": 769,
+      "submitted_at": "2026-01-10T08:00:00Z",
+      "activated_at": "2026-01-12T08:00:00Z",
+      "challenge": null
+    },
+    {
+      "attestation_id": "att-002",
+      "attestation_type": "CreditIssuanceClaim",
+      "attestation_iri": "koi://attestation/carbon-issuance-batch-C04-2026",
+      "attester": "regen1def456attester2",
+      "bond": { "amount": "2000", "denom": "uregen" },
+      "status": "ACTIVE",
+      "quality_score": 704,
+      "submitted_at": "2026-01-15T10:00:00Z",
+      "activated_at": "2026-01-17T10:00:00Z",
+      "challenge": null
+    },
+    {
+      "attestation_id": "att-003",
+      "attestation_type": "ProjectBoundary",
+      "attestation_iri": "koi://attestation/project-boundary-P-regen-042",
+      "attester": "regen1ghi789attester3",
+      "bond": { "amount": "500", "denom": "uregen" },
+      "status": "RELEASED",
+      "quality_score": 425,
+      "submitted_at": "2025-11-01T09:00:00Z",
+      "activated_at": "2025-11-03T09:00:00Z",
+      "challenge": null
+    },
+    {
+      "attestation_id": "att-004",
+      "attestation_type": "MethodologyValidation",
+      "attestation_iri": "koi://attestation/methodology-review-soil-carbon-v4",
+      "attester": "regen1jkl012attester4",
+      "bond": { "amount": "10000", "denom": "uregen" },
+      "status": "ACTIVE",
+      "quality_score": 970,
+      "submitted_at": "2026-02-01T14:00:00Z",
+      "activated_at": "2026-02-03T14:00:00Z",
+      "challenge": null
+    },
+    {
+      "attestation_id": "att-005",
+      "attestation_type": "BaselineMeasurement",
+      "attestation_iri": "koi://attestation/weak-baseline-unresolvable",
+      "attester": "regen1mno345attester5",
+      "bond": { "amount": "1000", "denom": "uregen" },
+      "status": "SUBMITTED",
+      "quality_score": 393,
+      "submitted_at": "2026-02-15T16:00:00Z",
+      "activated_at": null,
+      "challenge": null
+    }
+  ]
+}

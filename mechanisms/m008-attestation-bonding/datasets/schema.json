@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "m008_dataset_v0",
+  "title": "m008 replay dataset",
+  "description": "Replay dataset for m008 Data Attestation Bonding — attestation lifecycle records with bond, status, and quality scores.",
+  "type": "object",
+  "required": ["mechanism_id", "scope", "as_of", "attestations"],
+  "properties": {
+    "mechanism_id": { "const": "m008" },
+    "scope": { "type": "string" },
+    "as_of": { "type": "string", "format": "date-time" },
+    "attestations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["attestation_id", "attestation_type", "attestation_iri", "attester", "bond", "status"],
+        "properties": {
+          "attestation_id": { "type": "string" },
+          "attestation_type": {
+            "type": "string",
+            "enum": ["ProjectBoundary", "BaselineMeasurement", "CreditIssuanceClaim", "MethodologyValidation"]
+          },
+          "attestation_iri": { "type": "string" },
+          "attester": { "type": "string" },
+          "bond": {
+            "type": "object",
+            "required": ["amount", "denom"],
+            "properties": {
+              "amount": { "type": "string" },
+              "denom": { "type": "string" }
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["SUBMITTED", "ACTIVE", "CHALLENGED", "RESOLVED_VALID", "RESOLVED_INVALID", "RELEASED", "SLASHED"]
+          },
+          "quality_score": { "type": ["number", "null"] },
+          "submitted_at": { "type": "string", "format": "date-time" },
+          "activated_at": { "type": ["string", "null"], "format": "date-time" },
+          "challenge": {
+            "type": ["object", "null"],
+            "properties": {
+              "challenger": { "type": "string" },
+              "reason": { "type": "string" },
+              "challenged_at": { "type": "string", "format": "date-time" },
+              "resolved_at": { "type": ["string", "null"], "format": "date-time" },
+              "outcome": { "type": ["string", "null"], "enum": ["VALID", "INVALID", null] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

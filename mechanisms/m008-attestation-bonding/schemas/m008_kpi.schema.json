@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m008 KPI output",
+  "description": "KPI metrics for the attestation bonding process. See SPEC.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mechanism_id",
+    "scope",
+    "as_of",
+    "attestations_submitted",
+    "attestations_active",
+    "attestations_released",
+    "attestations_slashed"
+  ],
+  "properties": {
+    "mechanism_id": { "const": "m008" },
+    "scope": { "type": "string" },
+    "as_of": { "type": "string", "format": "date-time" },
+    "attestations_submitted": { "type": "integer", "minimum": 0 },
+    "attestations_active": { "type": "integer", "minimum": 0 },
+    "attestations_released": { "type": "integer", "minimum": 0 },
+    "attestations_challenged": { "type": "integer", "minimum": 0 },
+    "attestations_slashed": { "type": "integer", "minimum": 0 },
+    "challenge_rate": {
+      "type": "number", "minimum": 0.0, "maximum": 1.0,
+      "description": "challenged / total submitted"
+    },
+    "slash_rate": {
+      "type": ["number", "null"], "minimum": 0.0, "maximum": 1.0,
+      "description": "slashed / challenged"
+    },
+    "bond_economics": {
+      "type": "object",
+      "properties": {
+        "total_bonded": { "type": "string" },
+        "total_released": { "type": "string" },
+        "total_slashed": { "type": "string" },
+        "avg_bond_amount": { "type": ["number", "null"] }
+      }
+    },
+    "avg_quality_score": {
+      "type": ["number", "null"], "minimum": 0, "maximum": 1000
+    },
+    "attestation_type_breakdown": {
+      "type": "object",
+      "properties": {
+        "ProjectBoundary": { "type": "integer", "minimum": 0 },
+        "BaselineMeasurement": { "type": "integer", "minimum": 0 },
+        "CreditIssuanceClaim": { "type": "integer", "minimum": 0 },
+        "MethodologyValidation": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "notes": { "type": "string" }
+  }
+}
