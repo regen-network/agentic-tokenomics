@@ -6,9 +6,6 @@ pub enum ContractError {
     #[error("{0}")]
     Std(#[from] StdError),
 
-    #[error("Invalid fee rate: rate {rate} exceeds cap of 0.10 (10%)")]
-    InvalidFeeRate { rate: String },
-
     #[error("Distribution shares must sum to 1.0, got {sum}")]
     ShareSumNotUnity { sum: String },
 

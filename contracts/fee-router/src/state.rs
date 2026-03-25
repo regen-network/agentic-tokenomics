@@ -34,6 +34,12 @@ pub struct FeeConfig {
 ///
 /// All values are in uregen. The Fee Conservation invariant guarantees
 /// that total fees collected == burn_pool + validator_fund + community_pool + agent_infra.
+///
+/// Pools are write-only in this contract: `CollectFee` adds to pools but no
+/// execute message withdraws from them. Distribution to downstream mechanisms
+/// (M012 burn, M014 validator compensation, M015 contributor rewards) happens
+/// via cross-contract calls from those modules, preserving Pool Isolation
+/// (SPEC security invariant #5).
 #[cw_serde]
 pub struct PoolBalances {
     /// Accumulated burn pool balance (tokens queued for burn via M012)
