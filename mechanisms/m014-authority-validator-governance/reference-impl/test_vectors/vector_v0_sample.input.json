@@ -1,0 +1,60 @@
+{
+  "description": "5 validators across 3 categories with varied performance profiles for m014 scoring.",
+  "validators": [
+    {
+      "address": "regenvaloper1alpha",
+      "moniker": "AlphaBuilder",
+      "category": "infrastructure_builders",
+      "status": "active",
+      "factors": {
+        "uptime": 0.999,
+        "governance_participation": 0.9,
+        "ecosystem_contribution": 0.85
+      }
+    },
+    {
+      "address": "regenvaloper1beta",
+      "moniker": "BetaReFi",
+      "category": "trusted_refi_partners",
+      "status": "active",
+      "factors": {
+        "uptime": 0.997,
+        "governance_participation": 0.8,
+        "ecosystem_contribution": 0.7
+      }
+    },
+    {
+      "address": "regenvaloper1gamma",
+      "moniker": "GammaSteward",
+      "category": "ecological_data_stewards",
+      "status": "active",
+      "factors": {
+        "uptime": 0.993,
+        "governance_participation": 0.6,
+        "ecosystem_contribution": 0.5
+      }
+    },
+    {
+      "address": "regenvaloper1delta",
+      "moniker": "DeltaOps",
+      "category": "infrastructure_builders",
+      "status": "active",
+      "factors": {
+        "uptime": 0.980,
+        "governance_participation": 0.4,
+        "ecosystem_contribution": 0.3
+      }
+    },
+    {
+      "address": "regenvaloper1epsilon",
+      "moniker": "EpsilonPartner",
+      "category": "trusted_refi_partners",
+      "status": "active",
+      "factors": {
+        "uptime": 0.996,
+        "governance_participation": null,
+        "ecosystem_contribution": 0.6
+      }
+    }
+  ]
+}

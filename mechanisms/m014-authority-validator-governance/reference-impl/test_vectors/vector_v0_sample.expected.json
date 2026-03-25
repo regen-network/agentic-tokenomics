@@ -1,0 +1,66 @@
+{
+  "scores": [
+    {
+      "address": "regenvaloper1alpha",
+      "performance_score": 0.9246,
+      "confidence": 1.0,
+      "factors": {
+        "uptime": 0.999,
+        "governance_participation": 0.9,
+        "ecosystem_contribution": 0.85
+      },
+      "flags": []
+    },
+    {
+      "address": "regenvaloper1beta",
+      "performance_score": 0.8488,
+      "confidence": 1.0,
+      "factors": {
+        "uptime": 0.997,
+        "governance_participation": 0.8,
+        "ecosystem_contribution": 0.7
+      },
+      "flags": []
+    },
+    {
+      "address": "regenvaloper1gamma",
+      "performance_score": 0.7272,
+      "confidence": 1.0,
+      "factors": {
+        "uptime": 0.993,
+        "governance_participation": 0.6,
+        "ecosystem_contribution": 0.5
+      },
+      "flags": [
+        "below_uptime_minimum",
+        "probation_recommended"
+      ]
+    },
+    {
+      "address": "regenvaloper1delta",
+      "performance_score": 0.602,
+      "confidence": 1.0,
+      "factors": {
+        "uptime": 0.98,
+        "governance_participation": 0.4,
+        "ecosystem_contribution": 0.3
+      },
+      "flags": [
+        "below_performance_threshold",
+        "below_uptime_minimum",
+        "probation_recommended"
+      ]
+    },
+    {
+      "address": "regenvaloper1epsilon",
+      "performance_score": 0.8263,
+      "confidence": 0.67,
+      "factors": {
+        "uptime": 0.996,
+        "governance_participation": null,
+        "ecosystem_contribution": 0.6
+      },
+      "flags": []
+    }
+  ]
+}

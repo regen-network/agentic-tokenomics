@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m014 validator item",
+  "description": "Schema for an authority validator in the m014 curated validator set. See SPEC.md section 6.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "address",
+    "moniker",
+    "category",
+    "status",
+    "term_start",
+    "term_end"
+  ],
+  "properties": {
+    "address": {
+      "type": "string",
+      "description": "Validator operator address (e.g., regenvaloper1...)"
+    },
+    "moniker": {
+      "type": "string",
+      "description": "Human-readable validator name"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "infrastructure_builders",
+        "trusted_refi_partners",
+        "ecological_data_stewards"
+      ],
+      "description": "Validator category per composition requirements"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "candidate",
+        "approved",
+        "active",
+        "probation",
+        "removed",
+        "term_expired"
+      ],
+      "description": "Validator lifecycle state. See SPEC.md section 6.1."
+    },
+    "term_start": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 term start date"
+    },
+    "term_end": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 term end date"
+    },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Most recent performance evaluation",
+      "properties": {
+        "uptime": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "blocks_signed / blocks_expected (null if unavailable)"
+        },
+        "governance_participation": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "votes_cast / proposals_available (null if unavailable)"
+        },
+        "ecosystem_contribution": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "AGENT-004 assessed contribution score (null if unavailable)"
+        }
+      }
+    },
+    "probation_start": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when probation began (null if not on probation)"
+    },
+    "removal_reason": {
+      "type": ["string", "null"],
+      "description": "Reason for removal (null if not removed)"
+    }
+  }
+}

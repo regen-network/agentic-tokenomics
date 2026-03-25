@@ -1,0 +1,154 @@
+{
+  "mechanism_id": "m014",
+  "scope": "v0_transition_replay",
+  "description": "PoS-to-PoA transition scenarios: validators in various lifecycle states representing a mid-transition snapshot. Includes candidates, active validators, one on probation, one removed, and one with an expired term.",
+  "as_of": "2026-09-15T12:00:00Z",
+  "validator_fund_balance": 75000,
+  "validators": [
+    {
+      "address": "regenvaloper1node01",
+      "moniker": "RND-Core",
+      "category": "infrastructure_builders",
+      "status": "active",
+      "term_start": "2026-03-01T00:00:00Z",
+      "term_end": "2027-03-01T00:00:00Z",
+      "factors": {
+        "uptime": 0.9995,
+        "governance_participation": 0.95,
+        "ecosystem_contribution": 0.9
+      }
+    },
+    {
+      "address": "regenvaloper1node02",
+      "moniker": "KOI-Infra",
+      "category": "infrastructure_builders",
+      "status": "active",
+      "term_start": "2026-03-01T00:00:00Z",
+      "term_end": "2027-03-01T00:00:00Z",
+      "factors": {
+        "uptime": 0.998,
+        "governance_participation": 0.85,
+        "ecosystem_contribution": 0.8
+      }
+    },
+    {
+      "address": "regenvaloper1node03",
+      "moniker": "ReFiDAO-Node",
+      "category": "trusted_refi_partners",
+      "status": "active",
+      "term_start": "2026-03-01T00:00:00Z",
+      "term_end": "2027-03-01T00:00:00Z",
+      "factors": {
+        "uptime": 0.996,
+        "governance_participation": 0.75,
+        "ecosystem_contribution": 0.65
+      }
+    },
+    {
+      "address": "regenvaloper1node04",
+      "moniker": "Toucan-Validator",
+      "category": "trusted_refi_partners",
+      "status": "active",
+      "term_start": "2026-03-01T00:00:00Z",
+      "term_end": "2027-03-01T00:00:00Z",
+      "factors": {
+        "uptime": 0.9975,
+        "governance_participation": 0.7,
+        "ecosystem_contribution": 0.55
+      }
+    },
+    {
+      "address": "regenvaloper1node05",
+      "moniker": "EcoVerify-Lab",
+      "category": "ecological_data_stewards",
+      "status": "active",
+      "term_start": "2026-03-01T00:00:00Z",
+      "term_end": "2027-03-01T00:00:00Z",
+      "factors": {
+        "uptime": 0.9985,
+        "governance_participation": 0.8,
+        "ecosystem_contribution": 0.75
+      }
+    },
+    {
+      "address": "regenvaloper1node06",
+      "moniker": "SoilWatch",
+      "category": "ecological_data_stewards",
+      "status": "active",
+      "term_start": "2026-03-01T00:00:00Z",
+      "term_end": "2027-03-01T00:00:00Z",
+      "factors": {
+        "uptime": 0.997,
+        "governance_participation": 0.6,
+        "ecosystem_contribution": 0.85
+      }
+    },
+    {
+      "address": "regenvaloper1node07",
+      "moniker": "FailingOps",
+      "category": "infrastructure_builders",
+      "status": "probation",
+      "term_start": "2026-03-01T00:00:00Z",
+      "term_end": "2027-03-01T00:00:00Z",
+      "probation_start": "2026-08-15T00:00:00Z",
+      "factors": {
+        "uptime": 0.970,
+        "governance_participation": 0.3,
+        "ecosystem_contribution": 0.2
+      }
+    },
+    {
+      "address": "regenvaloper1node08",
+      "moniker": "NewApplicant-dMRV",
+      "category": "ecological_data_stewards",
+      "status": "candidate",
+      "term_start": "2026-09-15T12:00:00Z",
+      "term_end": "2027-09-15T12:00:00Z",
+      "factors": {
+        "uptime": null,
+        "governance_participation": null,
+        "ecosystem_contribution": 0.7
+      }
+    },
+    {
+      "address": "regenvaloper1node09",
+      "moniker": "LegacyPoS-Removed",
+      "category": "trusted_refi_partners",
+      "status": "removed",
+      "term_start": "2026-03-01T00:00:00Z",
+      "term_end": "2027-03-01T00:00:00Z",
+      "removal_reason": "Failed to meet uptime requirements during transition; node offline for 72 hours.",
+      "factors": {
+        "uptime": 0.85,
+        "governance_participation": 0.1,
+        "ecosystem_contribution": 0.1
+      }
+    },
+    {
+      "address": "regenvaloper1node10",
+      "moniker": "Kolektivo-Expired",
+      "category": "trusted_refi_partners",
+      "status": "term_expired",
+      "term_start": "2025-09-01T00:00:00Z",
+      "term_end": "2026-09-01T00:00:00Z",
+      "factors": {
+        "uptime": 0.998,
+        "governance_participation": 0.9,
+        "ecosystem_contribution": 0.8
+      }
+    }
+  ],
+  "expected_outputs": {
+    "description": "Transition snapshot: 6 active, 1 probation, 1 candidate, 1 removed, 1 term_expired. Composition not yet met (< 5 per category). Probation validator (node07) has poor performance.",
+    "active_validators": [
+      "regenvaloper1node01 (infrastructure_builders)",
+      "regenvaloper1node02 (infrastructure_builders)",
+      "regenvaloper1node03 (trusted_refi_partners)",
+      "regenvaloper1node04 (trusted_refi_partners)",
+      "regenvaloper1node05 (ecological_data_stewards)",
+      "regenvaloper1node06 (ecological_data_stewards)"
+    ],
+    "composition_valid": false,
+    "notes": "During PoS-to-PoA transition, composition minimums (5 per category) are not yet met. This is expected during Phase 1 migration."
+  }
+}

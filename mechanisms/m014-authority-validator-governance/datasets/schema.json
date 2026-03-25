@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m014 replay dataset",
+  "type": "object",
+  "required": [
+    "mechanism_id",
+    "scope",
+    "as_of",
+    "validators"
+  ],
+  "properties": {
+    "mechanism_id": {
+      "const": "m014"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "as_of": {
+      "type": "string",
+      "description": "ISO-8601 datetime",
+      "format": "date-time"
+    },
+    "validators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "address",
+          "moniker",
+          "category",
+          "status",
+          "term_start",
+          "term_end"
+        ],
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "moniker": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "infrastructure_builders",
+              "trusted_refi_partners",
+              "ecological_data_stewards"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "candidate",
+              "approved",
+              "active",
+              "probation",
+              "removed",
+              "term_expired"
+            ]
+          },
+          "term_start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "term_end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "factors": {
+            "type": "object",
+            "properties": {
+              "uptime": { "type": ["number", "null"] },
+              "governance_participation": { "type": ["number", "null"] },
+              "ecosystem_contribution": { "type": ["number", "null"] }
+            }
+          },
+          "probation_start": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "removal_reason": {
+            "type": ["string", "null"]
+          }
+        }
+      }
+    },
+    "validator_fund_balance": {
+      "type": "number",
+      "minimum": 0.0,
+      "description": "Total validator fund from M013 for compensation computation"
+    }
+  }
+}

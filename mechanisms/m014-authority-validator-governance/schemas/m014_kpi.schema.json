@@ -1,0 +1,118 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m014 KPI output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mechanism_id",
+    "scope",
+    "as_of",
+    "total_validators",
+    "validators_by_status",
+    "validators_by_category",
+    "avg_performance_score",
+    "composition_valid"
+  ],
+  "properties": {
+    "mechanism_id": {
+      "const": "m014"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "as_of": {
+      "type": "string",
+      "description": "ISO-8601 datetime with timezone (e.g., 2026-02-18T12:00:00Z)",
+      "format": "date-time"
+    },
+    "total_validators": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of validators across all statuses"
+    },
+    "validators_by_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "candidate": { "type": "integer", "minimum": 0 },
+        "approved": { "type": "integer", "minimum": 0 },
+        "active": { "type": "integer", "minimum": 0 },
+        "probation": { "type": "integer", "minimum": 0 },
+        "removed": { "type": "integer", "minimum": 0 },
+        "term_expired": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "validators_by_category": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Count of active validators per category",
+      "properties": {
+        "infrastructure_builders": { "type": "integer", "minimum": 0 },
+        "trusted_refi_partners": { "type": "integer", "minimum": 0 },
+        "ecological_data_stewards": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "avg_performance_score": {
+      "type": ["number", "null"],
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Average composite performance score across active validators"
+    },
+    "min_performance_score": {
+      "type": ["number", "null"],
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Minimum performance score among active validators"
+    },
+    "max_performance_score": {
+      "type": ["number", "null"],
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Maximum performance score among active validators"
+    },
+    "validators_below_threshold": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Count of active validators with performance_score < 0.70"
+    },
+    "composition_valid": {
+      "type": "boolean",
+      "description": "True if each category has >= 5 active validators"
+    },
+    "byzantine_tolerance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Byzantine fault tolerance metrics",
+      "properties": {
+        "active_count": { "type": "integer", "minimum": 0 },
+        "max_byzantine_f": { "type": "integer", "minimum": 0 },
+        "tolerance_met": { "type": "boolean" }
+      }
+    },
+    "compensation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Compensation statistics for the period",
+      "properties": {
+        "validator_fund_balance": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "description": "Total validator fund balance from M013"
+        },
+        "base_per_validator": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "description": "Base compensation per active validator"
+        },
+        "bonus_pool": {
+          "type": ["number", "null"],
+          "minimum": 0.0,
+          "description": "Total performance bonus pool (10% of fund)"
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}
