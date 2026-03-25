@@ -814,6 +814,25 @@ The messaging around this transition is critical. Existing validators should not
 
 ---
 
+## Cross-Reference: OQ Assumptions in Other PRs
+
+Several PRs in this repository assume specific OQ resolutions as baselines. If the WG resolves any NEEDS_GOVERNANCE item differently than assumed here, the following PRs will need parameter updates:
+
+| OQ | Assumed Value | Assumed In | Impact if Changed |
+|----|--------------|-----------|-------------------|
+| OQ-M012-1 | 221M hard cap | PR #54 (simulation), PR #49 (governance proposals) | Recalculate equilibrium analysis; update proposal text |
+| OQ-M013-1 | {28/25/45/2} compromise | PR #49 (governance proposals) | Update proposal parameters; re-run simulation |
+| OQ-M013-1 | {30/40/25/5} Model A | PR #54 (simulation baseline) | Simulation covers full range via sweep; conclusions robust |
+| OQ-M013-3 | Hybrid denomination | PR #49 (Proposal 1 text) | Update fee collection implementation architecture |
+| OQ-M013-5 | Burn exists (15-30%) | PR #54 (simulation), PR #49 | If burn eliminated, supply model changes fundamentally |
+| OQ-M014-3 | Bootstrap from current validators | PR #45 (selection rubric) | Update seed set selection process |
+| OQ-M015-3 | 70/30 auto/governance | PR #49 (Proposal 4), PR #54 | Update reward distribution parameters |
+| OQ-GOV-POA-1 | Per-process variation | PR #45 (rubric), PR #49 | Update tally logic in proposals |
+
+> **Action item**: When any NEEDS_GOVERNANCE item is resolved via community vote, update the affected PRs to reflect the actual governance decision. The simulation (PR #54) should be re-run with the decided parameters to confirm sustainability.
+
+---
+
 ## Next Steps for the Working Group
 
 1. **Governance Proposals (9 items):** The nine NEEDS_GOVERNANCE items should be packaged into governance proposals for community deliberation. We recommend grouping them into three proposals:
