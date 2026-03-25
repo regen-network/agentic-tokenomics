@@ -1,0 +1,46 @@
+{
+  "mechanism_id": "m010",
+  "scope": "v0_advisory_challenge_invalid_resolution_replay",
+  "as_of": "2026-02-16T12:00:00Z",
+  "description": "Intentionally invalid fixture: pending challenge incorrectly includes a resolution object.",
+  "events": [
+    {
+      "signal_id": "signal-invalid-1",
+      "timestamp": "2026-02-15T12:00:00Z",
+      "subject_type": "Project",
+      "subject_id": "P-regen-300",
+      "category": "delivery_risk",
+      "endorsement_level": 3,
+      "signaler_id": "signaler_invalid_a",
+      "status": "challenged",
+      "evidence": {
+        "koi_links": ["koi://note/invalid-1"],
+        "ledger_refs": ["ledger://tx/5001"]
+      }
+    }
+  ],
+  "challenges": [
+    {
+      "challenge_id": "ch-invalid-001",
+      "signal_id": "signal-invalid-1",
+      "challenger_id": "challenger_invalid_a",
+      "category": "delivery_risk",
+      "rationale": "This intentionally invalid fixture keeps status pending while injecting a resolution to validate negative test coverage in verification scripts.",
+      "severity": "LOW",
+      "requested_outcome": "FLAG_FOR_REVIEW",
+      "evidence": {
+        "koi_links": ["koi://note/ch-invalid-1"],
+        "ledger_refs": ["ledger://tx/ch-invalid-1"],
+        "web_links": []
+      },
+      "timestamp": "2026-02-15T13:00:00Z",
+      "status": "pending",
+      "resolution": {
+        "resolved_by": "admin_invalid",
+        "resolved_at": "2026-02-15T14:00:00Z",
+        "outcome": "VALID",
+        "rationale": "Resolution should not exist when challenge status is pending."
+      }
+    }
+  ]
+}

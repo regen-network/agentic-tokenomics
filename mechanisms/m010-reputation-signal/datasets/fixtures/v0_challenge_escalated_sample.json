@@ -1,0 +1,174 @@
+{
+  "mechanism_id": "m010",
+  "scope": "v0_advisory_challenge_escalated_replay",
+  "as_of": "2026-02-12T12:00:00Z",
+  "description": "Fixture exercising escalated challenges and mixed lifecycle statuses.",
+  "events": [
+    {
+      "signal_id": "signal-esc-1",
+      "timestamp": "2026-02-10T12:00:00Z",
+      "subject_type": "Project",
+      "subject_id": "P-regen-100",
+      "category": "delivery_risk",
+      "endorsement_level": 5,
+      "signaler_id": "signaler_alpha",
+      "status": "active",
+      "evidence": {
+        "koi_links": ["koi://note/esc-1"],
+        "ledger_refs": ["ledger://tx/3001"]
+      }
+    },
+    {
+      "signal_id": "signal-esc-2",
+      "timestamp": "2026-02-10T06:00:00Z",
+      "subject_type": "CreditClass",
+      "subject_id": "C01-010",
+      "category": "registry_quality",
+      "endorsement_level": 4,
+      "signaler_id": "signaler_beta",
+      "status": "escalated",
+      "evidence": {
+        "koi_links": ["koi://note/esc-2"],
+        "ledger_refs": ["ledger://tx/3002"]
+      }
+    },
+    {
+      "signal_id": "signal-esc-3",
+      "timestamp": "2026-02-09T18:00:00Z",
+      "subject_type": "Verifier",
+      "subject_id": "V-GammaMRV",
+      "category": "attestation_quality",
+      "endorsement_level": 3,
+      "signaler_id": "signaler_gamma",
+      "status": "resolved_valid",
+      "evidence": {
+        "koi_links": ["koi://note/esc-3"],
+        "ledger_refs": ["ledger://tx/3003"]
+      }
+    },
+    {
+      "signal_id": "signal-esc-4",
+      "timestamp": "2026-02-09T12:00:00Z",
+      "subject_type": "Methodology",
+      "subject_id": "METH-Biochar-v1",
+      "category": "method_rigor",
+      "endorsement_level": 2,
+      "signaler_id": "signaler_delta",
+      "status": "challenged",
+      "evidence": {
+        "koi_links": ["koi://note/esc-4"],
+        "ledger_refs": ["ledger://tx/3004"]
+      }
+    },
+    {
+      "signal_id": "signal-esc-5",
+      "timestamp": "2026-02-09T00:00:00Z",
+      "subject_type": "Address",
+      "subject_id": "regen1esc...0005",
+      "category": "operator_trust",
+      "endorsement_level": 5,
+      "signaler_id": "signaler_epsilon",
+      "status": "invalidated",
+      "evidence": {
+        "koi_links": ["koi://note/esc-5"],
+        "ledger_refs": ["ledger://tx/3005"]
+      }
+    },
+    {
+      "signal_id": "signal-esc-6",
+      "timestamp": "2026-02-08T12:00:00Z",
+      "subject_type": "Project",
+      "subject_id": "P-regen-101",
+      "category": "delivery_risk",
+      "endorsement_level": 1,
+      "signaler_id": "signaler_zeta",
+      "status": "active",
+      "evidence": {
+        "koi_links": ["koi://note/esc-6"],
+        "ledger_refs": ["ledger://tx/3006"]
+      }
+    }
+  ],
+  "challenges": [
+    {
+      "challenge_id": "ch-esc-001",
+      "signal_id": "signal-esc-2",
+      "challenger_id": "challenger_alpha",
+      "category": "registry_quality",
+      "rationale": "Challenge escalated due to unresolved concerns on class quality scoring after missing the resolver deadline and requiring governance review.",
+      "severity": "MEDIUM",
+      "requested_outcome": "FLAG_FOR_REVIEW",
+      "evidence": {
+        "koi_links": ["koi://note/ch-esc-1"],
+        "ledger_refs": ["ledger://tx/ch-esc-1"],
+        "web_links": []
+      },
+      "timestamp": "2026-02-10T08:00:00Z",
+      "status": "escalated"
+    },
+    {
+      "challenge_id": "ch-esc-002",
+      "signal_id": "signal-esc-3",
+      "challenger_id": "challenger_beta",
+      "category": "attestation_quality",
+      "rationale": "Initial concern on verifier reliability was reviewed and rejected after additional field evidence confirmed robust attestation process.",
+      "severity": "LOW",
+      "requested_outcome": "FLAG_FOR_REVIEW",
+      "evidence": {
+        "koi_links": ["koi://note/ch-esc-2"],
+        "ledger_refs": ["ledger://tx/ch-esc-2"],
+        "web_links": []
+      },
+      "timestamp": "2026-02-09T08:00:00Z",
+      "status": "resolved_valid",
+      "resolution": {
+        "resolved_by": "admin_2",
+        "resolved_at": "2026-02-11T08:00:00Z",
+        "outcome": "VALID",
+        "rationale": "Evidence quality was sufficient and no integrity violation was confirmed."
+      }
+    },
+    {
+      "challenge_id": "ch-esc-003",
+      "signal_id": "signal-esc-4",
+      "challenger_id": "challenger_gamma",
+      "category": "method_rigor",
+      "rationale": "Challenge found missing baseline methodology controls and contradictory implementation references that invalidate the original endorsement quality claim.",
+      "severity": "HIGH",
+      "requested_outcome": "INVALIDATE",
+      "evidence": {
+        "koi_links": ["koi://note/ch-esc-3"],
+        "ledger_refs": ["ledger://tx/ch-esc-3"],
+        "web_links": []
+      },
+      "timestamp": "2026-02-09T10:00:00Z",
+      "status": "resolved_invalid",
+      "resolution": {
+        "resolved_by": "admin_2",
+        "resolved_at": "2026-02-10T10:00:00Z",
+        "outcome": "INVALID",
+        "rationale": "Review confirmed method controls were absent; endorsement removed."
+      }
+    }
+  ],
+  "expected_outputs": {
+    "description": "Only active/resolved_valid signals contribute; escalated and challenged are paused.",
+    "contributing_signals": [
+      "signal-esc-1 (active, endorsement=5)",
+      "signal-esc-3 (resolved_valid, endorsement=3)",
+      "signal-esc-6 (active, endorsement=1)"
+    ],
+    "excluded_signals": [
+      "signal-esc-2 (escalated)",
+      "signal-esc-4 (challenged)",
+      "signal-esc-5 (invalidated)"
+    ],
+    "challenge_kpis": {
+      "challenges_filed": 3,
+      "challenge_rate": 0.5,
+      "challenge_success_rate": 0.5,
+      "avg_resolution_time_hours": 36.0,
+      "admin_resolution_timeout_rate": 0.3333
+    }
+  }
+}

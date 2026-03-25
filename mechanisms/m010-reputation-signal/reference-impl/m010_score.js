@@ -20,11 +20,15 @@ export function computeM010Score({ as_of, events, halfLifeHours = 336, useStakeW
   if (!evs.length) return { reputation_score_0_1: 0.0 };
 
   const lambda = Math.log(2) / halfLifeHours;
+  const contributingStatuses = new Set(["active", "resolved_valid"]);
 
   let wSum = 0;
   let dSum = 0;
 
   for (const e of evs) {
+    const status = typeof e.status === "string" ? e.status.toLowerCase() : null;
+    if (status !== null && !contributingStatuses.has(status)) continue;
+
     const ts = new Date(e.timestamp);
     const ageH = (asOf - ts) / (1000*60*60);
     const decay = Math.exp(-lambda * Math.max(0, ageH));

@@ -3,7 +3,7 @@
 m010 defines a reputation / legitimacy signal for Regen ecosystem subjects (e.g., credit classes, projects, verifiers, methodologies, addresses) based on **stake-weighted endorsements** with **time decay**.
 
 ## What it outputs
-- A normalized **reputation score** (0–1000) per `(subject_type, subject_id, category)`.
+- A normalized **reputation score** (`reputation_score_0_1`, range `0–1`) per `(subject_type, subject_id, category)` in v0 advisory mode.
 - A queryable history of submitted signals (endorsements), including state transitions (submitted, active, challenged, resolved_valid, resolved_invalid, withdrawn, invalidated).
 - Challenge workflow events with evidence, resolution, and rationale.
 
@@ -27,3 +27,19 @@ Canonical JSON schemas for m010 outputs live in `schemas/`.
 - `m010_signal.schema.json` — signal items with `status` lifecycle field
 - `m010_challenge.schema.json` — challenge events with evidence and resolution
 - `m010_kpi.schema.json` — KPI output including optional `challenge_kpis`
+
+## Reference implementation checks
+- Deterministic vectors are validated by `scripts/verify-m010-reference-impl.mjs`
+- `challenge_rate` is computed as `challenges_filed / signals_emitted` for replay-period KPI reporting
+
+## Consumer compatibility notes
+- v0 score contract: consumers should read `score.reputation_score_0_1` (`0..1`).
+- Status contribution contract: only `active` and `resolved_valid` contribute to score.
+- Challenge KPI contract: when `challenges[]` are present, `challenge_kpis` includes:
+  - `challenges_filed`
+  - `challenge_rate`
+  - `avg_resolution_time_hours`
+  - `challenge_success_rate`
+  - `admin_resolution_timeout_rate`
+
+Breaking changes for downstream consumers include renaming/removing these keys, changing denominator semantics, or changing lifecycle contribution rules.

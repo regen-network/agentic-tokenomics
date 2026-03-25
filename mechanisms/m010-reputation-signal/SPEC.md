@@ -305,7 +305,7 @@ The following metrics should be tracked and published in periodic digests:
 | KPI | Formula | Target |
 |-----|---------|--------|
 | `challenges_filed` | count of challenges per period | Informational |
-| `challenge_rate` | challenges / total active signals | < 5% (healthy ecosystem) |
+| `challenge_rate` | challenges / signals emitted in period | < 5% (healthy ecosystem) |
 | `avg_resolution_time_hours` | mean(resolution_timestamp - challenge_timestamp) | < 168h (7 days) |
 | `challenge_success_rate` | resolved_invalid / (resolved_valid + resolved_invalid) | Informational |
 | `admin_resolution_timeout_rate` | auto_escalated / total_challenges | < 5% |

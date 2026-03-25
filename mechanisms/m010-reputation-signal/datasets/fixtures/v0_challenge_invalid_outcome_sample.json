@@ -1,0 +1,46 @@
+{
+  "mechanism_id": "m010",
+  "scope": "v0_advisory_challenge_invalid_outcome_replay",
+  "as_of": "2026-02-16T12:00:00Z",
+  "description": "Intentionally invalid fixture: resolved_valid challenge has INVALID outcome.",
+  "events": [
+    {
+      "signal_id": "signal-invalid-outcome-1",
+      "timestamp": "2026-02-15T12:00:00Z",
+      "subject_type": "Project",
+      "subject_id": "P-regen-301",
+      "category": "delivery_risk",
+      "endorsement_level": 4,
+      "signaler_id": "signaler_invalid_b",
+      "status": "resolved_valid",
+      "evidence": {
+        "koi_links": ["koi://note/invalid-outcome-1"],
+        "ledger_refs": ["ledger://tx/5002"]
+      }
+    }
+  ],
+  "challenges": [
+    {
+      "challenge_id": "ch-invalid-002",
+      "signal_id": "signal-invalid-outcome-1",
+      "challenger_id": "challenger_invalid_b",
+      "category": "delivery_risk",
+      "rationale": "This intentionally invalid fixture sets status resolved_valid while setting resolution outcome INVALID to enforce strict status outcome consistency checks.",
+      "severity": "LOW",
+      "requested_outcome": "FLAG_FOR_REVIEW",
+      "evidence": {
+        "koi_links": ["koi://note/ch-invalid-2"],
+        "ledger_refs": ["ledger://tx/ch-invalid-2"],
+        "web_links": []
+      },
+      "timestamp": "2026-02-15T13:00:00Z",
+      "status": "resolved_valid",
+      "resolution": {
+        "resolved_by": "admin_invalid",
+        "resolved_at": "2026-02-15T14:00:00Z",
+        "outcome": "INVALID",
+        "rationale": "Outcome intentionally mismatched for negative verifier coverage."
+      }
+    }
+  ]
+}

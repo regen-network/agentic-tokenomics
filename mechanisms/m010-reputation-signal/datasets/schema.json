@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "m010 replay dataset",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "mechanism_id",
     "scope",
@@ -20,10 +21,14 @@
       "description": "ISO-8601 datetime",
       "format": "date-time"
     },
+    "description": {
+      "type": "string"
+    },
     "events": {
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "timestamp",
           "subject_type",
@@ -34,11 +39,16 @@
           "evidence"
         ],
         "properties": {
+          "signal_id": {
+            "type": "string",
+            "pattern": "^signal-[A-Za-z0-9._:-]+$"
+          },
           "timestamp": {
             "type": "string",
             "format": "date-time"
           },
           "subject_type": {
+            "type": "string",
             "enum": [
               "CreditClass",
               "Project",
@@ -48,10 +58,12 @@
             ]
           },
           "subject_id": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "category": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,63}$"
           },
           "endorsement_level": {
             "type": "integer",
@@ -59,10 +71,25 @@
             "maximum": 5
           },
           "signaler_id": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "submitted",
+              "active",
+              "challenged",
+              "escalated",
+              "resolved_valid",
+              "resolved_invalid",
+              "withdrawn",
+              "invalidated"
+            ]
           },
           "evidence": {
             "type": "object",
+            "additionalProperties": false,
             "required": [
               "koi_links",
               "ledger_refs"
@@ -70,20 +97,248 @@
             "properties": {
               "koi_links": {
                 "type": "array",
+                "uniqueItems": true,
                 "items": {
-                  "type": "string"
+                  "type": "string",
+                  "minLength": 1
                 }
               },
               "ledger_refs": {
                 "type": "array",
+                "uniqueItems": true,
                 "items": {
-                  "type": "string"
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "web_links": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
                 }
               }
             }
           }
         }
       }
+    },
+    "challenges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "challenge_id",
+          "signal_id",
+          "challenger_id",
+          "category",
+          "rationale",
+          "evidence",
+          "timestamp",
+          "status"
+        ],
+        "properties": {
+          "challenge_id": {
+            "type": "string",
+            "pattern": "^ch-[A-Za-z0-9._:-]+$"
+          },
+          "signal_id": {
+            "type": "string",
+            "pattern": "^signal-[A-Za-z0-9._:-]+$"
+          },
+          "challenger_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,63}$"
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 50
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH",
+              "CRITICAL"
+            ]
+          },
+          "requested_outcome": {
+            "type": "string",
+            "enum": [
+              "INVALIDATE",
+              "DOWNGRADE",
+              "FLAG_FOR_REVIEW"
+            ]
+          },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "koi_links",
+              "ledger_refs"
+            ],
+            "properties": {
+              "koi_links": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "ledger_refs": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "web_links": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "resolved_valid",
+              "resolved_invalid",
+              "escalated"
+            ]
+          },
+          "resolution": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "resolved_by",
+              "resolved_at",
+              "outcome",
+              "rationale"
+            ],
+            "properties": {
+              "resolved_by": {
+                "type": "string",
+                "minLength": 1
+              },
+              "resolved_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "outcome": {
+                "type": "string",
+                "enum": [
+                  "VALID",
+                  "INVALID"
+                ]
+              },
+              "rationale": {
+                "type": "string",
+                "minLength": 20
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "resolved_valid",
+                    "resolved_invalid"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "resolution"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "pending",
+                    "escalated"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "not": {
+                "required": [
+                  "resolution"
+                ]
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "resolved_valid"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "resolution": {
+                  "properties": {
+                    "outcome": {
+                      "const": "VALID"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "resolved_invalid"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "resolution": {
+                  "properties": {
+                    "outcome": {
+                      "const": "INVALID"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expected_outputs": {
+      "type": "object",
+      "additionalProperties": true
     }
   }
 }

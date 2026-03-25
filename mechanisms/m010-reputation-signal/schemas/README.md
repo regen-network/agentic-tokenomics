@@ -10,5 +10,6 @@ These JSON Schemas define **canonical output shapes** for m010 (Reputation Signa
 ## Notes
 - These schemas are intended for **validation** and consistency across repos (Heartbeat, agent skills, etc.).
 - v0 is advisory-only: schemas describe outputs, not enforcement.
-- The `status` field on signals tracks lifecycle state (submitted → active → challenged → resolved). See SPEC.md section 6.1.
+- The `status` field on signals tracks lifecycle state (submitted → active/challenged/escalated → resolved/withdrawn/invalidated). See SPEC.md section 6.1.
 - Challenge events are separate from signals; they reference a `signal_id` and track their own resolution lifecycle.
+- Challenge schema includes lifecycle guards: resolved statuses require `resolution`, unresolved statuses forbid it, and resolution outcomes must match status (`VALID` vs `INVALID`).

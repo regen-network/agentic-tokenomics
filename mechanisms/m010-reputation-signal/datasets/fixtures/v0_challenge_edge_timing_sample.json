@@ -1,0 +1,144 @@
+{
+  "mechanism_id": "m010",
+  "scope": "v0_advisory_challenge_edge_timing_replay",
+  "as_of": "2026-02-15T12:00:00Z",
+  "description": "Fixture exercising zero/low resolution durations and fresh events at as_of boundary.",
+  "events": [
+    {
+      "signal_id": "signal-edge-1",
+      "timestamp": "2026-02-15T11:00:00Z",
+      "subject_type": "Project",
+      "subject_id": "P-regen-200",
+      "category": "delivery_risk",
+      "endorsement_level": 3,
+      "signaler_id": "signaler_edge_a",
+      "status": "active",
+      "evidence": {
+        "koi_links": ["koi://note/edge-1"],
+        "ledger_refs": ["ledger://tx/4001"]
+      }
+    },
+    {
+      "signal_id": "signal-edge-2",
+      "timestamp": "2026-02-15T12:00:00Z",
+      "subject_type": "CreditClass",
+      "subject_id": "C01-020",
+      "category": "registry_quality",
+      "endorsement_level": 4,
+      "signaler_id": "signaler_edge_b",
+      "status": "resolved_valid",
+      "evidence": {
+        "koi_links": ["koi://note/edge-2"],
+        "ledger_refs": ["ledger://tx/4002"]
+      }
+    },
+    {
+      "signal_id": "signal-edge-3",
+      "timestamp": "2026-02-14T12:00:00Z",
+      "subject_type": "Verifier",
+      "subject_id": "V-EdgeMRV",
+      "category": "attestation_quality",
+      "endorsement_level": 5,
+      "signaler_id": "signaler_edge_c",
+      "status": "resolved_invalid",
+      "evidence": {
+        "koi_links": ["koi://note/edge-3"],
+        "ledger_refs": ["ledger://tx/4003"]
+      }
+    },
+    {
+      "signal_id": "signal-edge-4",
+      "timestamp": "2026-02-13T12:00:00Z",
+      "subject_type": "Address",
+      "subject_id": "regen1edge...0004",
+      "category": "operator_trust",
+      "endorsement_level": 2,
+      "signaler_id": "signaler_edge_d",
+      "status": "withdrawn",
+      "evidence": {
+        "koi_links": ["koi://note/edge-4"],
+        "ledger_refs": ["ledger://tx/4004"]
+      }
+    }
+  ],
+  "challenges": [
+    {
+      "challenge_id": "ch-edge-001",
+      "signal_id": "signal-edge-2",
+      "challenger_id": "challenger_edge_a",
+      "category": "registry_quality",
+      "rationale": "This challenge was immediately resolved at submission time to validate zero-hour resolution handling in deterministic KPI computation.",
+      "severity": "LOW",
+      "requested_outcome": "FLAG_FOR_REVIEW",
+      "evidence": {
+        "koi_links": ["koi://note/ch-edge-1"],
+        "ledger_refs": ["ledger://tx/ch-edge-1"],
+        "web_links": []
+      },
+      "timestamp": "2026-02-15T12:00:00Z",
+      "status": "resolved_valid",
+      "resolution": {
+        "resolved_by": "admin_edge",
+        "resolved_at": "2026-02-15T12:00:00Z",
+        "outcome": "VALID",
+        "rationale": "Instant resolution for deterministic boundary test."
+      }
+    },
+    {
+      "challenge_id": "ch-edge-002",
+      "signal_id": "signal-edge-3",
+      "challenger_id": "challenger_edge_b",
+      "category": "attestation_quality",
+      "rationale": "Evidence review completed within thirty minutes and determined the underlying verifier claim was invalid for this reporting period.",
+      "severity": "HIGH",
+      "requested_outcome": "INVALIDATE",
+      "evidence": {
+        "koi_links": ["koi://note/ch-edge-2"],
+        "ledger_refs": ["ledger://tx/ch-edge-2"],
+        "web_links": []
+      },
+      "timestamp": "2026-02-14T11:30:00Z",
+      "status": "resolved_invalid",
+      "resolution": {
+        "resolved_by": "admin_edge",
+        "resolved_at": "2026-02-14T12:00:00Z",
+        "outcome": "INVALID",
+        "rationale": "Short-window review confirmed evidence inconsistency."
+      }
+    },
+    {
+      "challenge_id": "ch-edge-003",
+      "signal_id": "signal-edge-4",
+      "challenger_id": "challenger_edge_c",
+      "category": "operator_trust",
+      "rationale": "Pending challenge remains open for withdrawn signal to verify unresolved challenge handling and exclusion behavior across score and KPI outputs.",
+      "severity": "MEDIUM",
+      "requested_outcome": "FLAG_FOR_REVIEW",
+      "evidence": {
+        "koi_links": ["koi://note/ch-edge-3"],
+        "ledger_refs": ["ledger://tx/ch-edge-3"],
+        "web_links": []
+      },
+      "timestamp": "2026-02-14T10:00:00Z",
+      "status": "pending"
+    }
+  ],
+  "expected_outputs": {
+    "description": "Edge timing fixture with zero-hour resolution and at-as_of signal timestamps.",
+    "contributing_signals": [
+      "signal-edge-1 (active, endorsement=3)",
+      "signal-edge-2 (resolved_valid, endorsement=4)"
+    ],
+    "excluded_signals": [
+      "signal-edge-3 (resolved_invalid)",
+      "signal-edge-4 (withdrawn)"
+    ],
+    "challenge_kpis": {
+      "challenges_filed": 3,
+      "challenge_rate": 0.75,
+      "challenge_success_rate": 0.5,
+      "avg_resolution_time_hours": 0.25,
+      "admin_resolution_timeout_rate": 0
+    }
+  }
+}

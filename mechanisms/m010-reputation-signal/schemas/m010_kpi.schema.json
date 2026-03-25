@@ -17,7 +17,8 @@
       "const": "m010"
     },
     "scope": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "as_of": {
       "type": "string",
@@ -68,6 +69,13 @@
       "type": "object",
       "description": "Challenge workflow metrics (section 6.7 of SPEC.md). Optional in v0; required when challenge workflow is active.",
       "additionalProperties": false,
+      "required": [
+        "challenges_filed",
+        "challenge_rate",
+        "avg_resolution_time_hours",
+        "challenge_success_rate",
+        "admin_resolution_timeout_rate"
+      ],
       "properties": {
         "challenges_filed": {
           "type": "integer",
@@ -78,7 +86,7 @@
           "type": "number",
           "minimum": 0.0,
           "maximum": 1.0,
-          "description": "challenges_filed / total_active_signals"
+          "description": "challenges_filed / signals_emitted (events in the reporting period)"
         },
         "avg_resolution_time_hours": {
           "type": ["number", "null"],

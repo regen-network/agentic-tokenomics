@@ -11,6 +11,11 @@
     "timestamp"
   ],
   "properties": {
+    "signal_id": {
+      "type": "string",
+      "pattern": "^signal-[A-Za-z0-9._:-]+$",
+      "description": "Stable signal identifier for lifecycle and challenge linkage"
+    },
     "subject_type": {
       "type": "string",
       "enum": [
@@ -22,10 +27,13 @@
       ]
     },
     "subject_id": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "category": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,63}$",
+      "description": "Machine-safe category key (snake_case)"
     },
     "endorsement_level": {
       "type": "integer",
@@ -33,7 +41,8 @@
       "maximum": 5
     },
     "signaler_id": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "status": {
       "type": "string",
@@ -41,6 +50,7 @@
         "submitted",
         "active",
         "challenged",
+        "escalated",
         "resolved_valid",
         "resolved_invalid",
         "withdrawn",
@@ -63,20 +73,26 @@
       "properties": {
         "koi_links": {
           "type": "array",
+          "uniqueItems": true,
           "items": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           }
         },
         "ledger_refs": {
           "type": "array",
+          "uniqueItems": true,
           "items": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           }
         },
         "web_links": {
           "type": "array",
+          "uniqueItems": true,
           "items": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           }
         }
       }

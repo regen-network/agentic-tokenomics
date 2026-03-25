@@ -1,0 +1,21 @@
+{
+  "kpi": {
+    "mechanism_id": "m010",
+    "scope": "v0_advisory_challenge_escalated_replay",
+    "as_of": "2026-02-12T12:00:00Z",
+    "signals_emitted": 6,
+    "subjects_touched": 6,
+    "evidence_coverage_rate": 1,
+    "median_event_latency_hours": 69,
+    "challenge_kpis": {
+      "challenges_filed": 3,
+      "challenge_rate": 0.5,
+      "avg_resolution_time_hours": 36,
+      "challenge_success_rate": 0.5,
+      "admin_resolution_timeout_rate": 0.3333
+    }
+  },
+  "score": {
+    "reputation_score_0_1": 0.6131
+  }
+}

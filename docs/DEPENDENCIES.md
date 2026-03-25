@@ -22,3 +22,11 @@ This repo is a coordination + specification registry for “agentic tokenomics�
 
 - High-level dependency notes: `docs/DEPENDENCIES.md` (this file)
 - Mechanism-specific dependency notes: `mechanisms/<id>/README.md` → “External inputs”
+
+## Downstream coordination for schema/output changes
+
+When changes may affect consumers in other repos (for example `regen-heartbeat`), include in the PR:
+- exact output key contract (added/changed/removed keys)
+- whether change is `non-breaking` or `breaking`
+- at least one deterministic fixture/vector update proving the new behavior
+- rollback note (what to revert if downstream parsing fails)
