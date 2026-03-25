@@ -11,6 +11,7 @@ Welcome to the Regen Network Agentic Tokenomics & Governance System. This reposi
 5. [Repository Structure](#repository-structure)
 6. [Progressive Access Tiers](#progressive-access-tiers)
 7. [Getting Started](#getting-started)
+8. [List Your Project](#list-your-project)
 
 ---
 
@@ -59,6 +60,30 @@ This repository is part of a larger ecosystem transformation. Contributors—whe
 5. Engage in review process
 6. Merge after approval
 ```
+
+### Fork Sync & Measured PR Workflow
+
+Use this when contributing from a fork to keep `main` clean and PRs easy to review.
+
+```
+1. Add upstream once:
+   git remote add upstream https://github.com/regen-network/agentic-tokenomics.git
+2. Sync local main:
+   git checkout main
+   git fetch upstream origin
+   git reset --hard upstream/main
+   git push --force-with-lease origin main
+3. Create a scoped branch from main:
+   git checkout -b codex/<short-topic>
+4. Keep PR scope small:
+   one concern per PR, minimal file touch, tests included
+5. Rebase before opening/updating PR:
+   git fetch upstream
+   git rebase upstream/main
+   git push --force-with-lease origin codex/<short-topic>
+```
+
+Recommended PR size: ~100-300 LOC and one clearly stated outcome.
 
 ### Style Guide
 
@@ -206,6 +231,12 @@ Contributors can progress through tiers via:
 - [Forum Discussions](https://forum.regen.network)
 - [KOI Knowledge Base](https://regen.gaiaai.xyz)
 - [Regen Heartbeat Digests](https://gaiaaiagent.github.io/regen-heartbeat/digests/)
+
+---
+
+## List Your Project
+
+Building on the Regen agentic tokenomics framework? Add your project to the [`docs/ECOSYSTEM.md`](docs/ECOSYSTEM.md) directory by opening a PR. Include your repo link, a one-line description, and any relevant status info.
 
 ---
 

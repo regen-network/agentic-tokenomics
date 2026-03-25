@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "m001-enh agent pre-screening score",
+  "description": "Agent pre-screening output for a credit class creator proposal. See SPEC.md section 5.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "proposal_id",
+    "agent_id",
+    "score",
+    "confidence",
+    "recommendation",
+    "factors",
+    "timestamp"
+  ],
+  "properties": {
+    "proposal_id": {
+      "type": "string",
+      "description": "Unique identifier of the credit class creator proposal"
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "Address or identifier of the scoring agent (AGENT-001)"
+    },
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000,
+      "description": "Weighted composite score (0-1000). See SPEC.md section 5.1."
+    },
+    "confidence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000,
+      "description": "Data availability confidence (0-1000). See SPEC.md section 5.3."
+    },
+    "recommendation": {
+      "type": "string",
+      "enum": ["APPROVE", "CONDITIONAL", "REJECT"],
+      "description": "Agent recommendation derived from score and confidence thresholds. See SPEC.md section 3."
+    },
+    "factors": {
+      "type": "object",
+      "description": "Individual factor scores contributing to the composite",
+      "additionalProperties": false,
+      "required": [
+        "methodology_quality",
+        "admin_reputation",
+        "novelty",
+        "completeness"
+      ],
+      "properties": {
+        "methodology_quality": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Methodology rigor score (weight: 0.4)"
+        },
+        "admin_reputation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Admin/proposer reputation from M010 (weight: 0.3)"
+        },
+        "novelty": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Differentiation from existing classes (weight: 0.2)"
+        },
+        "completeness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Application completeness checklist (weight: 0.1)"
+        }
+      }
+    },
+    "rationale_iri": {
+      "type": "string",
+      "description": "KOI IRI pointing to detailed agent analysis rationale"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when score was computed"
+    }
+  }
+}
