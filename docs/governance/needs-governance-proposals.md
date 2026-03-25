@@ -84,6 +84,8 @@ Parameter Change Proposal (governance parameter resolution — sets binding valu
 | `fee_denomination` | REGEN-only | Hybrid (collect in tx denom; auto-convert burn portion to REGEN) | Module config flag | Preserves UX; ensures burn always operates on REGEN |
 
 > **Consistency note:** The distribution shares sum to 1.00 (15% + 30% + 50% + 5% = 100%). This resolves the tension between OQ-M013-1 and OQ-M013-5: the earlier compromise proposed {28% burn, 25% validator, 45% community, 2% agent}, but OQ-M013-5 recommended reducing burn to 15%. The freed-up allocation (13%) is redistributed to validator (+5%), community (+5%), and agent (+3%) pools.
+>
+> **Simulation validation:** The cadCAD simulation (`simulations/cadcad/`) uses Model A (30% burn) as its baseline but the parameter sweep covers burn_share from 0% to 35%, validating both configurations. At 15% burn, equilibrium supply rises to ~220.42M REGEN (vs ~219.85M at 30%). Validator sustainability is maintained — see `simulations/cadcad/equilibrium_analysis.md` section 1.3.1 for the derivation.
 
 ### 6. Risk Assessment Matrix
 
