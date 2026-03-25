@@ -1,0 +1,98 @@
+{
+  "mechanism_id": "m011",
+  "scope": "v0_advisory",
+  "as_of": "2026-02-18T12:00:00Z",
+  "scored_batches": [
+    {
+      "batch_denom": "C01-001-20250601-20260101-001",
+      "credit_type": "C",
+      "class_id": "C01",
+      "project_id": "P-regen-001",
+      "seller": "regen1seller01",
+      "quality_score": 818,
+      "confidence": 1000,
+      "scored_at": "2026-02-18T08:00:00Z"
+    },
+    {
+      "batch_denom": "C04-001-20240101-20241231-003",
+      "credit_type": "C",
+      "class_id": "C04",
+      "project_id": "P-regen-042",
+      "seller": "regen1seller02",
+      "quality_score": 648,
+      "confidence": 1000,
+      "scored_at": "2026-02-18T08:00:00Z"
+    },
+    {
+      "batch_denom": "BT01-001-20250301-20250901-001",
+      "credit_type": "BT",
+      "class_id": "BT01",
+      "project_id": "P-regen-050",
+      "seller": "regen1seller03",
+      "quality_score": 593,
+      "confidence": 714,
+      "scored_at": "2026-02-18T08:00:00Z"
+    },
+    {
+      "batch_denom": "C09-001-20230601-20240101-002",
+      "credit_type": "C",
+      "class_id": "C09",
+      "project_id": "P-regen-099",
+      "seller": "regen1seller04",
+      "quality_score": 755,
+      "confidence": 1000,
+      "scored_at": "2026-02-18T08:00:00Z"
+    },
+    {
+      "batch_denom": "KSH01-001-20250101-20250601-001",
+      "credit_type": "KSH",
+      "class_id": "KSH01",
+      "project_id": "P-regen-070",
+      "seller": "regen1seller05",
+      "quality_score": 325,
+      "confidence": 429,
+      "scored_at": "2026-02-18T08:00:00Z"
+    }
+  ],
+  "collections": [
+    {
+      "collection_id": "col-001",
+      "curator": "regen1curator01",
+      "name": "Premium Carbon Credits",
+      "bond": { "amount": "1000000000", "denom": "uregen" },
+      "members": [
+        "C01-001-20250601-20260101-001",
+        "C04-001-20240101-20241231-003",
+        "C09-001-20230601-20240101-002"
+      ],
+      "status": "ACTIVE",
+      "trade_volume": "15000000000",
+      "total_rewards": "75000000",
+      "challenge": null
+    },
+    {
+      "collection_id": "col-002",
+      "curator": "regen1curator02",
+      "name": "Biodiversity & Ecosystem",
+      "bond": { "amount": "1000000000", "denom": "uregen" },
+      "members": [
+        "BT01-001-20250301-20250901-001"
+      ],
+      "status": "ACTIVE",
+      "trade_volume": "3000000000",
+      "total_rewards": "15000000",
+      "challenge": null
+    },
+    {
+      "collection_id": "col-003",
+      "curator": "regen1curator03",
+      "name": "Closed Collection",
+      "bond": { "amount": "1000000000", "denom": "uregen" },
+      "members": [],
+      "status": "CLOSED",
+      "trade_volume": "500000000",
+      "total_rewards": "2500000",
+      "challenge": null
+    }
+  ]
+}

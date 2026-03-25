@@ -82,6 +82,7 @@ This repository contains the design specifications and implementation plans for 
 - [m008 — Data Attestation Bonding (v0 advisory)](mechanisms/m008-attestation-bonding/)
 - [m009 — Service Provision Escrow](mechanisms/m009-service-escrow/)
 - [m010 — Reputation Signal (v0 advisory)](mechanisms/m010-reputation-signal/)
+- [m011 — Marketplace Curation & Quality Signals](mechanisms/m011-marketplace-curation/)
 
 <!-- END MECHANISMS INDEX -->
 

@@ -1,0 +1,69 @@
+{
+  "scores": [
+    {
+      "score": 818,
+      "confidence": 1000,
+      "factors": {
+        "project_reputation": 800,
+        "class_reputation": 750,
+        "vintage_freshness": 900,
+        "verification_recency": 850,
+        "seller_reputation": 700,
+        "price_fairness": 950,
+        "additionality_confidence": 800
+      }
+    },
+    {
+      "score": 648,
+      "confidence": 1000,
+      "factors": {
+        "project_reputation": 600,
+        "class_reputation": 700,
+        "vintage_freshness": 700,
+        "verification_recency": 600,
+        "seller_reputation": 500,
+        "price_fairness": 800,
+        "additionality_confidence": 650
+      }
+    },
+    {
+      "score": 593,
+      "confidence": 714,
+      "factors": {
+        "project_reputation": 400,
+        "class_reputation": 500,
+        "vintage_freshness": 950,
+        "verification_recency": 900,
+        "seller_reputation": 300,
+        "price_fairness": 600,
+        "additionality_confidence": 500
+      }
+    },
+    {
+      "score": 755,
+      "confidence": 1000,
+      "factors": {
+        "project_reputation": 900,
+        "class_reputation": 850,
+        "vintage_freshness": 500,
+        "verification_recency": 400,
+        "seller_reputation": 800,
+        "price_fairness": 1000,
+        "additionality_confidence": 900
+      }
+    },
+    {
+      "score": 325,
+      "confidence": 429,
+      "factors": {
+        "project_reputation": 200,
+        "class_reputation": 300,
+        "vintage_freshness": 800,
+        "verification_recency": 200,
+        "seller_reputation": 100,
+        "price_fairness": 400,
+        "additionality_confidence": 300
+      }
+    }
+  ]
+}

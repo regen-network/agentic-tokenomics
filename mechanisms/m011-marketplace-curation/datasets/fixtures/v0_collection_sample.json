@@ -1,0 +1,94 @@
+{
+  "mechanism_id": "m011",
+  "scope": "v0_advisory",
+  "as_of": "2026-02-18T12:00:00Z",
+  "scored_batches": [
+    {
+      "batch_denom": "C01-001-20250601-20260101-001",
+      "credit_type": "C",
+      "class_id": "C01",
+      "project_id": "P-regen-001",
+      "seller": "regen1seller01",
+      "quality_score": 818,
+      "confidence": 1000,
+      "scored_at": "2026-02-17T08:00:00Z"
+    },
+    {
+      "batch_denom": "C05-001-20240601-20250101-002",
+      "credit_type": "C",
+      "class_id": "C05",
+      "project_id": "P-regen-030",
+      "seller": "regen1seller06",
+      "quality_score": 250,
+      "confidence": 571,
+      "scored_at": "2026-02-17T08:00:00Z"
+    },
+    {
+      "batch_denom": "C02-001-20250101-20250601-001",
+      "credit_type": "C",
+      "class_id": "C02",
+      "project_id": "P-regen-010",
+      "seller": "regen1seller07",
+      "quality_score": 720,
+      "confidence": 857,
+      "scored_at": "2026-02-17T08:00:00Z"
+    }
+  ],
+  "collections": [
+    {
+      "collection_id": "col-c01",
+      "curator": "regen1curatorch01",
+      "name": "High-Integrity Carbon",
+      "bond": { "amount": "2000000000", "denom": "uregen" },
+      "members": [
+        "C01-001-20250601-20260101-001",
+        "C05-001-20240601-20250101-002"
+      ],
+      "status": "UNDER_REVIEW",
+      "trade_volume": "8000000000",
+      "total_rewards": "40000000",
+      "challenge": {
+        "challenger": "regen1challenger01",
+        "batch_denom": "C05-001-20240601-20250101-002",
+        "reason": "Batch quality score 250 is below collection quality floor of 500; satellite imagery contradicts claimed sequestration area",
+        "outcome": null
+      }
+    },
+    {
+      "collection_id": "col-c02",
+      "curator": "regen1curatorch02",
+      "name": "Verified Reforestation",
+      "bond": { "amount": "1000000000", "denom": "uregen" },
+      "members": [
+        "C02-001-20250101-20250601-001"
+      ],
+      "status": "SUSPENDED",
+      "trade_volume": "2000000000",
+      "total_rewards": "10000000",
+      "challenge": {
+        "challenger": "regen1challenger02",
+        "batch_denom": "C02-001-20250101-20250601-001",
+        "reason": "Verification report found to be outdated; project boundary has changed since last verification",
+        "outcome": "CHALLENGER_WINS"
+      }
+    },
+    {
+      "collection_id": "col-c03",
+      "curator": "regen1curatorch03",
+      "name": "Community Carbon Fund",
+      "bond": { "amount": "1500000000", "denom": "uregen" },
+      "members": [
+        "C01-001-20250601-20260101-001"
+      ],
+      "status": "ACTIVE",
+      "trade_volume": "5000000000",
+      "total_rewards": "25000000",
+      "challenge": {
+        "challenger": "regen1challenger03",
+        "batch_denom": "C01-001-20250601-20260101-001",
+        "reason": "False claim: batch was properly verified and curator selection criteria were met",
+        "outcome": "CURATOR_WINS"
+      }
+    }
+  ]
+}
