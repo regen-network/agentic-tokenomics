@@ -112,11 +112,30 @@ requireFile("mechanisms/m013-value-based-fee-routing/schemas/m013_fee_event.sche
 requireFile("mechanisms/m013-value-based-fee-routing/schemas/m013_fee_config.schema.json");
 requireFile("mechanisms/m013-value-based-fee-routing/datasets/fixtures/v0_sample.json");
 
+// m014 core files
+requireFile("mechanisms/m014-authority-validator-governance/SPEC.md");
+requireFile("mechanisms/m014-authority-validator-governance/README.md");
+requireFile("mechanisms/m014-authority-validator-governance/schemas/m014_kpi.schema.json");
+requireFile("mechanisms/m014-authority-validator-governance/schemas/m014_performance.schema.json");
+requireFile("mechanisms/m014-authority-validator-governance/schemas/m014_validator.schema.json");
+requireFile("mechanisms/m014-authority-validator-governance/datasets/fixtures/v0_sample.json");
+requireFile("mechanisms/m014-authority-validator-governance/reference-impl/m014_kpi.js");
+requireFile("mechanisms/m014-authority-validator-governance/reference-impl/m014_score.js");
+
+// m015 core files
+requireFile("mechanisms/m015-contribution-weighted-rewards/SPEC.md");
+requireFile("mechanisms/m015-contribution-weighted-rewards/schemas/m015_kpi.schema.json");
+requireFile("mechanisms/m015-contribution-weighted-rewards/schemas/m015_activity_score.schema.json");
+requireFile("mechanisms/m015-contribution-weighted-rewards/schemas/m015_stability_commitment.schema.json");
+requireFile("mechanisms/m015-contribution-weighted-rewards/datasets/fixtures/v0_sample.json");
+requireFile("mechanisms/m015-contribution-weighted-rewards/reference-impl/m015_score.js");
+
 // Basic schema sanity — m010
 const kpiSchema = readJson("mechanisms/m010-reputation-signal/schemas/m010_kpi.schema.json");
 if (!kpiSchema.required || !kpiSchema.required.includes("mechanism_id")) {
   console.error("m010 KPI schema missing required fields.");
   process.exit(4);
+}
 // Schema sanity for all canonical schema artifacts.
 const allFiles = listFilesRecursive(repoRoot);
 const schemaFiles = allFiles
@@ -166,5 +185,25 @@ if (!m012KpiSchema.required || !m012KpiSchema.required.includes("mechanism_id"))
 
 // m012 self-test
 run("node", ["mechanisms/m012-fixed-cap-dynamic-supply/reference-impl/m012_supply.js"]);
+
+// Basic schema sanity — m014
+const m014KpiSchema = readJson("mechanisms/m014-authority-validator-governance/schemas/m014_kpi.schema.json");
+if (!m014KpiSchema.required || !m014KpiSchema.required.includes("mechanism_id")) {
+  console.error("m014 KPI schema missing required fields.");
+  process.exit(4);
+}
+
+// m014 self-test
+run("node", ["mechanisms/m014-authority-validator-governance/reference-impl/m014_score.js"]);
+
+// Basic schema sanity — m015
+const m015KpiSchema = readJson("mechanisms/m015-contribution-weighted-rewards/schemas/m015_kpi.schema.json");
+if (!m015KpiSchema.required || !m015KpiSchema.required.includes("mechanism_id")) {
+  console.error("m015 KPI schema missing required fields.");
+  process.exit(4);
+}
+
+// m015 self-test
+run("node", ["mechanisms/m015-contribution-weighted-rewards/reference-impl/m015_score.js"]);
 
 console.log("agentic-tokenomics verify: PASS");
