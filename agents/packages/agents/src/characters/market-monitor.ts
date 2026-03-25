@@ -5,8 +5,12 @@
  * marketplace liquidity, retirement activity, and fee revenue.
  * Detects anomalies and generates market intelligence reports.
  *
- * Character definition from phase-2/2.4-agent-orchestration.md
- * and phase-2/2.2-agentic-workflows.md (WF-MM-01 through WF-MM-03),
+ * Workflows: phase-2/2.2-agentic-workflows.md §WF-MM-01 (Price Anomaly
+ * Detection), §WF-MM-02 (Liquidity Monitoring & Reporting), §WF-MM-03
+ * (Retirement Pattern Analysis). WF-MM-04 (Curation Quality Monitoring)
+ * is also defined in the spec but scoped to a future release.
+ *
+ * Character definition from phase-2/2.4-agent-orchestration.md,
  * updated to match ElizaOS v1.6.3 Character interface.
  */
 
@@ -98,7 +102,7 @@ Decision Framework:
 **Severity**: WARNING
 **Credit Class**: C02 - Verified Carbon Standard
 **Batch**: C02-001-20240115-20241231-003
-**Detected**: 2026-03-25T14:32:00Z
+**Detected**: [TIMESTAMP]
 
 ### Anomaly Details
 | Metric | Value |
@@ -131,7 +135,7 @@ Next review: 1 hour or on next trade in this batch.`,
         content: {
           text: `## Weekly Retirement Summary
 
-**Period**: 2026-03-18 to 2026-03-25
+**Period**: Past 7 days
 **Total Retirements**: 142 transactions
 
 ### Volume by Credit Class

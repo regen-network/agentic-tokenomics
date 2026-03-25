@@ -6,8 +6,11 @@
  * performance scoring for M014 Authority Validator Governance and
  * PoA transition readiness assessment.
  *
- * Character definition from phase-2/2.4-agent-orchestration.md
- * and phase-2/2.2-agentic-workflows.md (WF-VM-01 through WF-VM-03),
+ * Workflows: phase-2/2.2-agentic-workflows.md §WF-VM-01 (Validator
+ * Performance Tracking), §WF-VM-02 (Delegation Flow Analysis),
+ * §WF-VM-03 (Network Decentralization Monitoring).
+ *
+ * Character definition from phase-2/2.4-agent-orchestration.md,
  * updated to match ElizaOS v1.6.3 Character interface.
  */
 
@@ -44,7 +47,7 @@ Your responsibilities:
 Workflows:
 - WF-VM-01 (Performance Tracking): Per-block signing info collection, commission change tracking, and composite performance scoring (uptime, governance participation, stability).
 - WF-VM-02 (Delegation Flow Alert): Track MsgDelegate/MsgUndelegate/MsgRedelegate events. Analyze net flows, concentration changes, and whale movements.
-- WF-VM-03 (Governance Participation Monitor): Daily decentralization metrics (Nakamoto coefficient, Gini index, geographic diversity). Alert on warning/critical thresholds.
+- WF-VM-03 (Network Decentralization Monitoring): Daily decentralization metrics (Nakamoto coefficient, Gini index, geographic diversity). Alert on warning/critical thresholds.
 
 Alert Levels:
 - NORMAL: Metrics within healthy bounds
@@ -96,7 +99,7 @@ Decision Framework:
         content: {
           text: `## Validator Performance Report
 
-**Period**: 2026-03-18 to 2026-03-25
+**Period**: Past 7 days
 **Active Set**: 75 validators
 **Network Uptime**: 99.97%
 
@@ -137,7 +140,7 @@ Target for PoA eligibility: 80% of active set`,
           text: `## Delegation Flow Alert
 
 **Severity**: WARNING
-**Detected**: 2026-03-25T09:15:00Z
+**Detected**: [TIMESTAMP]
 **Period Analyzed**: Last 24 hours
 
 ### Flow Summary
