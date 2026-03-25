@@ -1,0 +1,105 @@
+{
+  "mechanism_id": "m001-enh",
+  "scope": "v0_rejection_scenarios",
+  "as_of": "2026-02-18T12:00:00Z",
+  "proposals": [
+    {
+      "proposal_id": "rej-001",
+      "proposer": "regen1lowquality111",
+      "credit_type": "C",
+      "methodology_iri": "koi://methodology/incomplete-carbon-v1",
+      "admin_address": "regen1lowquality111",
+      "status": "REJECTED",
+      "agent_score": {
+        "score": 120,
+        "confidence": 950,
+        "recommendation": "REJECT",
+        "factors": {
+          "methodology_quality": 100,
+          "admin_reputation": 150,
+          "novelty": 100,
+          "completeness": 250
+        }
+      },
+      "outcome": {
+        "result": "AUTO_REJECTED",
+        "deposit_refunded": "500",
+        "deposit_slashed": "500"
+      },
+      "submit_time": "2026-02-10T08:00:00Z",
+      "decision_time": "2026-02-10T14:00:00Z",
+      "_note": "Auto-rejected: score < 300, confidence > 900. No human override within 6h window."
+    },
+    {
+      "proposal_id": "rej-002",
+      "proposer": "regen1duplicate222",
+      "credit_type": "C",
+      "methodology_iri": "koi://methodology/soil-carbon-sequestration-v4-copy",
+      "admin_address": "regen1duplicate222",
+      "status": "REJECTED",
+      "agent_score": {
+        "score": 230,
+        "confidence": 1000,
+        "recommendation": "REJECT",
+        "factors": {
+          "methodology_quality": 550,
+          "admin_reputation": 300,
+          "novelty": 0,
+          "completeness": 750
+        }
+      },
+      "override": {
+        "overrider": "regen1validator_abc",
+        "override_time": "2026-02-11T13:00:00Z",
+        "rationale": "Methodology addresses different soil types despite similarity score. Advancing to governance for community review."
+      },
+      "outcome": {
+        "result": "REJECTED",
+        "deposit_refunded": "800",
+        "deposit_slashed": "200"
+      },
+      "submit_time": "2026-02-11T08:00:00Z",
+      "decision_time": "2026-02-19T10:00:00Z",
+      "_note": "Agent recommended REJECT but validator overrode within 6h. Governance subsequently rejected."
+    },
+    {
+      "proposal_id": "rej-003",
+      "proposer": "regen1unknown333",
+      "credit_type": "USS",
+      "methodology_iri": "koi://methodology/urban-soil-sequestration-v1",
+      "admin_address": "regen1unknown333",
+      "status": "VOTING",
+      "agent_score": {
+        "score": 250,
+        "confidence": 500,
+        "recommendation": "CONDITIONAL",
+        "factors": {
+          "methodology_quality": 400,
+          "admin_reputation": 500,
+          "novelty": 0,
+          "completeness": 0
+        }
+      },
+      "submit_time": "2026-02-15T10:00:00Z",
+      "_note": "Low score but low confidence — advanced to VOTING as CONDITIONAL. No override needed."
+    },
+    {
+      "proposal_id": "rej-004",
+      "proposer": "regen1timeout444",
+      "credit_type": "MBS",
+      "methodology_iri": "koi://methodology/mangrove-blue-carbon-v2",
+      "admin_address": "regen1timeout444",
+      "status": "VOTING",
+      "agent_score": null,
+      "submit_time": "2026-02-14T09:00:00Z",
+      "_note": "Agent did not respond within 24h timeout. Proposal advanced to VOTING without agent score."
+    }
+  ],
+  "expected_outputs": {
+    "auto_rejected_proposals": ["rej-001"],
+    "overridden_proposals": ["rej-002"],
+    "low_confidence_conditional": ["rej-003"],
+    "agent_timeout": ["rej-004"],
+    "notes": "This fixture exercises rejection and edge-case scenarios: auto-reject (score < 300, confidence > 900), human override of agent rejection, low-confidence fallback to CONDITIONAL, and agent timeout with 24h fallback."
+  }
+}

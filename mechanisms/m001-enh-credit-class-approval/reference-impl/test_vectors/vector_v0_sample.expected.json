@@ -1,0 +1,82 @@
+{
+  "scores": [
+    {
+      "proposal_id": "prop-001",
+      "score": 776,
+      "confidence": 1000,
+      "recommendation": "APPROVE",
+      "factors": {
+        "methodology_quality": 850,
+        "admin_reputation": 720,
+        "novelty": 600,
+        "completeness": 1000
+      }
+    },
+    {
+      "proposal_id": "prop-002",
+      "score": 665,
+      "confidence": 500,
+      "recommendation": "CONDITIONAL",
+      "factors": {
+        "methodology_quality": 700,
+        "admin_reputation": 500,
+        "novelty": 800,
+        "completeness": 750
+      }
+    },
+    {
+      "proposal_id": "prop-003",
+      "score": 280,
+      "confidence": 500,
+      "recommendation": "CONDITIONAL",
+      "factors": {
+        "methodology_quality": 200,
+        "admin_reputation": 500,
+        "novelty": 0,
+        "completeness": 500
+      }
+    },
+    {
+      "proposal_id": "prop-004",
+      "score": 690,
+      "confidence": 1000,
+      "recommendation": "CONDITIONAL",
+      "factors": {
+        "methodology_quality": 600,
+        "admin_reputation": 650,
+        "novelty": 900,
+        "completeness": 750
+      }
+    },
+    {
+      "proposal_id": "prop-005",
+      "score": 155,
+      "confidence": 750,
+      "recommendation": "CONDITIONAL",
+      "factors": {
+        "methodology_quality": 100,
+        "admin_reputation": 200,
+        "novelty": 150,
+        "completeness": 250
+      }
+    }
+  ],
+  "kpi": {
+    "mechanism_id": "m001-enh",
+    "scope": "v0_advisory",
+    "as_of": "2026-02-18T12:00:00Z",
+    "proposals_submitted": 5,
+    "proposals_approved": 2,
+    "proposals_rejected": 2,
+    "proposals_expired": 1,
+    "approval_rate": 0.4,
+    "agent_scoring": {
+      "proposals_scored": 5,
+      "agent_accuracy": 0.6,
+      "avg_score": 513.2,
+      "auto_reject_count": 1,
+      "override_count": 1
+    },
+    "avg_time_to_decision_hours": 192.0
+  }
+}
