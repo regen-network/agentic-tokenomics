@@ -44,7 +44,7 @@ Every dollar of credit market activity creates two compounding effects:
 This is not a speculative supply game. It is real revenue from real ecological activity purchasing and removing REGEN from circulation. The mechanism is identical to Binance's BNB burn program, which is among the most credible token value accrual mechanisms in crypto.
 
 **For contributors and regenerators:**
-The remaining 60-70% of fees (distributed to validators, community pool, agent infrastructure) continues to fund active contributors. Nothing is taken from contributor rewards — the burn share is additive deflationary pressure on top of the existing distribution.
+The remaining 72% of fees (25% validators, 45% community pool, 2% agent infrastructure) continues to fund active contributors. Nothing is taken from contributor rewards — the burn share is additive deflationary pressure on top of the existing distribution.
 
 **The unified narrative:**
 
@@ -59,16 +59,17 @@ Regeneration and token appreciation are the same transaction.
 ```
 Transaction fee collected (USDC)
     │
-    ├── 35% → Burn Pool
-    │         └── auto-convert to REGEN via Osmosis
+    ├── 28% → Burn Pool
+    │         └── auto-convert to REGEN via Osmosis (primary)
     │               └── burn permanently (x/bank SendCoins to null address)
+    │         └── fallback: on-chain burn auction (see Implementation Notes)
     │
-    ├── 35% → Validator Fund (USDC or REGEN, validator's choice)
+    ├── 25% → Validator Fund (USDC or REGEN, validator's choice)
     │
-    ├── 25% → Community Pool → M015 activity rewards
+    ├── 45% → Community Pool → M015 activity rewards
     │         └── distributed in REGEN (converted at claim time)
     │
-    └── 5%  → Agent Infrastructure Fund (governance-directed; open to any qualifying AI agent infrastructure provider)
+    └── 2%  → Agent Infrastructure Fund (governance-directed; open to any qualifying AI agent infrastructure provider)
 ```
 
 **On distribution denomination (OQ-M013-3, distribution side):**
@@ -83,16 +84,16 @@ Transaction fee collected (USDC)
 
 At current REGEN price (~$0.0013) and realistic near-term volumes:
 
-| Weekly Credit Volume | Fees Collected | Burn Pool (35%) | REGEN Bought & Burned |
+| Weekly Credit Volume | Fees Collected | Burn Pool (28%) | REGEN Bought & Burned |
 |---|---|---|---|
-| $1,000 | $5–$30 | $1.75–$10.50 | ~1,350–8,100 REGEN |
-| $10,000 | $50–$300 | $17.50–$105 | ~13,500–81,000 REGEN |
-| $100,000 | $500–$3,000 | $175–$1,050 | ~135,000–808,000 REGEN |
-| $1,000,000 | $5,000–$30,000 | $1,750–$10,500 | ~1.35M–8.1M REGEN |
+| $1,000 | $5–$30 | $1.40–$8.40 | ~1,077–6,462 REGEN |
+| $10,000 | $50–$300 | $14–$84 | ~10,769–64,615 REGEN |
+| $100,000 | $500–$3,000 | $140–$840 | ~107,692–646,154 REGEN |
+| $1,000,000 | $5,000–$30,000 | $1,400–$8,400 | ~1.08M–6.46M REGEN |
 
 *Fee range reflects 0.5% (retirement) to 3% (issuance). Burn assumes full conversion via Osmosis.*
 
-At $10K/week in credit volume — a realistic near-term target for Regen Compute — the network burns roughly **700K–4.2M REGEN/year** (~0.2–1.3% of the 321M hard cap). Modest today, meaningful at scale, and directionally correct from day one.
+At $10K/week in credit volume — a realistic near-term target — the network burns roughly **560K–3.36M REGEN/year** (~0.17–1.05% of the 321M hard cap). Modest today, meaningful at scale, and directionally correct from day one.
 
 ---
 
@@ -157,7 +158,7 @@ Buy-and-burn is the most credible mechanism for aligning speculative interest wi
 |---|---|
 | OQ-M013-3 (collection) | Hybrid: collect in native denom (USDC), auto-convert burn share to REGEN via Osmosis |
 | OQ-M013-3 (distribution) | Burn Pool: REGEN only. Validators: choice. Community Pool: REGEN with 5% bonus option. Agent Infra: USDC, governance-directed |
-| OQ-M013-5 (burn share) | Option A — maintain burn at 30-40%, implemented as buy-and-burn |
+| OQ-M013-5 (burn share) | 28% burn, implemented as buy-and-burn — aligns with upstream OQ-M013-1 resolution |
 | OQ-M012-1 (hard cap) | 321M — headroom above current ~229M total supply to complete staking reward transition, then permanent ceiling |
 
 ---
