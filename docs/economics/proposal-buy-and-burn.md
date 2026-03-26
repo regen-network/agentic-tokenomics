@@ -110,7 +110,7 @@ At current REGEN price (~$0.0013) and realistic near-term volumes:
 
 *Fee range reflects 0.5% (retirement) to 3% (issuance). Burn assumes full conversion via Osmosis.*
 
-At $100K/week in credit volume — a realistic 12-month target with Regen Compute growth — the network burns roughly **0.3–0.4% of total supply per year**. Modest today, meaningful at scale, and directionally correct from day one.
+At $10K/week in credit volume — a realistic near-term target for Regen Compute — the network burns roughly **0.3–1.9% of total supply per year** (~700K–4.2M REGEN). Modest today, meaningful at scale, and directionally correct from day one.
 
 ---
 
