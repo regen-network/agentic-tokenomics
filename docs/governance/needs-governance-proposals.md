@@ -3,13 +3,13 @@
 **Status:** Draft for WG Review
 **Date:** 2026-03-25
 **Author:** Tokenomics Working Group (AGENT-assisted drafting)
-**Scope:** 9 NEEDS_GOVERNANCE items from [Open Questions Resolution](./open-questions-resolution.md), packaged into 3 governance proposals
+**Scope:** 7 NEEDS_GOVERNANCE items from [Open Questions Resolution](./open-questions-resolution.md), packaged into 3 governance proposals
 
 ---
 
 ## Overview
 
-The [Open Questions Resolution](./open-questions-resolution.md) triaged 31 open questions from Phase 2 module specifications. Twenty-two were resolved directly; nine require formal governance votes. This document packages those nine items into three governance proposals, each containing copy-paste-ready text, parameter tables, risk assessments, and voting guidance.
+The [Open Questions Resolution](./open-questions-resolution.md) triaged 33 open questions from Phase 2 module specifications. Twenty-six were resolved directly; seven require formal governance votes. This document packages those seven items into three governance proposals, each containing copy-paste-ready text, parameter tables, risk assessments, and voting guidance.
 
 These proposals are **complementary** to the mechanism activation proposals in [Economic Reboot Proposals](./economic-reboot-proposals.md) (Proposals 1-5). The Economic Reboot Proposals activate M012-M015 on-chain. These proposals resolve the parameter ambiguities that the activation proposals depend on. They should be deliberated and voted on **before** the corresponding activation proposals are submitted.
 
@@ -477,7 +477,7 @@ For implementers preparing on-chain submissions, the following JSON templates en
 
 **Total OQs resolved:** 7 distinct OQs across 3 proposals (OQ-M013-1 and OQ-M013-5 are resolved jointly in Proposal A)
 
-**Total NEEDS_GOVERNANCE items addressed:** 9 of 9
+**Total NEEDS_GOVERNANCE items addressed:** 7 of 7
 
 | OQ ID | Question | Resolved In |
 |-------|----------|-------------|
@@ -489,10 +489,9 @@ For implementers preparing on-chain submissions, the following JSON templates en
 | OQ-GOV-POA-1 | Per-process governance weights | Proposal B |
 | OQ-M015-3 | Community Pool auto/governance split | Proposal C |
 
-> **Note on OQ-M014-3 and OQ-GOV-POA-1:** These were listed as 2 of the 9 NEEDS_GOVERNANCE items. The remaining 2 items from the count of 9 are OQ-M013-1 and OQ-M013-5, which are closely interrelated and resolved together in Proposal A. The total count reconciles: 4 (Proposal A) + 2 (Proposal B) + 1 (Proposal C) = 7 unique OQ IDs resolving 9 NEEDS_GOVERNANCE designations (since OQ-M013-1 and OQ-M013-5 each carry independent NEEDS_GOVERNANCE status but are resolved jointly).
 
 ---
 
-*This document provides governance-ready proposal drafts for the 9 NEEDS_GOVERNANCE open questions identified during the Phase 2 comprehensive review. All recommendations represent the Tokenomics Working Group's best current analysis and should be refined through community deliberation before on-chain submission.*
+*This document provides governance-ready proposal drafts for the 7 NEEDS_GOVERNANCE open questions identified during the Phase 2 comprehensive review. All recommendations represent the Tokenomics Working Group's best current analysis and should be refined through community deliberation before on-chain submission.*
 
 *Prepared for the Regen Network Tokenomics Working Group, March 2026.*
