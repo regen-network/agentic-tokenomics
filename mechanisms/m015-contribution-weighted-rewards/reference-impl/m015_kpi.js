@@ -169,8 +169,13 @@ function selfTest() {
     console.log(`  revenue_ok:          ${kpi.revenue_constraint_satisfied}`);
     console.log(`  stability_cap_ok:    ${kpi.stability_cap_satisfied}`);
 
-    // Validate against expected values
+    // Validate KPI outputs against expected values
     let vectorFailed = false;
+
+    if (kpi.total_distributed_uregen !== expected.total_distributed_uregen) {
+      console.error(`  FAIL: total_distributed expected ${expected.total_distributed_uregen}, got ${kpi.total_distributed_uregen}`);
+      vectorFailed = true;
+    }
 
     if (kpi.stability_allocation_uregen !== expected.stability_allocation_uregen) {
       console.error(`  FAIL: stability_allocation expected ${expected.stability_allocation_uregen}, got ${kpi.stability_allocation_uregen}`);
@@ -182,23 +187,24 @@ function selfTest() {
       vectorFailed = true;
     }
 
-    // Check that distribution rewards match
-    const scoredParticipants = input.participants.map((p) => {
-      const result = computeActivityScore({ activities: p.activities });
-      return { address: p.address, ...result };
-    });
+    if (kpi.stability_utilization !== expected.stability_utilization) {
+      console.error(`  FAIL: stability_utilization expected ${expected.stability_utilization}, got ${kpi.stability_utilization}`);
+      vectorFailed = true;
+    }
 
-    for (const exp of expected.participant_scores) {
-      const actual = scoredParticipants.find((p) => p.address === exp.address);
-      if (!actual) {
-        console.error(`  FAIL: participant ${exp.address} not found`);
-        vectorFailed = true;
-        continue;
-      }
-      if (Math.abs(actual.total_score - exp.total_score) > 0.001) {
-        console.error(`  FAIL: ${exp.address} score expected ${exp.total_score}, got ${actual.total_score}`);
-        vectorFailed = true;
-      }
+    if (kpi.participant_count !== expected.participant_count) {
+      console.error(`  FAIL: participant_count expected ${expected.participant_count}, got ${kpi.participant_count}`);
+      vectorFailed = true;
+    }
+
+    if (Math.abs(kpi.gini_coefficient - expected.gini_coefficient) > 0.000001) {
+      console.error(`  FAIL: gini_coefficient expected ${expected.gini_coefficient}, got ${kpi.gini_coefficient}`);
+      vectorFailed = true;
+    }
+
+    if (Math.abs(kpi.top_earner_share - expected.top_earner_share) > 0.000001) {
+      console.error(`  FAIL: top_earner_share expected ${expected.top_earner_share}, got ${kpi.top_earner_share}`);
+      vectorFailed = true;
     }
 
     // Security invariants
