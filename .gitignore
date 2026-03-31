@@ -1,6 +1,7 @@
 *.zip
 .DS_Store
 node_modules/
+target/
 
 # Local-only context (LLM analyses, workspace archives, private notes)
 .local/
