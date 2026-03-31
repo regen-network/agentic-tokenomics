@@ -127,7 +127,7 @@ P7: Agent Dynamics -> validator churn, stability adoption, price update
 simulations/cadcad/
   model/
     __init__.py           # Package docstring
-    state_variables.py    # Initial state vector (37 variables)
+    state_variables.py    # Initial state vector (44 variables)
     params.py             # Parameters, sweep configs, stress test configs
     policies.py           # 7 policy functions (P1-P7)
     state_updates.py      # State update functions
@@ -159,7 +159,7 @@ The simulation validates these criteria from the spec:
 
 From the equilibrium analysis (`equilibrium_analysis.md`):
 
-1. **Equilibrium supply**: ~219.85M REGEN (about 1.15M below cap), reached in ~2.4 years
+1. **Equilibrium supply**: ~219.85M REGEN (about 1.15M below cap), within 0.1% in ~3.1 years
 2. **Validator sustainability gap**: At $500K/week baseline volume, validator income is ~$5,778/yr — well below $15,000. Minimum viable volume is ~$1.3M/week.
 3. **Bootstrap requirement**: A ~$250K declining subsidy over 3 years bridges the gap until volume grows.
 4. **Stability tier capacity**: At baseline volume, supports 6.5M REGEN (2.94% of supply).

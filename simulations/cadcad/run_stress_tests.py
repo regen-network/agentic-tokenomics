@@ -2,8 +2,9 @@
 """
 Run stress test scenarios (SC-001 through SC-008) for the Regen M012-M015 model.
 
-Each scenario modifies the simulation mid-run to test resilience against
-adversarial or failure conditions.
+Each scenario injects schedule-based parameter perturbations into the cadCAD
+policy functions so that the simulation engine (Executor) drives the loop
+exactly as it does for baseline, sweep, and Monte Carlo runs.
 
 Usage:
     python run_stress_tests.py [--scenario SC-NNN] [--all] [--epochs EPOCHS]
@@ -19,19 +20,36 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from model.config import build_config, partial_state_update_blocks
+from model.config import partial_state_update_blocks
 from model.state_variables import initial_state
 from model.params import baseline_params, stress_test_params
+from model.policies import (
+    p_credit_market, p_fee_collection, p_fee_distribution,
+    p_mint_burn, p_validator_compensation, p_contribution_rewards,
+    p_agent_dynamics,
+)
+from model.state_updates import (
+    s_supply, s_minted, s_burned, s_cumulative_minted, s_cumulative_burned,
+    s_r_effective, s_supply_state, s_periods_near_equilibrium,
+    s_total_fees_collected, s_total_fees_usd, s_burn_pool, s_validator_fund,
+    s_community_pool, s_agent_infra, s_cumulative_fees,
+    s_active_validators, s_validator_income_period, s_validator_income_annual,
+    s_validator_income_usd,
+    s_stability_committed, s_stability_allocation, s_activity_pool,
+    s_total_activity_score, s_stability_utilization, s_reward_per_unit_activity,
+    s_credit_volume_weekly, s_regen_price, s_ecological_multiplier,
+    s_issuance_count, s_trade_count, s_retirement_count, s_transfer_count,
+    s_issuance_value, s_trade_value, s_retirement_value, s_transfer_value,
+    s_total_volume,
+)
 
 from cadCAD.configuration import Experiment
 from cadCAD.configuration.utils import config_sim
+from cadCAD.engine import ExecutionMode, ExecutionContext, Executor
 
 
 # ---------------------------------------------------------------------------
-# Scenario-specific state variable overrides applied during simulation.
-# We implement these by running the simulation in segments, modifying state
-# between segments. An alternative is to embed schedule logic in policies.
-# For clarity, we use the segment approach.
+# Schedule helpers
 # ---------------------------------------------------------------------------
 
 def _get_volume_for_epoch(schedule, epoch, baseline_vol=500_000):
@@ -42,10 +60,8 @@ def _get_volume_for_epoch(schedule, epoch, baseline_vol=500_000):
     for start, end, spec in schedule:
         if start <= epoch <= end:
             if spec == 'linear_recovery':
-                # Find the previous segment's value and the next
-                prev_val = baseline_vol * 0.1  # default
+                prev_val = baseline_vol * 0.1
                 next_val = baseline_vol * 0.5
-                # Look up neighbors
                 for s, e, v in schedule:
                     if e == start - 1 and isinstance(v, (int, float)):
                         prev_val = v
@@ -81,16 +97,214 @@ def _get_schedule_value(schedule, epoch, default):
     return default
 
 
+# ---------------------------------------------------------------------------
+# Stress-aware composite policy functions
+#
+# These mirror the three composite policies in model/config.py but inject
+# schedule-based perturbations before delegating to the standard policies.
+# This keeps all stress logic in the policy layer while letting cadCAD's
+# Executor drive the simulation loop.
+# ---------------------------------------------------------------------------
+
+def _stress_market_and_fees(params, substep, state_history, prev_state):
+    """PSUB-1 policy with stress schedule injection."""
+    timestep = prev_state.get('timestep', 0)
+
+    # --- Apply stress conditions to a mutable state copy ---
+    state = dict(prev_state)
+
+    # Volume schedule: scale agent counts to approximate target volume
+    vol_schedule = params.get('_volume_schedule')
+    if vol_schedule is not None:
+        target_vol = _get_volume_for_epoch(
+            vol_schedule, timestep, baseline_params['initial_weekly_volume_usd']
+        )
+        vol_ratio = target_vol / max(baseline_params['initial_weekly_volume_usd'], 1)
+        state['num_buyers'] = max(5, int(initial_state['num_buyers'] * vol_ratio))
+        state['num_issuers'] = max(3, int(initial_state['num_issuers'] * vol_ratio))
+        state['num_retirees'] = max(3, int(initial_state['num_retirees'] * vol_ratio))
+
+    # Wash trader schedule
+    wt_schedule = params.get('_wash_trader_schedule')
+    if wt_schedule is not None:
+        state['num_wash_traders'] = int(
+            _get_schedule_value(wt_schedule, timestep, 0)
+        )
+
+    # Ecological multiplier schedule
+    eco_schedule = params.get('_eco_mult_schedule')
+    if eco_schedule is not None:
+        state['ecological_multiplier'] = _get_schedule_value(
+            eco_schedule, timestep, 1.0
+        )
+
+    # Price crash (instantaneous)
+    crash_epoch = params.get('_price_crash_epoch')
+    if crash_epoch is not None and timestep == crash_epoch:
+        state['regen_price_usd'] = (
+            prev_state['regen_price_usd'] * params.get('_price_crash_factor', 1.0)
+        )
+
+    # Stability bank run (instantaneous)
+    bankrun_epoch = params.get('_bank_run_epoch')
+    if bankrun_epoch is not None and timestep == bankrun_epoch:
+        exit_frac = params.get('_bank_run_exit_fraction', 0.0)
+        state['stability_committed'] = (
+            prev_state['stability_committed'] * (1.0 - exit_frac)
+        )
+
+    # Churn schedule: mutate params copy
+    churn_schedule = params.get('_churn_schedule')
+    if churn_schedule is not None:
+        effective_params = dict(params)
+        effective_params['base_validator_churn'] = _get_schedule_value(
+            churn_schedule, timestep, params['base_validator_churn']
+        )
+    else:
+        effective_params = params
+
+    # Delegate to standard policies
+    market = p_credit_market(effective_params, substep, state_history, state)
+    fees = p_fee_collection(effective_params, substep, state_history, state, market)
+    dist = p_fee_distribution(effective_params, substep, state_history, state, fees)
+
+    result = {}
+    result.update(market)
+    result.update(fees)
+    result.update(dist)
+    return result
+
+
+def _stress_supply_and_compensation(params, substep, state_history, prev_state):
+    """PSUB-2 policy with stress-aware parameter lookup."""
+    timestep = prev_state.get('timestep', 0)
+
+    # Apply churn schedule to params for validator compensation
+    churn_schedule = params.get('_churn_schedule')
+    if churn_schedule is not None:
+        effective_params = dict(params)
+        effective_params['base_validator_churn'] = _get_schedule_value(
+            churn_schedule, timestep, params['base_validator_churn']
+        )
+    else:
+        effective_params = params
+
+    pool_input = {
+        'burn_allocation': prev_state['burn_pool_balance'],
+        'validator_allocation': prev_state['validator_fund_balance'],
+        'community_allocation': prev_state['community_pool_balance'],
+        'issuance_value_usd': prev_state.get('issuance_value_usd', 0),
+        'retirement_value_usd': prev_state.get('retirement_value_usd', 0),
+        'trade_value_usd': prev_state.get('trade_value_usd', 0),
+    }
+
+    mint_burn = p_mint_burn(effective_params, substep, state_history, prev_state, pool_input)
+    val_comp = p_validator_compensation(effective_params, substep, state_history, prev_state, pool_input)
+    rewards = p_contribution_rewards(effective_params, substep, state_history, prev_state, pool_input)
+
+    result = {}
+    result.update(mint_burn)
+    result.update(val_comp)
+    result.update(rewards)
+    return result
+
+
+def _stress_agent_dynamics(params, substep, state_history, prev_state):
+    """PSUB-3 policy with stress-aware parameter lookup."""
+    timestep = prev_state.get('timestep', 0)
+
+    churn_schedule = params.get('_churn_schedule')
+    if churn_schedule is not None:
+        effective_params = dict(params)
+        effective_params['base_validator_churn'] = _get_schedule_value(
+            churn_schedule, timestep, params['base_validator_churn']
+        )
+    else:
+        effective_params = params
+
+    agent_input = {
+        'validator_income_usd': prev_state.get('validator_income_usd', 0),
+    }
+    return p_agent_dynamics(effective_params, substep, state_history, prev_state, agent_input)
+
+
+# ---------------------------------------------------------------------------
+# Stress-test PSUBs — identical state update wiring, stress-aware policies
+# ---------------------------------------------------------------------------
+
+stress_partial_state_update_blocks = [
+    {
+        'policies': {
+            'market_and_fees': _stress_market_and_fees,
+        },
+        'variables': {
+            'total_fees_collected': s_total_fees_collected,
+            'total_fees_usd': s_total_fees_usd,
+            'burn_pool_balance': s_burn_pool,
+            'validator_fund_balance': s_validator_fund,
+            'community_pool_balance': s_community_pool,
+            'agent_infra_balance': s_agent_infra,
+            'cumulative_fees': s_cumulative_fees,
+            'issuance_count': s_issuance_count,
+            'trade_count': s_trade_count,
+            'retirement_count': s_retirement_count,
+            'transfer_count': s_transfer_count,
+            'issuance_value_usd': s_issuance_value,
+            'trade_value_usd': s_trade_value,
+            'retirement_value_usd': s_retirement_value,
+            'transfer_value_usd': s_transfer_value,
+            'total_volume_usd': s_total_volume,
+            'credit_volume_weekly_usd': s_credit_volume_weekly,
+        },
+    },
+    {
+        'policies': {
+            'supply_and_compensation': _stress_supply_and_compensation,
+        },
+        'variables': {
+            'S': s_supply,
+            'M_t': s_minted,
+            'B_t': s_burned,
+            'cumulative_minted': s_cumulative_minted,
+            'cumulative_burned': s_cumulative_burned,
+            'r_effective': s_r_effective,
+            'supply_state': s_supply_state,
+            'periods_near_equilibrium': s_periods_near_equilibrium,
+            'validator_income_period': s_validator_income_period,
+            'validator_income_annual': s_validator_income_annual,
+            'validator_income_usd': s_validator_income_usd,
+            'stability_allocation': s_stability_allocation,
+            'activity_pool': s_activity_pool,
+            'total_activity_score': s_total_activity_score,
+            'stability_utilization': s_stability_utilization,
+            'reward_per_unit_activity': s_reward_per_unit_activity,
+        },
+    },
+    {
+        'policies': {
+            'agent_dynamics': _stress_agent_dynamics,
+        },
+        'variables': {
+            'active_validators': s_active_validators,
+            'stability_committed': s_stability_committed,
+            'regen_price_usd': s_regen_price,
+            'ecological_multiplier': s_ecological_multiplier,
+        },
+    },
+]
+
+
+# ---------------------------------------------------------------------------
+# Simulation runner using cadCAD Executor
+# ---------------------------------------------------------------------------
+
 def run_stress_scenario(scenario_id, T=260, seed=42):
     """
-    Run a single stress test scenario.
+    Run a single stress test scenario using cadCAD's Executor.
 
-    Instead of modifying cadCAD mid-run (which is complex), we run the full
-    simulation with baseline parameters but hook into the policy functions
-    via modified parameters that encode the schedule.
-
-    For simplicity, we run the simulation epoch by epoch, injecting state
-    overrides at schedule boundaries.
+    Schedule-based perturbations (volume shocks, churn spikes, price crashes,
+    etc.) are embedded in the params dict and interpreted by the stress-aware
+    composite policies above.  The cadCAD engine runs the full loop.
     """
     scenario = stress_test_params[scenario_id]
     np.random.seed(seed)
@@ -98,15 +312,10 @@ def run_stress_scenario(scenario_id, T=260, seed=42):
     print(f"\n  Scenario: {scenario['name']}")
     print(f"  Description: {scenario['description']}")
 
-    # We run the full simulation with a wrapper that modifies state per-epoch.
-    # To keep it simple with cadCAD, we run a standard simulation and post-process.
-    # The stress effects are modeled by adjusting the initial conditions in params.
-
-    # Build full params with schedule-aware overrides
+    # Build params with schedule metadata
     sim_params = copy.deepcopy(baseline_params)
     sim_params.update(scenario.get('overrides', {}))
 
-    # For stress tests with volume schedules, we embed the schedule in params
     sim_params['_stress_scenario'] = scenario_id
     sim_params['_volume_schedule'] = scenario.get('volume_schedule', None)
     sim_params['_churn_schedule'] = scenario.get('churn_schedule', None)
@@ -117,153 +326,37 @@ def run_stress_scenario(scenario_id, T=260, seed=42):
     sim_params['_bank_run_epoch'] = scenario.get('stability_bank_run_epoch', None)
     sim_params['_bank_run_exit_fraction'] = scenario.get('bank_run_exit_fraction', None)
 
-    # Run epoch-by-epoch simulation with stress injection
-    state = copy.deepcopy(initial_state)
-    state['timestep'] = 0
-    records = [copy.deepcopy(state)]
+    # Build cadCAD configuration with stress-aware PSUBs
+    sim_state = copy.deepcopy(initial_state)
 
-    for epoch in range(1, T + 1):
-        state['timestep'] = epoch
+    sim_config = config_sim({
+        'T': range(T),
+        'N': 1,
+        'M': sim_params,
+    })
 
-        # --- Inject stress conditions ---
+    exp = Experiment()
+    exp.append_configs(
+        initial_state=sim_state,
+        partial_state_update_blocks=stress_partial_state_update_blocks,
+        sim_configs=sim_config,
+    )
 
-        # Volume schedule
-        if sim_params['_volume_schedule'] is not None:
-            target_vol = _get_volume_for_epoch(
-                sim_params['_volume_schedule'], epoch,
-                baseline_params['initial_weekly_volume_usd']
-            )
-            # Scale agent counts to approximate target volume
-            vol_ratio = target_vol / max(baseline_params['initial_weekly_volume_usd'], 1)
-            state['num_buyers'] = max(5, int(initial_state['num_buyers'] * vol_ratio))
-            state['num_issuers'] = max(3, int(initial_state['num_issuers'] * vol_ratio))
-            state['num_retirees'] = max(3, int(initial_state['num_retirees'] * vol_ratio))
+    # Execute via cadCAD engine
+    exec_context = ExecutionContext(context=ExecutionMode().local_mode)
+    simulation = Executor(exec_context=exec_context, configs=exp.configs)
+    raw_system_events, _, _ = simulation.execute()
 
-        # Churn schedule
-        if sim_params['_churn_schedule'] is not None:
-            churn = _get_schedule_value(sim_params['_churn_schedule'], epoch,
-                                        baseline_params['base_validator_churn'])
-            sim_params['base_validator_churn'] = churn
+    df = pd.DataFrame(raw_system_events)
 
-        # Wash trader schedule
-        if sim_params['_wash_trader_schedule'] is not None:
-            wt = _get_schedule_value(sim_params['_wash_trader_schedule'], epoch, 0)
-            state['num_wash_traders'] = int(wt)
+    # Keep only the final substep per timestep
+    if 'substep' in df.columns:
+        df = df.groupby(['run', 'timestep']).last().reset_index()
+    elif len(df) > 0:
+        counts = df.groupby('timestep').size()
+        if counts.max() > 1:
+            df = df.groupby('timestep').last().reset_index()
 
-        # Ecological multiplier schedule
-        if sim_params['_eco_mult_schedule'] is not None:
-            em = _get_schedule_value(sim_params['_eco_mult_schedule'], epoch, 1.0)
-            state['ecological_multiplier'] = em
-
-        # Price crash
-        if (sim_params['_price_crash_epoch'] is not None and
-                epoch == sim_params['_price_crash_epoch']):
-            state['regen_price_usd'] *= sim_params['_price_crash_factor']
-
-        # Stability bank run
-        if (sim_params['_bank_run_epoch'] is not None and
-                epoch == sim_params['_bank_run_epoch']):
-            exit_frac = sim_params['_bank_run_exit_fraction']
-            state['stability_committed'] *= (1.0 - exit_frac)
-
-        # --- Run one epoch ---
-        # We simulate one step by running a cadCAD config of T=1
-        # This is equivalent to stepping the model forward once.
-        from model.policies import (
-            p_credit_market, p_fee_collection, p_fee_distribution,
-            p_mint_burn, p_validator_compensation, p_contribution_rewards,
-            p_agent_dynamics,
-        )
-
-        # P1: Credit market
-        market = p_credit_market(sim_params, 0, [], state)
-
-        # P2: Fee collection
-        fees = p_fee_collection(sim_params, 0, [], state, market)
-
-        # P3: Fee distribution
-        dist = p_fee_distribution(sim_params, 0, [], state, fees)
-
-        # Update pool state
-        state['burn_pool_balance'] = dist['burn_allocation']
-        state['validator_fund_balance'] = dist['validator_allocation']
-        state['community_pool_balance'] = dist['community_allocation']
-        state['agent_infra_balance'] = dist['agent_allocation']
-        state['total_fees_collected'] = fees['total_fees_regen']
-        state['total_fees_usd'] = fees['total_fees_usd']
-        state['cumulative_fees'] += fees['total_fees_regen']
-
-        # Store transaction data
-        state['issuance_count'] = market['issuance_count']
-        state['trade_count'] = market['trade_count']
-        state['retirement_count'] = market['retirement_count']
-        state['transfer_count'] = market['transfer_count']
-        state['issuance_value_usd'] = market['issuance_value_usd']
-        state['trade_value_usd'] = market['trade_value_usd']
-        state['retirement_value_usd'] = market['retirement_value_usd']
-        state['transfer_value_usd'] = market['transfer_value_usd']
-        state['total_volume_usd'] = market['total_volume_usd']
-        state['credit_volume_weekly_usd'] = market['total_volume_usd']
-
-        # P4: Mint/burn
-        pool_input = {
-            'burn_allocation': dist['burn_allocation'],
-            'validator_allocation': dist['validator_allocation'],
-            'community_allocation': dist['community_allocation'],
-            'issuance_value_usd': market['issuance_value_usd'],
-            'retirement_value_usd': market['retirement_value_usd'],
-            'trade_value_usd': market['trade_value_usd'],
-        }
-        mint_burn = p_mint_burn(sim_params, 0, [], state, pool_input)
-        state['S'] = mint_burn['new_S']
-        state['M_t'] = mint_burn['M_t']
-        state['B_t'] = mint_burn['B_t']
-        state['cumulative_minted'] += mint_burn['M_t']
-        state['cumulative_burned'] += mint_burn['B_t']
-        state['r_effective'] = mint_burn['r_effective']
-
-        # Supply state machine
-        threshold = sim_params['equilibrium_threshold']
-        req_periods = sim_params['equilibrium_periods']
-        S = state['S']
-        if S > 0 and abs(state['M_t'] - state['B_t']) < threshold * S:
-            state['periods_near_equilibrium'] += 1
-        else:
-            state['periods_near_equilibrium'] = 0
-
-        if state['supply_state'] == 'TRANSITION' and state['B_t'] > 0:
-            state['supply_state'] = 'DYNAMIC'
-        elif state['supply_state'] == 'DYNAMIC' and state['periods_near_equilibrium'] >= req_periods:
-            state['supply_state'] = 'EQUILIBRIUM'
-        elif state['supply_state'] == 'EQUILIBRIUM':
-            if S > 0 and abs(state['M_t'] - state['B_t']) >= threshold * S:
-                state['supply_state'] = 'DYNAMIC'
-                state['periods_near_equilibrium'] = 0
-
-        # P5: Validator compensation
-        val_comp = p_validator_compensation(sim_params, 0, [], state, pool_input)
-        state['validator_income_period'] = val_comp['validator_income_period']
-        state['validator_income_annual'] = val_comp['validator_income_annual']
-        state['validator_income_usd'] = val_comp['validator_income_usd']
-
-        # P6: Contribution rewards
-        rewards = p_contribution_rewards(sim_params, 0, [], state, pool_input)
-        state['stability_allocation'] = rewards['stability_allocation']
-        state['activity_pool'] = rewards['activity_pool']
-        state['total_activity_score'] = rewards['total_activity_score']
-        state['reward_per_unit_activity'] = rewards['reward_per_unit_activity']
-        state['stability_utilization'] = rewards['stability_utilization']
-
-        # P7: Agent dynamics
-        agent_input = {'validator_income_usd': val_comp['validator_income_usd']}
-        agent = p_agent_dynamics(sim_params, 0, [], state, agent_input)
-        state['active_validators'] = agent['new_active_validators']
-        state['stability_committed'] = agent['new_stability_committed']
-        state['regen_price_usd'] = agent['new_regen_price_usd']
-
-        records.append(copy.deepcopy(state))
-
-    df = pd.DataFrame(records)
     return df
 
 
@@ -335,8 +428,6 @@ def evaluate_scenario(scenario_id, df):
 
     elif scenario_id == 'SC-003':
         # Wash trading should be unprofitable
-        # Wash traders pay fees but get proportional reward
-        # If total wash value exists, check fee > reward
         crisis = df[df['timestep'] >= 13]
         if len(crisis) > 0:
             total_fees = crisis['total_fees_collected'].sum()

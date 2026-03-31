@@ -178,17 +178,23 @@ After reaching 221M, convergence to S* follows the exponential:
 ```
 |221M - 219.85M| = 1.15M REGEN
 
-For 1% convergence (epsilon = 0.01 * S*):
-  t = log(2.2M / 1.15M) / log(0.974) = log(1.91) / (-0.0263) = 0.648 / 0.0263 ≈ 25 periods
+For 1% convergence (epsilon = 0.01 * S* ≈ 2.2M):
+  The gap (1.15M) is already smaller than epsilon (2.2M), so the system is
+  within 1% of S* as soon as it drops below the cap.  t = 0 additional periods.
 
-For 0.1% convergence:
-  t = log(220K / 1.15M) / log(0.974) = log(0.191) / (-0.0263) = 1.655 / 0.0263 ≈ 63 periods
+For 0.1% convergence (epsilon = 0.001 * S* ≈ 220K):
+  t = log(epsilon / gap) / log(1 - r)
+    = log(220K / 1.15M) / log(0.974)
+    = log(0.191) / log(0.974)
+    = (-1.655) / (-0.0263)
+    ≈ 63 periods (~1.2 years)
 ```
 
 **Total convergence time from activation:**
 - Pure-burn phase: ~100 epochs (1.9 years)
-- Exponential convergence to 1%: ~25 epochs (0.5 years)
-- Total to near-equilibrium: ~125 epochs (~2.4 years)
+- Already within 1% of S* at end of burn-down phase
+- Exponential convergence to 0.1%: ~63 additional epochs (~1.2 years)
+- Total to tight equilibrium: ~163 epochs (~3.1 years)
 
 ## 3. Stability Conditions
 
@@ -355,7 +361,7 @@ Under any realistic growth scenario, wash trading remains unprofitable because f
 | Finding | Value | Implication |
 |---------|-------|-------------|
 | Equilibrium supply S* | ~219.85M REGEN | System converges to ~1.15M below cap |
-| Time to equilibrium | ~2.4 years from activation | Includes ~2 year initial burn-down phase |
+| Time to equilibrium (0.1%) | ~3.1 years from activation | Includes ~1.9 year initial burn-down phase |
 | Min viable volume | $1.3M/week | Current baseline ($500K) is insufficient for validators |
 | Bootstrap fund needed | ~$250K over 3 years | Declining subsidy until volume grows |
 | Max stability commitments | 6.5M REGEN at baseline vol | 2.94% of supply — niche feature at current scale |

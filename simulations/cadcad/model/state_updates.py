@@ -11,6 +11,24 @@ cadCAD state update signature:
 
 
 # ---------------------------------------------------------------------------
+# Shared helpers
+# ---------------------------------------------------------------------------
+
+def _compute_periods_near_equilibrium(M_t, B_t, S, threshold, prev_periods):
+    """Compute the updated consecutive near-equilibrium period count.
+
+    This is the single source of truth for the near-equilibrium check:
+        |M - B| < threshold * S
+
+    Used by both ``s_supply_state`` and ``s_periods_near_equilibrium`` so that
+    the logic is defined in exactly one place.
+    """
+    if S > 0 and abs(M_t - B_t) < threshold * S:
+        return prev_periods + 1
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # Supply state updates (M012)
 # ---------------------------------------------------------------------------
 
@@ -53,13 +71,10 @@ def s_supply_state(params, substep, state_history, prev_state, policy_input):
     required_periods = params['equilibrium_periods']
 
     current_state = prev_state['supply_state']
-    periods_near_eq = prev_state['periods_near_equilibrium']
 
-    # Check if near equilibrium: |M - B| < threshold * S
-    if S > 0 and abs(M_t - B_t) < threshold * S:
-        periods_near_eq += 1
-    else:
-        periods_near_eq = 0
+    periods_near_eq = _compute_periods_near_equilibrium(
+        M_t, B_t, S, threshold, prev_state['periods_near_equilibrium']
+    )
 
     # State transitions
     if current_state == 'TRANSITION':
@@ -77,17 +92,18 @@ def s_supply_state(params, substep, state_history, prev_state, policy_input):
 
 
 def s_periods_near_equilibrium(params, substep, state_history, prev_state, policy_input):
-    """Track consecutive near-equilibrium periods."""
-    M_t = policy_input['M_t']
-    B_t = policy_input['B_t']
-    S = policy_input['new_S']
-    threshold = params['equilibrium_threshold']
+    """Track consecutive near-equilibrium periods.
 
-    periods = prev_state['periods_near_equilibrium']
-    if S > 0 and abs(M_t - B_t) < threshold * S:
-        return ('periods_near_equilibrium', periods + 1)
-    else:
-        return ('periods_near_equilibrium', 0)
+    Delegates to ``_compute_periods_near_equilibrium`` to keep the
+    equilibrium check in a single place.
+    """
+    return ('periods_near_equilibrium', _compute_periods_near_equilibrium(
+        policy_input['M_t'],
+        policy_input['B_t'],
+        policy_input['new_S'],
+        params['equilibrium_threshold'],
+        prev_state['periods_near_equilibrium'],
+    ))
 
 
 # ---------------------------------------------------------------------------

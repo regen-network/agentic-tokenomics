@@ -121,14 +121,23 @@ def get_sweep_param_set(sweep_name: str) -> list[dict]:
     """
     configs = []
     if sweep_name == 'burn_share_sweep':
+        # Baseline non-burn shares used as proportional weights
+        base_vs = baseline_params['validator_share']
+        base_cs = baseline_params['community_share']
+        base_ags = baseline_params['agent_share']
+        base_non_burn = base_vs + base_cs + base_ags  # 0.70 at baseline
+
         for bs in sweep_params['burn_share_sweep']['burn_share']:
-            # Keep community and agent shares fixed; validator gets the remainder
-            cs = baseline_params['community_share']
-            ags = baseline_params['agent_share']
-            vs = 1.0 - bs - cs - ags
-            if vs < 0:
-                vs = 0.0
-                cs = 1.0 - bs - ags
+            remaining = 1.0 - bs
+            if remaining <= 0:
+                # Degenerate: everything burned
+                vs, cs, ags = 0.0, 0.0, 0.0
+            else:
+                # Redistribute remaining proportionally among validator/community/agent
+                scale = remaining / base_non_burn
+                vs = max(0.0, base_vs * scale)
+                cs = max(0.0, base_cs * scale)
+                ags = max(0.0, base_ags * scale)
             configs.append({
                 'burn_share': bs,
                 'validator_share': vs,
