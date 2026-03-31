@@ -65,9 +65,10 @@ Some directories contain both code and documentation:
 - **`mechanisms/`** — `SPEC.md` and `README.md` files are CC-BY-SA 4.0; `*.js` and `*.json` files are Apache 2.0
 - **`agents/`** — `README.md` files are CC-BY-SA 4.0; all other files are Apache 2.0
 
-When in doubt, the file extension determines the license:
-- Markdown (`.md`) files are CC-BY-SA 4.0
-- All other files are Apache 2.0
+When in doubt, the file's **purpose** determines the license:
+
+- **Documentation and specifications** are licensed under **CC-BY-SA 4.0**. This includes Markdown files (`.md`), diagrams (`.svg`, `.png`, `.jpg`), and other media that serve as part of design documents or specifications. For example, an `.svg` architecture diagram in `docs/` is CC-BY-SA 4.0.
+- **Source code and configuration** are licensed under **Apache 2.0**. This covers all file types listed in the "Code" section above, as well as any executable or programmatic assets. For example, an `.svg` used as a UI component in application code is Apache 2.0.
 
 ---
 
