@@ -10,46 +10,59 @@
 
 ## Executive Summary
 
-This document triages all 31 formally numbered open questions from the Phase 2 mechanism specifications, plus 4 implicit questions from the bioregional validator framework, and identifies 8 additional implicit questions that the existing OQ process did not surface. Each question is assigned a priority, resolution owner, recommended answer, and dependency mapping.
+This document triages all 33 open questions from the Phase 2 mechanism specifications and OQ resolution doc (31 from module specs plus 2 additional governance transition questions), plus 4 implicit questions from the bioregional validator framework, and identifies 8 additional implicit questions that the existing OQ process did not surface -- 45 items total. Each question is assigned a priority, resolution owner, recommended answer, and dependency mapping.
 
 ### Counts by Priority
 
 | Priority | Count | Description |
 |----------|-------|-------------|
-| P0 (blocks implementation) | 8 | Must be resolved before any code is written |
-| P1 (blocks mainnet) | 14 | Must be resolved before mainnet launch |
+| P0 (blocks implementation) | 10 | Must be resolved before any code is written |
+| P1 (blocks mainnet) | 18 | Must be resolved before mainnet launch |
 | P2 (deferrable) | 17 | Can be deferred to v1 or later iteration |
 
 ### Counts by Resolution Owner
 
 | Owner | Count |
 |-------|-------|
-| Engineering | 9 |
-| Community Governance | 11 |
-| Tokenomics WG | 12 |
+| Engineering | 16 |
+| Community Governance | 8 |
+| Tokenomics WG | 14 |
 | Cross-functional | 7 |
 
-### Counts by Status (from OQ Resolution Doc)
+### Counts by Status (all 45 items in this triage)
 
 | Status | Count |
 |--------|-------|
-| RESOLVED (technical recommendation ready) | 22 |
+| RESOLVED (technical recommendation ready) | 26 |
 | NEEDS_GOVERNANCE (requires community vote) | 9 |
-| NOT_ADDRESSED (gaps identified in this triage) | 8 |
+| NOT_ADDRESSED (gaps identified in this triage) | 10 |
+
+> **Note:** The companion OQ Resolution Doc covers the original 31 questions (22 RESOLVED, 9 NEEDS_GOVERNANCE). This triage adds 4 bioregional and 8 implicit questions. Two items initially marked NOT_ADDRESSED (OQ-BIO-2, OQ-IMPL-4) are reclassified here as NEEDS_GOVERNANCE because they require governance decisions and are included in the governance proposal packaging below.
 
 ### Critical Path
 
-The following P0 items form a sequential dependency chain that gates all implementation work:
+All 10 P0 items must be resolved before implementation can proceed. The primary dependency chain:
 
 ```
-OQ-M013-1 (fee distribution model)
-    -> OQ-M013-5 (burn pool existence/size)
-        -> OQ-M012-1 (hard cap value)
-            -> OQ-M014-3 (initial validator seed set)
-                -> Implementation can begin
+Phase A: Foundation Decisions (parallel, no upstream deps)
+  OQ-M012-4 (permanent burn vs reserve)
+  OQ-M013-2 (credit value determination)
+  OQ-IMPL-2 (SDK v0.54 readiness assessment)
+
+Phase B: Economic Parameters (sequential, governance-gated)
+  OQ-M013-1 (fee distribution model)
+      -> OQ-M013-5 (burn pool existence/size)
+          -> OQ-M012-1 (hard cap value)
+
+Phase C: Operational Setup (after Phase B)
+  OQ-M014-3 (initial validator seed set)
+  OQ-IMPL-1 (zero fee revenue contingency)
+  OQ-IMPL-3 (IBC safety during migration)
+  OQ-IMPL-8 (cross-mechanism state consistency)
+      -> Implementation can begin
 ```
 
-If these four questions are not resolved, no mechanism code can be finalized because every module's parameters depend on the fee distribution model, which cascades through burn economics, supply management, and validator compensation.
+See the [full Critical Path Analysis](#critical-path-analysis) below for resolution order, timelines, and dependencies.
 
 ---
 
@@ -155,16 +168,18 @@ If these four questions are not resolved, no mechanism code can be finalized bec
 
 **Recommended Resolution Owner:** Tokenomics WG
 
-**Concrete Recommended Answer:** Phase-gated progression aligned with M014 state:
-- M014 INACTIVE: staking_multiplier (uses existing staking ratio)
-- M014 TRANSITION: max(staking_multiplier, stability_multiplier) -- prevents regrowth discontinuity during unbonding
-- M014 ACTIVE/EQUILIBRIUM: stability_multiplier only (from M015 commitments)
+**Concrete Recommended Answer:** Phase-gated progression triggered by on-chain conditions:
+- **Phase 1 (launch):** staking_multiplier -- incentivizes staking participation to secure the validator set during the early PoA period
+- **Phase 2 (staking ratio > 60%):** maximum deflation multiplier -- highest burn rates once staking security is established
+- **Phase 3 (supply reaches governance-defined target):** stability_multiplier -- adaptive burn to maintain supply near target
 
-Transitions are triggered by on-chain M014 state changes, not calendar dates.
+During the PoA transition specifically, the M012 spec's `max(staking_multiplier, stability_multiplier)` selection prevents a regrowth cliff as staked tokens unbond while M015 stability commitments ramp up.
 
-**Rationale:** Each phase addresses the network's most pressing need at that stage. The `max()` selection during TRANSITION prevents a regrowth cliff as staked tokens unbond while stability commitments ramp up.
+Transitions are triggered by on-chain conditions (staking ratio thresholds, supply levels), not calendar dates.
 
-**Status:** RESOLVED -- The OQ resolution doc and M012 spec both describe this phase-gated approach.
+**Rationale:** Each phase addresses the network's most pressing need at that stage. The phase progression is consistent with the OQ resolution doc's three-phase model (staking -> maximum deflation -> stability). The M012 spec adds the `max()` bridging logic for the PoA transition period specifically, which is complementary to (not in conflict with) the general progression.
+
+**Status:** RESOLVED -- The OQ resolution doc describes the three-phase progression; the M012 spec adds transition-period bridging logic. Both are consistent.
 
 **Implementation Dependencies:** M014 state machine must be implemented first (provides the phase gate signal). M015 stability tier must be at least specified (provides the stability_committed input).
 
@@ -590,17 +605,17 @@ Adjustable through governance proposals.
 
 **Question (from spec):** Should the default governance tally weight be fixed at 60% validator / 40% token holder, or should it vary by proposal type?
 
-**Priority:** P2 -- deferrable. The base 60/40 split is sufficient for v0. Per-process variation (addressed in OQ-GOV-POA-1) is the more detailed treatment of this question.
+**Priority:** P2 -- deferrable. The *principle* of using 60/40 as the default with per-process variation is technically resolved. The *specific per-process weights* are the P1 governance decision tracked in OQ-GOV-POA-1. This question does not independently block any work beyond what OQ-GOV-POA-1 already gates.
 
 **Recommended Resolution Owner:** Tokenomics WG
 
 **Concrete Recommended Answer:** Adopt 60/40 as the default with per-process variation: 70/30 for software upgrades, 50/50 for treasury, 60/40 for registry and parameter changes. See OQ-GOV-POA-1 for the full weight table.
 
-**Rationale:** Subsumes into OQ-GOV-POA-1. The 60/40 default is a sensible fallback for uncategorized proposals.
+**Rationale:** The principle that weights should vary by process type is resolved (yes, they should). The specific weights are governed by OQ-GOV-POA-1, which is P1/NEEDS_GOVERNANCE. The 60/40 default is a sensible fallback for uncategorized proposals regardless of the per-process weights chosen.
 
-**Status:** RESOLVED -- Treated as resolved in conjunction with OQ-GOV-POA-1.
+**Status:** RESOLVED -- The principle is resolved; the specific weights are governed by OQ-GOV-POA-1 (P1, NEEDS_GOVERNANCE). No contradiction: this question resolves the "should weights vary?" design question, while GOV-POA-1 resolves the "what should the specific weights be?" governance question.
 
-**Implementation Dependencies:** OQ-GOV-POA-1 resolution.
+**Implementation Dependencies:** OQ-GOV-POA-1 resolution (for specific per-process weight values).
 
 **Blocks:**
 - `x/gov` tally weight default configuration
@@ -842,7 +857,7 @@ The bioregional-validators.md document identifies four additional open questions
 
 **Rationale:** Hard constraints on bioregional distribution could make the 5/5/5 composition requirement impossible to fill if qualified applicants from certain bioregions do not exist yet. Starting as an aspirational goal with specific targets creates pressure toward diversity without creating an impossible constraint.
 
-**Status:** NOT_ADDRESSED -- Not covered in the OQ resolution doc.
+**Status:** NEEDS_GOVERNANCE -- Not covered in the OQ resolution doc. Reclassified from NOT_ADDRESSED because this decision directly affects validator composition enforcement and should be included in the Validator and Governance Structure governance proposal (Proposal B).
 
 **Implementation Dependencies:** Validator selection rubric geographic diversity scoring (IB-5/RP-5/DS-5) already creates incentive structure.
 
@@ -979,7 +994,7 @@ The following questions were not asked in any spec or supporting document but sh
 
 **Rationale:** Disenfranchising locked tokens would create a perverse incentive to avoid the stability tier, undermining M015's purpose. It would also concentrate governance power among active traders (who keep tokens liquid) rather than committed holders (who lock tokens).
 
-**Status:** NOT_ADDRESSED -- Neither M015 nor the governance specs address voting rights for stability-locked tokens.
+**Status:** NEEDS_GOVERNANCE -- Neither M015 nor the governance specs address voting rights for stability-locked tokens. Reclassified from NOT_ADDRESSED because this decision affects governance power distribution and should be included in the Community Pool and Operations governance proposal (Proposal C).
 
 **Implementation Dependencies:** The `x/rewards` module's stability tier must integrate with `x/gov` for voting delegation.
 
@@ -1114,13 +1129,13 @@ The following questions were not asked in any spec or supporting document but sh
 | OQ-M011-4 | M011 | Curator reputation | P2 | Engineering | RESOLVED | M010 extension |
 | OQ-M011-5 | M011 | Basket quality scores | P2 | Tokenomics WG | RESOLVED | Basket scoring |
 | OQ-BIO-1 | Bioregional | Claim verification | P1 | Cross-functional | NOT_ADDRESSED | Validator applications |
-| OQ-BIO-2 | Bioregional | Constraint vs goal | P1 | Community Governance | NOT_ADDRESSED | Composition enforcement |
+| OQ-BIO-2 | Bioregional | Constraint vs goal | P1 | Community Governance | NEEDS_GOVERNANCE | Composition enforcement |
 | OQ-BIO-3 | Bioregional | Validator coordination | P2 | Cross-functional | NOT_ADDRESSED | Social infrastructure |
 | OQ-BIO-4 | Bioregional | Non-technical support | P1 | Cross-functional | NOT_ADDRESSED | Data Steward recruitment |
 | OQ-IMPL-1 | Cross-cutting | Zero fee revenue | P0 | Tokenomics WG | NOT_ADDRESSED | Validator compensation sustainability |
 | OQ-IMPL-2 | Cross-cutting | SDK v0.54 readiness | P0 | Engineering | NOT_ADDRESSED | M014 tech choice |
 | OQ-IMPL-3 | Cross-cutting | IBC safety | P0 | Engineering | NOT_ADDRESSED | Stage 3 migration |
-| OQ-IMPL-4 | Cross-cutting | Stability locks + voting | P1 | Tokenomics WG | NOT_ADDRESSED | Governance integration |
+| OQ-IMPL-4 | Cross-cutting | Stability locks + voting | P1 | Tokenomics WG | NEEDS_GOVERNANCE | Governance integration |
 | OQ-IMPL-5 | Cross-cutting | Non-REGEN credit pricing | P1 | Engineering | NOT_ADDRESSED | Fee calculation |
 | OQ-IMPL-6 | Cross-cutting | Emergency validator recovery | P1 | Engineering | NOT_ADDRESSED | Emergency procedures |
 | OQ-IMPL-7 | Cross-cutting | Fee router upgrades | P2 | Engineering | NOT_ADDRESSED | Module architecture |
@@ -1132,7 +1147,7 @@ The following questions were not asked in any spec or supporting document but sh
 
 ### P0 Resolution Order
 
-The 8 P0 items must be resolved in approximately the following order:
+The 10 P0 items must be resolved in approximately the following order:
 
 ```
 Phase A: Foundation Decisions (can be resolved in parallel)
@@ -1165,23 +1180,25 @@ Phase B: Economic Parameters (sequential, governance-gated)
      - Owner: Community Governance (target: Q2 2026)
 
 Phase C: Operational Setup (after Phase B)
-  7. OQ-M014-3: Seed set selection
+  7. OQ-IMPL-8: Cross-mechanism state consistency
+     - Must be resolved before Stage 2 deployment (June 2026)
+     - Defines fund accumulation policy during multi-stage rollout
+     - Owner: Engineering
+
+  8. OQ-M014-3: Seed set selection
      - Depends on all economic parameters being known
      - Requires validator outreach, application, scoring, governance vote
      - Owner: Community Governance (target: Q3 2026)
 
-  8. OQ-IMPL-1: Zero fee revenue contingency
+  9. OQ-IMPL-1: Zero fee revenue contingency
      - Design depends on knowing the fee distribution model
-     - Must be resolved before M014 activates
+     - Must be resolved before testnet pilot (August 2026)
      - Owner: Tokenomics WG
 
-  OQ-IMPL-3: IBC safety procedures
+ 10. OQ-IMPL-3: IBC safety procedures
      - Must be resolved before Stage 3 migration
-     - Owner: Engineering
-
-  OQ-IMPL-8: Cross-mechanism state consistency
-     - Must be resolved before Stage 2 deployment
-     - Owner: Engineering
+     - Requires IBC inventory, relayer coordination, testnet validation
+     - Owner: Engineering (target: August 2026)
 ```
 
 ### Timeline Mapping
@@ -1207,18 +1224,19 @@ The following P1 items require the most calendar time and should be started imme
 
 ## Unresolved Gaps Summary
 
-The following 8 implicit questions (OQ-IMPL-1 through OQ-IMPL-8) were not addressed in any existing spec or resolution document. They represent genuine gaps that could cause implementation failures or governance crises if not resolved:
+The following implicit questions were not addressed in any existing spec or resolution document. They represent genuine gaps that could cause implementation failures or governance crises if not resolved. Two items (OQ-IMPL-4 and OQ-BIO-2) have been reclassified as NEEDS_GOVERNANCE and are included in the governance proposal packaging below.
 
 | Gap | Risk if Unresolved | Recommended Next Step |
 |-----|--------------------|-----------------------|
-| OQ-IMPL-1: Zero fee revenue | Validator exodus during downturn | Tokenomics WG designs contingency mechanism by April 2026 |
+| OQ-IMPL-1: Zero fee revenue | Validator exodus during downturn | Tokenomics WG designs contingency mechanism; must be resolved before testnet pilot (August 2026) |
 | OQ-IMPL-2: SDK v0.54 dependency | Implementation blocked or on wrong technology | Engineering assesses timeline and begins Strangelove integration by April 2026 |
 | OQ-IMPL-3: IBC safety | Active IBC channels break during migration | Engineering documents IBC inventory and contacts relayers by May 2026 |
-| OQ-IMPL-4: Stability locks + voting | Governance power imbalance or perverse incentives | Tokenomics WG resolves by June 2026 |
 | OQ-IMPL-5: Non-REGEN credit pricing | Fee calculation errors on multi-denom credits | Engineering designs conversion mechanism by May 2026 |
 | OQ-IMPL-6: Emergency validator recovery | Chain halt with no recovery plan | Engineering designs tiered response by July 2026 |
 | OQ-IMPL-7: Fee router upgrades | Inability to adapt fee logic post-launch | Engineering considers in module architecture design |
 | OQ-IMPL-8: Cross-mechanism state | Fund accumulation confusion during multi-stage rollout | Engineering resolves before Stage 2 deployment |
+
+> **Reclassified to NEEDS_GOVERNANCE:** OQ-IMPL-4 (stability locks + voting, Proposal C) and OQ-BIO-2 (bioregional representation constraint, Proposal B) require governance decisions and are tracked in the governance proposal packaging rather than this gaps table.
 
 ---
 
