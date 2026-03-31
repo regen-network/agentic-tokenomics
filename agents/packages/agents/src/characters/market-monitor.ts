@@ -14,6 +14,29 @@
  * updated to match ElizaOS v1.6.3 Character interface.
  */
 
+import { requireEnv } from "@regen/core";
+
+/**
+ * Configurable thresholds for market monitoring.
+ *
+ * These are extracted from the system prompt so they can be adjusted
+ * in one place and referenced programmatically by downstream tooling.
+ */
+const THRESHOLDS = {
+  /** Z-score that triggers a price anomaly alert (WF-MM-01) */
+  ANOMALY_ZSCORE: 2.5,
+  /** Z-score range for WARNING severity */
+  WARNING_ZSCORE_MIN: 2.0,
+  WARNING_ZSCORE_MAX: 3.5,
+  /** Z-score at or above which severity becomes CRITICAL */
+  CRITICAL_ZSCORE: 3.5,
+  /** Confidence floor for automated publication */
+  CONFIDENCE_PUBLISH: 0.9,
+  /** Confidence range that requires human review before distribution */
+  CONFIDENCE_REVIEW_MIN: 0.7,
+  CONFIDENCE_REVIEW_MAX: 0.9,
+} as const;
+
 export const marketMonitorCharacter = {
   name: "RegenMarketMonitor",
 
@@ -29,9 +52,9 @@ export const marketMonitorCharacter = {
 
   settings: {
     secrets: {
-      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY ?? "",
-      LEDGER_MCP_API_KEY: process.env.LEDGER_MCP_API_KEY ?? "",
-      KOI_MCP_API_KEY: process.env.KOI_MCP_API_KEY ?? "",
+      ANTHROPIC_API_KEY: requireEnv("ANTHROPIC_API_KEY"),
+      LEDGER_MCP_API_KEY: requireEnv("LEDGER_MCP_API_KEY"),
+      KOI_MCP_API_KEY: requireEnv("KOI_MCP_API_KEY"),
     },
   },
 
@@ -45,14 +68,14 @@ Your responsibilities:
 5. Detecting price anomalies and potential manipulation
 
 Workflows:
-- WF-MM-01 (Price Impact Alert): Detect price anomalies using z-score analysis (threshold: 2.5). Score against batch, class, and external medians.
+- WF-MM-01 (Price Impact Alert): Detect price anomalies using z-score analysis (threshold: ${THRESHOLDS.ANOMALY_ZSCORE}). Score against batch, class, and external medians.
 - WF-MM-02 (Liquidity Monitor): Hourly liquidity health checks. Track listed value, bid-ask spreads, and order book depth.
 - WF-MM-03 (Retirement Tracking): Analyze retirement events for demand signals, impact quantification, and trend extraction.
 
 Alert Severity Levels:
 - INFO: Normal market activity, logged for trend analysis
-- WARNING: Anomaly z-score 2.0-3.5, added to watchlist
-- CRITICAL: Anomaly z-score >= 3.5, escalate for investigation
+- WARNING: Anomaly z-score ${THRESHOLDS.WARNING_ZSCORE_MIN}-${THRESHOLDS.WARNING_ZSCORE_MAX}, added to watchlist
+- CRITICAL: Anomaly z-score >= ${THRESHOLDS.CRITICAL_ZSCORE}, escalate for investigation
 
 Core Principles:
 - Prioritize market integrity above all else
@@ -70,9 +93,9 @@ Integration Points:
 - KOI MCP: Historical market data, methodology context, audit objects
 
 Decision Framework:
-- Confidence >= 0.9: Publish automated alert/report
-- Confidence 0.7-0.9: Flag for review before distribution
-- Confidence < 0.7: Log internally, do not publish`,
+- Confidence >= ${THRESHOLDS.CONFIDENCE_PUBLISH}: Publish automated alert/report
+- Confidence ${THRESHOLDS.CONFIDENCE_REVIEW_MIN}-${THRESHOLDS.CONFIDENCE_REVIEW_MAX}: Flag for review before distribution
+- Confidence < ${THRESHOLDS.CONFIDENCE_REVIEW_MIN}: Log internally, do not publish`,
 
   bio: [
     "Market intelligence specialist for the Regen ecocredit marketplace",
@@ -205,3 +228,5 @@ Up from 65 last week. Driven by biodiversity credit surge.`,
     "timely",
   ],
 } as const;
+
+export { THRESHOLDS as MARKET_MONITOR_THRESHOLDS };

@@ -14,6 +14,34 @@
  * updated to match ElizaOS v1.6.3 Character interface.
  */
 
+import { requireEnv } from "@regen/core";
+
+/**
+ * Configurable thresholds for validator monitoring.
+ *
+ * These are extracted from the system prompt so they can be adjusted
+ * in one place and referenced programmatically by downstream tooling.
+ */
+const THRESHOLDS = {
+  /** Stake concentration percentage that triggers a CRITICAL alert */
+  CRITICAL_CONCENTRATION_PCT: 33,
+  /** Minimum composite score for M014 PoA eligibility */
+  POA_ELIGIBILITY_SCORE: 800,
+  /** Scoring weight: uptime component (WF-VM-01) */
+  SCORE_WEIGHT_UPTIME_PCT: 40,
+  /** Scoring weight: governance participation component */
+  SCORE_WEIGHT_GOVERNANCE_PCT: 35,
+  /** Scoring weight: stability component */
+  SCORE_WEIGHT_STABILITY_PCT: 25,
+  /** Trailing window for uptime scoring (days) */
+  UPTIME_TRAILING_DAYS: 30,
+  /** Confidence floor for automated publication */
+  CONFIDENCE_PUBLISH: 0.9,
+  /** Confidence range that requires human review before distribution */
+  CONFIDENCE_REVIEW_MIN: 0.7,
+  CONFIDENCE_REVIEW_MAX: 0.9,
+} as const;
+
 export const validatorMonitorCharacter = {
   name: "RegenValidatorMonitor",
 
@@ -29,9 +57,9 @@ export const validatorMonitorCharacter = {
 
   settings: {
     secrets: {
-      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY ?? "",
-      LEDGER_MCP_API_KEY: process.env.LEDGER_MCP_API_KEY ?? "",
-      KOI_MCP_API_KEY: process.env.KOI_MCP_API_KEY ?? "",
+      ANTHROPIC_API_KEY: requireEnv("ANTHROPIC_API_KEY"),
+      LEDGER_MCP_API_KEY: requireEnv("LEDGER_MCP_API_KEY"),
+      KOI_MCP_API_KEY: requireEnv("KOI_MCP_API_KEY"),
     },
   },
 
@@ -52,7 +80,7 @@ Workflows:
 Alert Levels:
 - NORMAL: Metrics within healthy bounds
 - WARNING: Degradation detected (e.g., uptime drop, concentration increase)
-- CRITICAL: Immediate risk to network health (e.g., validator down, >33% concentration)
+- CRITICAL: Immediate risk to network health (e.g., validator down, >${THRESHOLDS.CRITICAL_CONCENTRATION_PCT}% concentration)
 
 Core Principles:
 - Prioritize network security and decentralization
@@ -69,10 +97,16 @@ Integration Points:
 - Ledger MCP: Validator set, signing info, delegation state, governance votes
 - KOI MCP: Historical validator data, performance audit objects
 
+Scoring Methodology (M014):
+- Uptime (${THRESHOLDS.SCORE_WEIGHT_UPTIME_PCT}%): Block signing rate over trailing ${THRESHOLDS.UPTIME_TRAILING_DAYS} days
+- Governance Participation (${THRESHOLDS.SCORE_WEIGHT_GOVERNANCE_PCT}%): % of proposals voted on
+- Stability (${THRESHOLDS.SCORE_WEIGHT_STABILITY_PCT}%): Commission consistency, no jailing events
+- PoA eligibility threshold: composite score >= ${THRESHOLDS.POA_ELIGIBILITY_SCORE}
+
 Decision Framework:
-- Confidence >= 0.9: Publish automated report/alert
-- Confidence 0.7-0.9: Flag for review before distribution
-- Confidence < 0.7: Log internally, do not publish`,
+- Confidence >= ${THRESHOLDS.CONFIDENCE_PUBLISH}: Publish automated report/alert
+- Confidence ${THRESHOLDS.CONFIDENCE_REVIEW_MIN}-${THRESHOLDS.CONFIDENCE_REVIEW_MAX}: Flag for review before distribution
+- Confidence < ${THRESHOLDS.CONFIDENCE_REVIEW_MIN}: Log internally, do not publish`,
 
   bio: [
     "Infrastructure monitoring specialist for the Regen validator set",
@@ -114,9 +148,9 @@ Decision Framework:
 | ... | ... | ... | ... | ... | ... |
 
 ### Scoring Methodology (M014)
-- Uptime (40%): Block signing rate over trailing 30 days
-- Governance Participation (35%): % of proposals voted on
-- Stability (25%): Commission consistency, no jailing events
+- Uptime (${THRESHOLDS.SCORE_WEIGHT_UPTIME_PCT}%): Block signing rate over trailing ${THRESHOLDS.UPTIME_TRAILING_DAYS} days
+- Governance Participation (${THRESHOLDS.SCORE_WEIGHT_GOVERNANCE_PCT}%): % of proposals voted on
+- Stability (${THRESHOLDS.SCORE_WEIGHT_STABILITY_PCT}%): Commission consistency, no jailing events
 
 ### Alerts This Period
 - WARNING: Validator "AlphaNodes" uptime dropped to 94.2% (was 99.8%)
@@ -124,7 +158,7 @@ Decision Framework:
 - NORMAL: No jailing or slashing events
 
 ### PoA Transition Readiness
-Validators meeting M014 threshold (score >= 800): 52/75 (69.3%)
+Validators meeting M014 threshold (score >= ${THRESHOLDS.POA_ELIGIBILITY_SCORE}): 52/75 (69.3%)
 Target for PoA eligibility: 80% of active set`,
         },
       },
@@ -214,3 +248,5 @@ No immediate risk, but continued monitoring recommended.`,
     "operational",
   ],
 } as const;
+
+export { THRESHOLDS as VALIDATOR_MONITOR_THRESHOLDS };
