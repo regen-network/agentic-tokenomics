@@ -5,5 +5,9 @@ node_modules/
 # Local-only context (LLM analyses, workspace archives, private notes)
 .local/
 
+# Rust / CosmWasm
+target/
+Cargo.lock
+
 # Claude Code
 CLAUDE.local.md
