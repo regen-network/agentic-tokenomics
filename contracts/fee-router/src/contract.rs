@@ -10,6 +10,10 @@ use crate::msg::{
 };
 use crate::state::{FeeConfig, PoolBalances, FEE_CONFIG, POOL_BALANCES};
 
+/// Maximum allowed fee rate: 10%% (0.1).
+/// Decimal stores 18 decimal places, so 0.1 = 100_000_000_000_000_000.
+const MAX_FEE_RATE: Decimal = Decimal::raw(100_000_000_000_000_000);
+
 // ---------------------------------------------------------------------------
 // Instantiate
 // ---------------------------------------------------------------------------
@@ -21,12 +25,11 @@ pub fn instantiate(
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
-    // Validate all rates are within [0, 0.10]
-    let max_rate = Decimal::raw(100_000_000_000_000_000); // 0.1
-    validate_rate(msg.issuance_rate, max_rate)?;
-    validate_rate(msg.transfer_rate, max_rate)?;
-    validate_rate(msg.retirement_rate, max_rate)?;
-    validate_rate(msg.trade_rate, max_rate)?;
+    // Validate all rates are within [0, MAX_FEE_RATE]
+    validate_rate(msg.issuance_rate, MAX_FEE_RATE)?;
+    validate_rate(msg.transfer_rate, MAX_FEE_RATE)?;
+    validate_rate(msg.retirement_rate, MAX_FEE_RATE)?;
+    validate_rate(msg.trade_rate, MAX_FEE_RATE)?;
 
     // Validate distribution shares sum to 1.0
     validate_shares(
@@ -143,9 +146,8 @@ fn execute_update_fee_rate(
         return Err(ContractError::Unauthorized {});
     }
 
-    // Validate rate within [0, 0.10]
-    let max_rate = Decimal::raw(100_000_000_000_000_000); // 0.1
-    validate_rate(rate, max_rate)?;
+    // Validate rate within [0, MAX_FEE_RATE]
+    validate_rate(rate, MAX_FEE_RATE)?;
 
     match tx_type {
         TxType::CreditIssuance => config.issuance_rate = rate,
