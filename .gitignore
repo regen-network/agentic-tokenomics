@@ -2,8 +2,17 @@
 .DS_Store
 node_modules/
 
+# Rust build artifacts
+target/
+Cargo.lock
+
 # Local-only context (LLM analyses, workspace archives, private notes)
 .local/
 
 # Claude Code
+.claude/
 CLAUDE.local.md
+
+# Agent data
+*.sqlite
+data/
