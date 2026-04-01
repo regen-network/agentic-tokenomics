@@ -49,6 +49,9 @@ pub enum ExecuteMsg {
     /// Admin: trigger distribution for current period with community pool inflow
     TriggerDistribution { community_pool_inflow: Uint128 },
 
+    /// Claim accumulated activity rewards (pull model)
+    ClaimRewards {},
+
     /// Admin: update configuration parameters
     UpdateConfig {
         community_pool_addr: Option<String>,
@@ -99,6 +102,10 @@ pub enum QueryMsg {
         period_from: u32,
         period_to: u32,
     },
+
+    /// Returns unclaimed activity rewards for a participant
+    #[returns(ClaimableRewardsResponse)]
+    ClaimableRewards { address: String },
 }
 
 // ── Query responses ────────────────────────────────────────────────────
@@ -154,4 +161,11 @@ pub struct ParticipantRewardsResponse {
     pub total_activity_rewards: Uint128,
     /// Number of periods with recorded activity
     pub active_periods: u32,
+}
+
+#[cw_serde]
+pub struct ClaimableRewardsResponse {
+    pub address: String,
+    /// Accumulated unclaimed activity rewards
+    pub amount: Uint128,
 }

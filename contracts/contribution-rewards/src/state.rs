@@ -76,6 +76,9 @@ pub struct MechanismState {
     pub current_period: u32,
     /// Last period that had a distribution executed
     pub last_distribution_period: Option<u32>,
+    /// Running total of committed principal across all active stability commitments.
+    /// Incremented on CommitStability, decremented on ExitStabilityEarly / ClaimMaturedStability.
+    pub total_committed_principal: Uint128,
 }
 
 // ── Stability commitments ──────────────────────────────────────────────
@@ -167,3 +170,7 @@ pub const DISTRIBUTIONS: Map<u32, DistributionRecord> = Map::new("distributions"
 
 /// Voter deduplication: (period, voter_address) -> bool
 pub const VOTER_DEDUP: Map<(u32, &Addr), bool> = Map::new("voter_dedup");
+
+/// Claimable activity rewards per participant (pull model).
+/// Accumulated by trigger_distribution, drained by ClaimRewards.
+pub const CLAIMABLE_REWARDS: Map<&Addr, Uint128> = Map::new("claimable_rewards");

@@ -21,6 +21,8 @@ pub struct Config {
     pub agent_review_timeout_seconds: u64,
     /// Override window in seconds after agent auto-reject (default 6h = 21_600)
     pub override_window_seconds: u64,
+    /// Address that receives slashed deposit funds (falls back to admin if None)
+    pub community_pool: Option<Addr>,
 }
 
 // ── Proposal Status ───────────────────────────────────────────────────

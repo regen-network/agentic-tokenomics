@@ -366,6 +366,7 @@ fn test_credit_class_approval_flow() {
                 voting_period_seconds: Some(200), // short for testing
                 agent_review_timeout_seconds: Some(100),
                 override_window_seconds: Some(50),
+                community_pool: None,
             },
             &[],
             "credit-class-voting",
@@ -1129,6 +1130,7 @@ fn test_full_ecosystem_flow() {
                 voting_period_seconds: Some(200),
                 agent_review_timeout_seconds: Some(100),
                 override_window_seconds: Some(50),
+                community_pool: None,
             },
             &[],
             "credit-class-voting",

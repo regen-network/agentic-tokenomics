@@ -6,13 +6,14 @@ use cw2::set_contract_version;
 
 use crate::error::ContractError;
 use crate::msg::{
-    ActivityScoreResponse, ConfigResponse, DistributionRecordResponse, ExecuteMsg, InstantiateMsg,
-    MechanismStateResponse, ParticipantRewardsResponse, QueryMsg, StabilityCommitmentResponse,
+    ActivityScoreResponse, ClaimableRewardsResponse, ConfigResponse, DistributionRecordResponse,
+    ExecuteMsg, InstantiateMsg, MechanismStateResponse, ParticipantRewardsResponse, QueryMsg,
+    StabilityCommitmentResponse,
 };
 use crate::state::{
     ActivityScore, CommitmentStatus, Config, DistributionRecord, MechanismState, MechanismStatus,
-    StabilityCommitment, ACTIVITY_SCORES, COMMITMENTS, CONFIG, DISTRIBUTIONS, MECHANISM_STATE,
-    NEXT_COMMITMENT_ID,
+    StabilityCommitment, ACTIVITY_SCORES, CLAIMABLE_REWARDS, COMMITMENTS, CONFIG, DISTRIBUTIONS,
+    MECHANISM_STATE, NEXT_COMMITMENT_ID,
 };
 
 const CONTRACT_NAME: &str = "crates.io:contribution-rewards";
@@ -56,6 +57,7 @@ pub fn instantiate(
         tracking_start: None,
         current_period: 0,
         last_distribution_period: None,
+        total_committed_principal: Uint128::zero(),
     };
     MECHANISM_STATE.save(deps.storage, &state)?;
     NEXT_COMMITMENT_ID.save(deps.storage, &1u64)?;
@@ -106,6 +108,7 @@ pub fn execute(
         ExecuteMsg::TriggerDistribution {
             community_pool_inflow,
         } => execute_trigger_distribution(deps, env, info, community_pool_inflow),
+        ExecuteMsg::ClaimRewards {} => execute_claim_rewards(deps, info),
         ExecuteMsg::UpdateConfig {
             community_pool_addr,
             credit_purchase_weight,
@@ -240,6 +243,11 @@ fn execute_commit_stability(
     COMMITMENTS.save(deps.storage, id, &commitment)?;
     NEXT_COMMITMENT_ID.save(deps.storage, &(id + 1))?;
 
+    // Maintain running total of committed principal
+    let mut state = MECHANISM_STATE.load(deps.storage)?;
+    state.total_committed_principal += amount;
+    MECHANISM_STATE.save(deps.storage, &state)?;
+
     Ok(Response::new()
         .add_attribute("action", "commit_stability")
         .add_attribute("commitment_id", id.to_string())
@@ -284,6 +292,14 @@ fn execute_exit_early(
 
     commitment.status = CommitmentStatus::EarlyExit;
     COMMITMENTS.save(deps.storage, commitment_id, &commitment)?;
+
+    // Decrement running total of committed principal
+    let mut state = MECHANISM_STATE.load(deps.storage)?;
+    state.total_committed_principal = state
+        .total_committed_principal
+        .checked_sub(commitment.amount)
+        .unwrap_or(Uint128::zero());
+    MECHANISM_STATE.save(deps.storage, &state)?;
 
     let mut msgs = vec![];
     if !total_return.is_zero() {
@@ -342,6 +358,14 @@ fn execute_claim_matured(
     let total_return = commitment.amount + commitment.accrued_rewards;
     commitment.status = CommitmentStatus::Matured;
     COMMITMENTS.save(deps.storage, commitment_id, &commitment)?;
+
+    // Decrement running total of committed principal
+    let mut state = MECHANISM_STATE.load(deps.storage)?;
+    state.total_committed_principal = state
+        .total_committed_principal
+        .checked_sub(commitment.amount)
+        .unwrap_or(Uint128::zero());
+    MECHANISM_STATE.save(deps.storage, &state)?;
 
     let mut msgs = vec![];
     if !total_return.is_zero() {
@@ -450,19 +474,16 @@ fn execute_trigger_distribution(
     let (total_score, participant_scores) =
         calculate_period_scores(deps.as_ref(), &config, period)?;
 
-    // ── Step 4: Distribute activity rewards pro-rata ──
-    let mut bank_msgs = vec![];
+    // ── Step 4: Accumulate activity rewards into claimable balances (pull model) ──
     if !activity_pool.is_zero() && !total_score.is_zero() {
-        for (addr, score) in &participant_scores {
+        for (addr_str, score) in &participant_scores {
             let reward = activity_pool.multiply_ratio(score.u128(), total_score.u128());
             if !reward.is_zero() {
-                bank_msgs.push(BankMsg::Send {
-                    to_address: addr.to_string(),
-                    amount: vec![Coin {
-                        denom: config.denom.clone(),
-                        amount: reward,
-                    }],
-                });
+                let addr = deps.api.addr_validate(addr_str)?;
+                let existing = CLAIMABLE_REWARDS
+                    .may_load(deps.storage, &addr)?
+                    .unwrap_or(Uint128::zero());
+                CLAIMABLE_REWARDS.save(deps.storage, &addr, &(existing + reward))?;
             }
         }
     }
@@ -484,7 +505,6 @@ fn execute_trigger_distribution(
     MECHANISM_STATE.save(deps.storage, &state)?;
 
     Ok(Response::new()
-        .add_messages(bank_msgs)
         .add_attribute("action", "trigger_distribution")
         .add_attribute("period", period.to_string())
         .add_attribute("community_pool_inflow", community_pool_inflow)
@@ -492,6 +512,39 @@ fn execute_trigger_distribution(
         .add_attribute("activity_pool", activity_pool)
         .add_attribute("total_score", total_score)
         .add_attribute("participants", participant_scores.len().to_string()))
+}
+
+fn execute_claim_rewards(
+    deps: DepsMut,
+    info: MessageInfo,
+) -> Result<Response, ContractError> {
+    let config = CONFIG.load(deps.storage)?;
+    let claimable = CLAIMABLE_REWARDS
+        .may_load(deps.storage, &info.sender)?
+        .unwrap_or(Uint128::zero());
+
+    if claimable.is_zero() {
+        return Err(ContractError::NoClaimableRewards {
+            address: info.sender.to_string(),
+        });
+    }
+
+    // Zero out the balance before sending
+    CLAIMABLE_REWARDS.save(deps.storage, &info.sender, &Uint128::zero())?;
+
+    let msg = BankMsg::Send {
+        to_address: info.sender.to_string(),
+        amount: vec![Coin {
+            denom: config.denom.clone(),
+            amount: claimable,
+        }],
+    };
+
+    Ok(Response::new()
+        .add_message(msg)
+        .add_attribute("action", "claim_rewards")
+        .add_attribute("address", info.sender.to_string())
+        .add_attribute("amount", claimable))
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -599,19 +652,15 @@ fn extract_single_coin(info: &MessageInfo, expected_denom: &str) -> Result<Uint1
 
 /// Calculate how much of the inflow goes to stability tier.
 /// Pro-rate 6% annual across all active commitments, capped at max_stability_share_bps of inflow.
+/// Uses the `total_committed_principal` counter instead of scanning all commitments.
 fn calculate_stability_allocation(
     storage: &dyn cosmwasm_std::Storage,
     config: &Config,
     _env: &Env,
     inflow: Uint128,
 ) -> Result<Uint128, ContractError> {
-    // Sum all committed principal
-    let total_committed: Uint128 = COMMITMENTS
-        .range(storage, None, None, Order::Ascending)
-        .filter_map(|r| r.ok())
-        .filter(|(_, c)| c.status == CommitmentStatus::Committed)
-        .map(|(_, c)| c.amount)
-        .fold(Uint128::zero(), |acc, a| acc + a);
+    let state = MECHANISM_STATE.load(storage)?;
+    let total_committed = state.total_committed_principal;
 
     if total_committed.is_zero() {
         return Ok(Uint128::zero());
@@ -773,6 +822,9 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
             period_from,
             period_to,
         )?),
+        QueryMsg::ClaimableRewards { address } => {
+            to_json_binary(&query_claimable_rewards(deps, address)?)
+        }
     }
 }
 
@@ -884,6 +936,14 @@ fn query_participant_rewards(
         total_activity_rewards,
         active_periods,
     })
+}
+
+fn query_claimable_rewards(deps: Deps, address: String) -> StdResult<ClaimableRewardsResponse> {
+    let addr = deps.api.addr_validate(&address)?;
+    let amount = CLAIMABLE_REWARDS
+        .may_load(deps.storage, &addr)?
+        .unwrap_or(Uint128::zero());
+    Ok(ClaimableRewardsResponse { address, amount })
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────
@@ -1176,8 +1236,57 @@ mod tests {
             "10000000"
         );
 
-        // Should have 2 bank messages (one per participant)
-        assert_eq!(res.messages.len(), 2);
+        // Pull model: distribution should NOT send bank messages
+        assert_eq!(res.messages.len(), 0);
+
+        // Both participants should have claimable rewards
+        let alice_claimable: ClaimableRewardsResponse = cosmwasm_std::from_json(
+            query(
+                deps.as_ref(),
+                mock_env(),
+                QueryMsg::ClaimableRewards {
+                    address: alice.to_string(),
+                },
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        assert!(
+            alice_claimable.amount > Uint128::zero(),
+            "alice should have claimable rewards"
+        );
+
+        let bob_claimable: ClaimableRewardsResponse = cosmwasm_std::from_json(
+            query(
+                deps.as_ref(),
+                mock_env(),
+                QueryMsg::ClaimableRewards {
+                    address: bob.to_string(),
+                },
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        assert!(
+            bob_claimable.amount > Uint128::zero(),
+            "bob should have claimable rewards"
+        );
+
+        // Total claimable should equal the full inflow (no stability commitments)
+        // Allow 1 unit of rounding error from pro-rata integer division
+        let total_claimable = alice_claimable.amount + bob_claimable.amount;
+        assert!(
+            total_claimable.u128().abs_diff(inflow.u128()) <= 1,
+            "total claimable {} should approximately equal inflow {}",
+            total_claimable,
+            inflow
+        );
+
+        // Alice should get more than Bob (higher activity scores)
+        assert!(
+            alice_claimable.amount > bob_claimable.amount,
+            "alice should get more than bob"
+        );
 
         // Period should advance to 2
         let state: MechanismStateResponse = cosmwasm_std::from_json(
@@ -1201,9 +1310,50 @@ mod tests {
         assert_eq!(dist.record.stability_allocation, Uint128::zero());
         assert_eq!(dist.record.activity_pool, inflow);
 
-        // Double distribution for same period should fail (already advanced)
-        // But the period is now 2 — trying period 1 again would need to re-set period
-        // Actually, re-trigger should work for period 2 with new activity
+        // Alice claims her rewards
+        let alice_info = message_info(&alice, &[]);
+        let claim_res = execute(
+            deps.as_mut(),
+            mock_env(),
+            alice_info,
+            ExecuteMsg::ClaimRewards {},
+        )
+        .unwrap();
+        assert_eq!(claim_res.messages.len(), 1); // one BankMsg::Send
+        assert_eq!(
+            claim_res
+                .attributes
+                .iter()
+                .find(|a| a.key == "amount")
+                .unwrap()
+                .value,
+            alice_claimable.amount.to_string()
+        );
+
+        // After claiming, alice's claimable should be zero
+        let alice_after: ClaimableRewardsResponse = cosmwasm_std::from_json(
+            query(
+                deps.as_ref(),
+                mock_env(),
+                QueryMsg::ClaimableRewards {
+                    address: alice.to_string(),
+                },
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(alice_after.amount, Uint128::zero());
+
+        // Claiming again should fail
+        let alice_info2 = message_info(&alice, &[]);
+        let err = execute(
+            deps.as_mut(),
+            mock_env(),
+            alice_info2,
+            ExecuteMsg::ClaimRewards {},
+        )
+        .unwrap_err();
+        assert!(matches!(err, ContractError::NoClaimableRewards { .. }));
     }
 
     // ── Test 4: Early exit penalty ──
@@ -1681,5 +1831,264 @@ mod tests {
         )
         .unwrap_err();
         assert!(matches!(err, ContractError::InvalidWeightSum { .. }));
+    }
+
+    // ── Test 9: Total committed principal counter ──
+
+    #[test]
+    fn test_total_committed_principal_counter() {
+        let mut deps = mock_dependencies();
+        let admin_info = setup_contract(deps.as_mut());
+        let admin = admin_info.sender.clone();
+        initialize_mechanism(deps.as_mut(), &admin);
+        activate_distribution(deps.as_mut(), &admin);
+
+        // Initially zero — read internal state directly since the query response
+        // doesn't expose total_committed_principal
+        let internal = MECHANISM_STATE.load(deps.as_ref().storage).unwrap();
+        assert_eq!(internal.total_committed_principal, Uint128::zero());
+
+        // Commit 400 REGEN
+        let holder_a = addr("holder_a");
+        let info_a = message_info(&holder_a, &[Coin::new(400_000_000u128, DENOM)]);
+        execute(
+            deps.as_mut(),
+            mock_env(),
+            info_a,
+            ExecuteMsg::CommitStability { lock_months: 12 },
+        )
+        .unwrap();
+
+        let internal = MECHANISM_STATE.load(deps.as_ref().storage).unwrap();
+        assert_eq!(
+            internal.total_committed_principal,
+            Uint128::new(400_000_000)
+        );
+
+        // Commit 600 REGEN
+        let holder_b = addr("holder_b");
+        let info_b = message_info(&holder_b, &[Coin::new(600_000_000u128, DENOM)]);
+        execute(
+            deps.as_mut(),
+            mock_env(),
+            info_b,
+            ExecuteMsg::CommitStability { lock_months: 6 },
+        )
+        .unwrap();
+
+        let internal = MECHANISM_STATE.load(deps.as_ref().storage).unwrap();
+        assert_eq!(
+            internal.total_committed_principal,
+            Uint128::new(1_000_000_000)
+        );
+
+        // Early exit commitment 1 (400M) — counter decrements
+        let exit_info = message_info(&holder_a, &[]);
+        execute(
+            deps.as_mut(),
+            mock_env(),
+            exit_info,
+            ExecuteMsg::ExitStabilityEarly { commitment_id: 1 },
+        )
+        .unwrap();
+
+        let internal = MECHANISM_STATE.load(deps.as_ref().storage).unwrap();
+        assert_eq!(
+            internal.total_committed_principal,
+            Uint128::new(600_000_000)
+        );
+
+        // Need activity participant for distribution to work
+        let p = addr("participant");
+        let admin_nf = message_info(&admin, &[]);
+        execute(
+            deps.as_mut(),
+            mock_env(),
+            admin_nf.clone(),
+            ExecuteMsg::RecordActivity {
+                participant: p.to_string(),
+                credit_purchase_value: Uint128::new(1_000_000),
+                credit_retirement_value: Uint128::zero(),
+                platform_facilitation_value: Uint128::zero(),
+                governance_votes: 0,
+                proposal_credits: 0,
+            },
+        )
+        .unwrap();
+
+        // Distribute so commitment 2 accrues some rewards
+        execute(
+            deps.as_mut(),
+            mock_env(),
+            admin_nf,
+            ExecuteMsg::TriggerDistribution {
+                community_pool_inflow: Uint128::new(10_000_000),
+            },
+        )
+        .unwrap();
+
+        // Claim matured commitment 2 (fast-forward time)
+        let mut future_env = mock_env();
+        future_env.block.time = Timestamp::from_seconds(
+            mock_env().block.time.seconds() + 6 * SECONDS_PER_MONTH + 86_400,
+        );
+        let claim_info = message_info(&holder_b, &[]);
+        execute(
+            deps.as_mut(),
+            future_env,
+            claim_info,
+            ExecuteMsg::ClaimMaturedStability { commitment_id: 2 },
+        )
+        .unwrap();
+
+        let internal = MECHANISM_STATE.load(deps.as_ref().storage).unwrap();
+        assert_eq!(
+            internal.total_committed_principal,
+            Uint128::zero(),
+            "all commitments exited/claimed, counter should be zero"
+        );
+    }
+
+    // ── Test 10: Pull model claim rewards accumulation ──
+
+    #[test]
+    fn test_claim_rewards_accumulates_across_periods() {
+        let mut deps = mock_dependencies();
+        let admin_info = setup_contract(deps.as_mut());
+        let admin = admin_info.sender.clone();
+        initialize_mechanism(deps.as_mut(), &admin);
+        activate_distribution(deps.as_mut(), &admin);
+
+        let alice = addr("alice");
+        let admin_nf = message_info(&admin, &[]);
+
+        // Period 1: record activity + distribute
+        execute(
+            deps.as_mut(),
+            mock_env(),
+            admin_nf.clone(),
+            ExecuteMsg::RecordActivity {
+                participant: alice.to_string(),
+                credit_purchase_value: Uint128::new(1_000_000),
+                credit_retirement_value: Uint128::zero(),
+                platform_facilitation_value: Uint128::zero(),
+                governance_votes: 0,
+                proposal_credits: 0,
+            },
+        )
+        .unwrap();
+
+        execute(
+            deps.as_mut(),
+            mock_env(),
+            admin_nf.clone(),
+            ExecuteMsg::TriggerDistribution {
+                community_pool_inflow: Uint128::new(5_000_000),
+            },
+        )
+        .unwrap();
+
+        let after_p1: ClaimableRewardsResponse = cosmwasm_std::from_json(
+            query(
+                deps.as_ref(),
+                mock_env(),
+                QueryMsg::ClaimableRewards {
+                    address: alice.to_string(),
+                },
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let p1_amount = after_p1.amount;
+        assert!(p1_amount > Uint128::zero());
+
+        // Period 2: record activity + distribute (rewards should accumulate)
+        execute(
+            deps.as_mut(),
+            mock_env(),
+            admin_nf.clone(),
+            ExecuteMsg::RecordActivity {
+                participant: alice.to_string(),
+                credit_purchase_value: Uint128::new(2_000_000),
+                credit_retirement_value: Uint128::zero(),
+                platform_facilitation_value: Uint128::zero(),
+                governance_votes: 0,
+                proposal_credits: 0,
+            },
+        )
+        .unwrap();
+
+        execute(
+            deps.as_mut(),
+            mock_env(),
+            admin_nf,
+            ExecuteMsg::TriggerDistribution {
+                community_pool_inflow: Uint128::new(8_000_000),
+            },
+        )
+        .unwrap();
+
+        let after_p2: ClaimableRewardsResponse = cosmwasm_std::from_json(
+            query(
+                deps.as_ref(),
+                mock_env(),
+                QueryMsg::ClaimableRewards {
+                    address: alice.to_string(),
+                },
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        // Should have accumulated rewards from both periods
+        assert!(
+            after_p2.amount > p1_amount,
+            "claimable should accumulate: {} > {}",
+            after_p2.amount,
+            p1_amount
+        );
+
+        // Claim all accumulated rewards
+        let alice_info = message_info(&alice, &[]);
+        let res = execute(
+            deps.as_mut(),
+            mock_env(),
+            alice_info,
+            ExecuteMsg::ClaimRewards {},
+        )
+        .unwrap();
+        assert_eq!(res.messages.len(), 1);
+        assert_eq!(
+            res.attributes
+                .iter()
+                .find(|a| a.key == "amount")
+                .unwrap()
+                .value,
+            after_p2.amount.to_string()
+        );
+
+        // Balance should be zero after claim
+        let after_claim: ClaimableRewardsResponse = cosmwasm_std::from_json(
+            query(
+                deps.as_ref(),
+                mock_env(),
+                QueryMsg::ClaimableRewards {
+                    address: alice.to_string(),
+                },
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(after_claim.amount, Uint128::zero());
+
+        // Claiming with nothing available should fail
+        let alice_info2 = message_info(&alice, &[]);
+        let err = execute(
+            deps.as_mut(),
+            mock_env(),
+            alice_info2,
+            ExecuteMsg::ClaimRewards {},
+        )
+        .unwrap_err();
+        assert!(matches!(err, ContractError::NoClaimableRewards { .. }));
     }
 }

@@ -12,7 +12,7 @@ use crate::msg::{
 };
 use crate::state::{
     AuthorityValidator, Config, ModuleState, PerformanceRecord, ValidatorCategory, ValidatorStatus,
-    CONFIG, MODULE_STATE, NEXT_PERIOD, PERFORMANCE_RECORDS, VALIDATORS,
+    ACTIVE_VALIDATORS, CONFIG, MODULE_STATE, NEXT_PERIOD, PERFORMANCE_RECORDS, VALIDATORS,
 };
 
 const CONTRACT_NAME: &str = "crates.io:validator-governance";
@@ -268,6 +268,7 @@ fn execute_activate(
     state.total_active += 1;
 
     VALIDATORS.save(deps.storage, &addr, &validator)?;
+    ACTIVE_VALIDATORS.save(deps.storage, &addr, &true)?;
     MODULE_STATE.save(deps.storage, &state)?;
 
     Ok(Response::new()
@@ -377,6 +378,7 @@ fn execute_initiate_probation(
     MODULE_STATE.save(deps.storage, &state)?;
 
     VALIDATORS.save(deps.storage, &addr, &validator)?;
+    ACTIVE_VALIDATORS.remove(deps.storage, &addr);
 
     Ok(Response::new()
         .add_attribute("action", "initiate_probation")
@@ -419,6 +421,7 @@ fn execute_restore_from_probation(
     MODULE_STATE.save(deps.storage, &state)?;
 
     VALIDATORS.save(deps.storage, &addr, &validator)?;
+    ACTIVE_VALIDATORS.save(deps.storage, &addr, &true)?;
 
     Ok(Response::new()
         .add_attribute("action", "restore_from_probation")
@@ -459,6 +462,7 @@ fn execute_confirm_removal(
 
     validator.status = ValidatorStatus::Removed;
     VALIDATORS.save(deps.storage, &addr, &validator)?;
+    ACTIVE_VALIDATORS.remove(deps.storage, &addr); // defensive: already removed at probation
 
     Ok(Response::new()
         .add_attribute("action", "confirm_removal")
@@ -496,6 +500,7 @@ fn execute_end_term(
     MODULE_STATE.save(deps.storage, &state)?;
 
     VALIDATORS.save(deps.storage, &addr, &validator)?;
+    ACTIVE_VALIDATORS.remove(deps.storage, &addr);
 
     Ok(Response::new()
         .add_attribute("action", "end_validator_term")
@@ -519,12 +524,12 @@ fn execute_distribute_compensation(
         });
     }
 
-    // Collect all active validators
-    let active_validators: Vec<AuthorityValidator> = VALIDATORS
+    // Collect active validators via the ACTIVE_VALIDATORS index (bounded)
+    let active_validators: Vec<AuthorityValidator> = ACTIVE_VALIDATORS
         .range(deps.storage, None, None, Order::Ascending)
         .filter_map(|r| r.ok())
-        .map(|(_, v)| v)
-        .filter(|v| v.status == ValidatorStatus::Active)
+        .map(|(addr, _)| VALIDATORS.load(deps.storage, &addr))
+        .filter_map(|r| r.ok())
         .collect();
 
     let active_count = active_validators.len() as u128;
@@ -753,11 +758,11 @@ fn query_validator(deps: Deps, address: String) -> StdResult<ValidatorResponse> 
 }
 
 fn query_active_validators(deps: Deps) -> StdResult<ValidatorsResponse> {
-    let validators: Vec<AuthorityValidator> = VALIDATORS
+    let validators: Vec<AuthorityValidator> = ACTIVE_VALIDATORS
         .range(deps.storage, None, None, Order::Ascending)
         .filter_map(|r| r.ok())
-        .map(|(_, v)| v)
-        .filter(|v| v.status == ValidatorStatus::Active)
+        .map(|(addr, _)| VALIDATORS.load(deps.storage, &addr))
+        .filter_map(|r| r.ok())
         .collect();
     Ok(ValidatorsResponse { validators })
 }
@@ -803,11 +808,11 @@ fn query_composition_breakdown(deps: Deps) -> StdResult<CompositionBreakdownResp
     let mut refi = 0u32;
     let mut eco = 0u32;
 
-    let all: Vec<AuthorityValidator> = VALIDATORS
+    let all: Vec<AuthorityValidator> = ACTIVE_VALIDATORS
         .range(deps.storage, None, None, Order::Ascending)
         .filter_map(|r| r.ok())
-        .map(|(_, v)| v)
-        .filter(|v| v.status == ValidatorStatus::Active)
+        .map(|(addr, _)| VALIDATORS.load(deps.storage, &addr))
+        .filter_map(|r| r.ok())
         .collect();
 
     for v in &all {
@@ -861,11 +866,12 @@ fn count_active_in_category(
     deps: Deps,
     category: &ValidatorCategory,
 ) -> Result<u32, ContractError> {
-    let count = VALIDATORS
+    let count = ACTIVE_VALIDATORS
         .range(deps.storage, None, None, Order::Ascending)
         .filter_map(|r| r.ok())
-        .map(|(_, v)| v)
-        .filter(|v| v.status == ValidatorStatus::Active && v.category == *category)
+        .map(|(addr, _)| VALIDATORS.load(deps.storage, &addr))
+        .filter_map(|r| r.ok())
+        .filter(|v| v.category == *category)
         .count() as u32;
     Ok(count)
 }

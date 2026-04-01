@@ -139,5 +139,8 @@ pub const COLLECTION_CHALLENGES: Map<u64, Vec<u64>> = Map::new("collection_chall
 /// Batch denom -> QualityScore
 pub const QUALITY_SCORES: Map<&str, QualityScore> = Map::new("quality_scores");
 
+/// Reverse index: batch denom -> list of collection IDs containing that batch
+pub const BATCH_COLLECTIONS: Map<&str, Vec<u64>> = Map::new("batch_collections");
+
 /// Curator address -> number of collections they own
 pub const CURATOR_COLLECTION_COUNT: Map<&Addr, u32> = Map::new("curator_collection_count");

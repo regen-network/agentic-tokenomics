@@ -56,4 +56,7 @@ pub enum ContractError {
 
     #[error("Zero inflow amount")]
     ZeroInflow,
+
+    #[error("No claimable rewards for {address}")]
+    NoClaimableRewards { address: String },
 }

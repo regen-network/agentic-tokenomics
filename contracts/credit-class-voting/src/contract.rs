@@ -42,6 +42,11 @@ pub fn instantiate(
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
+    let community_pool = msg
+        .community_pool
+        .map(|addr| deps.api.addr_validate(&addr))
+        .transpose()?;
+
     let config = Config {
         admin: info.sender.clone(),
         registry_agent: deps.api.addr_validate(&msg.registry_agent)?,
@@ -54,6 +59,7 @@ pub fn instantiate(
         override_window_seconds: msg
             .override_window_seconds
             .unwrap_or(DEFAULT_OVERRIDE_WINDOW),
+        community_pool,
     };
 
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
@@ -102,6 +108,7 @@ pub fn execute(
             voting_period_seconds,
             agent_review_timeout_seconds,
             override_window_seconds,
+            community_pool,
         } => execute_update_config(
             deps,
             info,
@@ -110,6 +117,7 @@ pub fn execute(
             voting_period_seconds,
             agent_review_timeout_seconds,
             override_window_seconds,
+            community_pool,
         ),
     }
 }
@@ -395,6 +403,13 @@ fn execute_finalize_proposal(
 
     let mut messages: Vec<BankMsg> = vec![];
 
+    // Slash recipient: community_pool if configured, otherwise admin
+    let slash_recipient = config
+        .community_pool
+        .as_ref()
+        .map(|a| a.to_string())
+        .unwrap_or_else(|| config.admin.to_string());
+
     match proposal.status {
         ProposalStatus::Voting => {
             // Must be after voting period
@@ -422,6 +437,15 @@ fn execute_finalize_proposal(
                         amount: vec![Coin {
                             denom: config.denom.clone(),
                             amount: refund,
+                        }],
+                    });
+                }
+                if !slash.is_zero() {
+                    messages.push(BankMsg::Send {
+                        to_address: slash_recipient.clone(),
+                        amount: vec![Coin {
+                            denom: config.denom.clone(),
+                            amount: slash,
                         }],
                     });
                 }
@@ -453,6 +477,15 @@ fn execute_finalize_proposal(
                         amount: vec![Coin {
                             denom: config.denom.clone(),
                             amount: refund,
+                        }],
+                    });
+                }
+                if !slash.is_zero() {
+                    messages.push(BankMsg::Send {
+                        to_address: slash_recipient.clone(),
+                        amount: vec![Coin {
+                            denom: config.denom.clone(),
+                            amount: slash,
                         }],
                     });
                 }
@@ -490,6 +523,15 @@ fn execute_finalize_proposal(
                     }],
                 });
             }
+            if !slash.is_zero() {
+                messages.push(BankMsg::Send {
+                    to_address: slash_recipient.clone(),
+                    amount: vec![Coin {
+                        denom: config.denom.clone(),
+                        amount: slash,
+                    }],
+                });
+            }
         }
         _ => {
             return Err(ContractError::InvalidStatus {
@@ -523,6 +565,7 @@ fn execute_update_config(
     voting_period_seconds: Option<u64>,
     agent_review_timeout_seconds: Option<u64>,
     override_window_seconds: Option<u64>,
+    community_pool: Option<String>,
 ) -> Result<Response, ContractError> {
     let mut config = CONFIG.load(deps.storage)?;
 
@@ -546,6 +589,9 @@ fn execute_update_config(
     }
     if let Some(seconds) = override_window_seconds {
         config.override_window_seconds = seconds;
+    }
+    if let Some(pool) = community_pool {
+        config.community_pool = Some(deps.api.addr_validate(&pool)?);
     }
 
     CONFIG.save(deps.storage, &config)?;
@@ -588,6 +634,7 @@ fn query_config(deps: Deps) -> StdResult<ConfigResponse> {
         voting_period_seconds: config.voting_period_seconds,
         agent_review_timeout_seconds: config.agent_review_timeout_seconds,
         override_window_seconds: config.override_window_seconds,
+        community_pool: config.community_pool.map(|a| a.to_string()),
     })
 }
 
@@ -672,6 +719,7 @@ mod tests {
             voting_period_seconds: Some(604_800),
             agent_review_timeout_seconds: Some(86_400),
             override_window_seconds: Some(21_600),
+            community_pool: None,
         };
         instantiate(deps, mock_env(), info.clone(), msg).unwrap();
         info
@@ -1075,8 +1123,8 @@ mod tests {
             .attributes
             .iter()
             .any(|a| a.key == "status" && a.value == "Rejected"));
-        // Refund message (80% of deposit after 20% slash)
-        assert_eq!(res.messages.len(), 1);
+        // Refund message (80% of deposit) + slash transfer (20% to admin)
+        assert_eq!(res.messages.len(), 2);
 
         let resp: ProposalResponse = cosmwasm_std::from_json(
             query(
@@ -1224,6 +1272,7 @@ mod tests {
             voting_period_seconds: Some(300_000),
             agent_review_timeout_seconds: None,
             override_window_seconds: None,
+            community_pool: None,
         };
         execute(deps.as_mut(), mock_env(), admin_info, msg).unwrap();
 
@@ -1253,6 +1302,7 @@ mod tests {
             voting_period_seconds: None,
             agent_review_timeout_seconds: None,
             override_window_seconds: None,
+            community_pool: None,
         };
         let err = execute(deps.as_mut(), mock_env(), info, msg).unwrap_err();
         assert!(matches!(err, ContractError::Unauthorized { .. }));
@@ -1378,5 +1428,271 @@ mod tests {
         )
         .unwrap();
         assert_eq!(resp.proposal.status, ProposalStatus::Expired);
+    }
+
+    // ── Test 16: Reject slash transferred to admin (fallback) ────────
+
+    #[test]
+    fn test_reject_slash_transferred_to_admin() {
+        let mut deps = mock_dependencies();
+        setup_contract(deps.as_mut());
+
+        let proposer = addr("proposer");
+        let id = submit_proposal(deps.as_mut(), &proposer);
+
+        agent_score(
+            deps.as_mut(),
+            id,
+            500,
+            700,
+            AgentRecommendation::Conditional,
+        );
+
+        let base_time = mock_env().block.time.seconds();
+
+        // 1 yes, 2 no → rejected
+        for (name, vote_yes) in [("v1", true), ("v2", false), ("v3", false)] {
+            let voter = addr(name);
+            execute(
+                deps.as_mut(),
+                env_at(base_time + 100),
+                message_info(&voter, &[]),
+                ExecuteMsg::CastVote {
+                    proposal_id: id,
+                    vote_yes,
+                },
+            )
+            .unwrap();
+        }
+
+        let res = execute(
+            deps.as_mut(),
+            env_at(base_time + 604_800 + 1),
+            message_info(&addr("anyone"), &[]),
+            ExecuteMsg::FinalizeProposal { proposal_id: id },
+        )
+        .unwrap();
+
+        // 2 messages: refund (80%) + slash (20%) to admin
+        assert_eq!(res.messages.len(), 2);
+
+        let admin = addr("admin");
+        let expected_slash = Uint128::new(DEPOSIT).multiply_ratio(2000u128, 10_000u128);
+        let expected_refund = Uint128::new(DEPOSIT) - expected_slash;
+
+        // First message: refund to proposer
+        if let cosmwasm_std::CosmosMsg::Bank(BankMsg::Send { to_address, amount }) =
+            &res.messages[0].msg
+        {
+            assert_eq!(to_address, &proposer.to_string());
+            assert_eq!(amount[0].amount, expected_refund);
+        } else {
+            panic!("Expected BankMsg::Send for refund");
+        }
+
+        // Second message: slash to admin (no community_pool configured)
+        if let cosmwasm_std::CosmosMsg::Bank(BankMsg::Send { to_address, amount }) =
+            &res.messages[1].msg
+        {
+            assert_eq!(to_address, &admin.to_string());
+            assert_eq!(amount[0].amount, expected_slash);
+        } else {
+            panic!("Expected BankMsg::Send for slash");
+        }
+    }
+
+    // ── Test 17: Expired slash transferred to admin ──────────────────
+
+    #[test]
+    fn test_expired_slash_transferred_to_admin() {
+        let mut deps = mock_dependencies();
+        setup_contract(deps.as_mut());
+
+        let proposer = addr("proposer");
+        let id = submit_proposal(deps.as_mut(), &proposer);
+
+        agent_score(
+            deps.as_mut(),
+            id,
+            600,
+            700,
+            AgentRecommendation::Conditional,
+        );
+
+        let base_time = mock_env().block.time.seconds();
+
+        // Finalize with no votes → Expired, 5% slash
+        let res = execute(
+            deps.as_mut(),
+            env_at(base_time + 604_800 + 1),
+            message_info(&addr("anyone"), &[]),
+            ExecuteMsg::FinalizeProposal { proposal_id: id },
+        )
+        .unwrap();
+
+        // 2 messages: refund (95%) + slash (5%)
+        assert_eq!(res.messages.len(), 2);
+
+        let admin = addr("admin");
+        let expected_slash = Uint128::new(DEPOSIT).multiply_ratio(500u128, 10_000u128);
+        let expected_refund = Uint128::new(DEPOSIT) - expected_slash;
+
+        if let cosmwasm_std::CosmosMsg::Bank(BankMsg::Send { to_address, amount }) =
+            &res.messages[0].msg
+        {
+            assert_eq!(to_address, &proposer.to_string());
+            assert_eq!(amount[0].amount, expected_refund);
+        } else {
+            panic!("Expected BankMsg::Send for refund");
+        }
+
+        if let cosmwasm_std::CosmosMsg::Bank(BankMsg::Send { to_address, amount }) =
+            &res.messages[1].msg
+        {
+            assert_eq!(to_address, &admin.to_string());
+            assert_eq!(amount[0].amount, expected_slash);
+        } else {
+            panic!("Expected BankMsg::Send for slash");
+        }
+    }
+
+    // ── Test 18: Slash goes to community_pool when configured ────────
+
+    #[test]
+    fn test_slash_transferred_to_community_pool() {
+        let mut deps = mock_dependencies();
+        let admin = addr("admin");
+        let info = message_info(&admin, &[]);
+        let pool = addr("community_pool");
+        let msg = InstantiateMsg {
+            registry_agent: addr("agent").to_string(),
+            deposit_amount: Some(Uint128::new(DEPOSIT)),
+            denom: Some(DENOM.to_string()),
+            voting_period_seconds: Some(604_800),
+            agent_review_timeout_seconds: Some(86_400),
+            override_window_seconds: Some(21_600),
+            community_pool: Some(pool.to_string()),
+        };
+        instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
+
+        let proposer = addr("proposer");
+        let id = submit_proposal(deps.as_mut(), &proposer);
+
+        agent_score(
+            deps.as_mut(),
+            id,
+            500,
+            700,
+            AgentRecommendation::Conditional,
+        );
+
+        let base_time = mock_env().block.time.seconds();
+
+        // 0 yes, 1 no → rejected
+        let v1 = addr("v1");
+        execute(
+            deps.as_mut(),
+            env_at(base_time + 100),
+            message_info(&v1, &[]),
+            ExecuteMsg::CastVote {
+                proposal_id: id,
+                vote_yes: false,
+            },
+        )
+        .unwrap();
+
+        let res = execute(
+            deps.as_mut(),
+            env_at(base_time + 604_800 + 1),
+            message_info(&addr("anyone"), &[]),
+            ExecuteMsg::FinalizeProposal { proposal_id: id },
+        )
+        .unwrap();
+
+        assert_eq!(res.messages.len(), 2);
+
+        let expected_slash = Uint128::new(DEPOSIT).multiply_ratio(2000u128, 10_000u128);
+
+        // Slash goes to community_pool, not admin
+        if let cosmwasm_std::CosmosMsg::Bank(BankMsg::Send { to_address, amount }) =
+            &res.messages[1].msg
+        {
+            assert_eq!(to_address, &pool.to_string());
+            assert_eq!(amount[0].amount, expected_slash);
+        } else {
+            panic!("Expected BankMsg::Send for slash to community_pool");
+        }
+    }
+
+    // ── Test 19: Auto-reject finalization transfers slash ─────────────
+
+    #[test]
+    fn test_auto_reject_finalize_slash_transferred() {
+        let mut deps = mock_dependencies();
+        setup_contract(deps.as_mut());
+
+        let proposer = addr("proposer");
+        let id = submit_proposal(deps.as_mut(), &proposer);
+
+        // Agent auto-rejects
+        let agent = addr("agent");
+        let base_time = mock_env().block.time.seconds();
+        execute(
+            deps.as_mut(),
+            env_at(base_time),
+            message_info(&agent, &[]),
+            ExecuteMsg::SubmitAgentScore {
+                proposal_id: id,
+                score: 100,
+                confidence: 950,
+                recommendation: AgentRecommendation::Reject,
+            },
+        )
+        .unwrap();
+
+        // Finalize after override window (6h = 21600s)
+        let res = execute(
+            deps.as_mut(),
+            env_at(base_time + 21_601),
+            message_info(&addr("anyone"), &[]),
+            ExecuteMsg::FinalizeProposal { proposal_id: id },
+        )
+        .unwrap();
+
+        // 2 messages: refund (80%) + slash (20%) to admin
+        assert_eq!(res.messages.len(), 2);
+
+        let admin = addr("admin");
+        let expected_slash = Uint128::new(DEPOSIT).multiply_ratio(2000u128, 10_000u128);
+        let expected_refund = Uint128::new(DEPOSIT) - expected_slash;
+
+        if let cosmwasm_std::CosmosMsg::Bank(BankMsg::Send { to_address, amount }) =
+            &res.messages[0].msg
+        {
+            assert_eq!(to_address, &proposer.to_string());
+            assert_eq!(amount[0].amount, expected_refund);
+        } else {
+            panic!("Expected BankMsg::Send for refund");
+        }
+
+        if let cosmwasm_std::CosmosMsg::Bank(BankMsg::Send { to_address, amount }) =
+            &res.messages[1].msg
+        {
+            assert_eq!(to_address, &admin.to_string());
+            assert_eq!(amount[0].amount, expected_slash);
+        } else {
+            panic!("Expected BankMsg::Send for slash");
+        }
+
+        let resp: ProposalResponse = cosmwasm_std::from_json(
+            query(
+                deps.as_ref(),
+                mock_env(),
+                QueryMsg::Proposal { proposal_id: id },
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(resp.proposal.status, ProposalStatus::Rejected);
     }
 }

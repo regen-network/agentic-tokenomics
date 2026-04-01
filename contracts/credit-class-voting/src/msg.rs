@@ -19,6 +19,8 @@ pub struct InstantiateMsg {
     pub agent_review_timeout_seconds: Option<u64>,
     /// Override window in seconds (default 21_600 = 6h)
     pub override_window_seconds: Option<u64>,
+    /// Address that receives slashed deposit funds (defaults to admin)
+    pub community_pool: Option<String>,
 }
 
 // ── Execute ────────────────────────────────────────────────────────────
@@ -63,6 +65,7 @@ pub enum ExecuteMsg {
         voting_period_seconds: Option<u64>,
         agent_review_timeout_seconds: Option<u64>,
         override_window_seconds: Option<u64>,
+        community_pool: Option<String>,
     },
 }
 
@@ -107,6 +110,7 @@ pub struct ConfigResponse {
     pub voting_period_seconds: u64,
     pub agent_review_timeout_seconds: u64,
     pub override_window_seconds: u64,
+    pub community_pool: Option<String>,
 }
 
 #[cw_serde]

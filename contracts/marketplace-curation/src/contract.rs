@@ -12,8 +12,8 @@ use crate::msg::{
 };
 use crate::state::{
     Challenge, ChallengeResolution, Collection, CollectionStatus, Config, QualityScore,
-    CHALLENGES, COLLECTIONS, COLLECTION_CHALLENGES, CONFIG, CURATOR_COLLECTION_COUNT,
-    NEXT_CHALLENGE_ID, NEXT_COLLECTION_ID, QUALITY_SCORES,
+    BATCH_COLLECTIONS, CHALLENGES, COLLECTIONS, COLLECTION_CHALLENGES, CONFIG,
+    CURATOR_COLLECTION_COUNT, NEXT_CHALLENGE_ID, NEXT_COLLECTION_ID, QUALITY_SCORES,
 };
 
 const CONTRACT_NAME: &str = "crates.io:marketplace-curation";
@@ -293,6 +293,13 @@ fn execute_add_to_collection(
     collection.batches.push(batch_denom.clone());
     COLLECTIONS.save(deps.storage, collection_id, &collection)?;
 
+    // Maintain reverse index: batch_denom -> collection IDs
+    let mut batch_colls = BATCH_COLLECTIONS
+        .may_load(deps.storage, &batch_denom)?
+        .unwrap_or_default();
+    batch_colls.push(collection_id);
+    BATCH_COLLECTIONS.save(deps.storage, &batch_denom, &batch_colls)?;
+
     Ok(Response::new()
         .add_attribute("action", "add_to_collection")
         .add_attribute("collection_id", collection_id.to_string())
@@ -327,6 +334,17 @@ fn execute_remove_from_collection(
 
     collection.batches.remove(pos);
     COLLECTIONS.save(deps.storage, collection_id, &collection)?;
+
+    // Maintain reverse index: remove this collection from the batch's list
+    let mut batch_colls = BATCH_COLLECTIONS
+        .may_load(deps.storage, &batch_denom)?
+        .unwrap_or_default();
+    batch_colls.retain(|&cid| cid != collection_id);
+    if batch_colls.is_empty() {
+        BATCH_COLLECTIONS.remove(deps.storage, &batch_denom);
+    } else {
+        BATCH_COLLECTIONS.save(deps.storage, &batch_denom, &batch_colls)?;
+    }
 
     Ok(Response::new()
         .add_attribute("action", "remove_from_collection")
@@ -622,17 +640,23 @@ fn execute_submit_quality_score(
     // Auto-remove from any collections if score dropped below minimum
     let mut removed_from: Vec<u64> = vec![];
     if score < config.min_quality_score {
-        // Iterate all collections to find ones containing this batch
-        let all_collections: Vec<(u64, Collection)> = COLLECTIONS
-            .range(deps.storage, None, None, Order::Ascending)
-            .collect::<StdResult<Vec<_>>>()?;
+        // Use reverse index to find only the collections containing this batch
+        let batch_colls = BATCH_COLLECTIONS
+            .may_load(deps.storage, &batch_denom)?
+            .unwrap_or_default();
 
-        for (cid, mut coll) in all_collections {
+        for cid in batch_colls {
+            let mut coll = COLLECTIONS.load(deps.storage, cid)?;
             if let Some(pos) = coll.batches.iter().position(|b| b == &batch_denom) {
                 coll.batches.remove(pos);
                 COLLECTIONS.save(deps.storage, cid, &coll)?;
                 removed_from.push(cid);
             }
+        }
+
+        // Clean up the reverse index entry since batch is removed from all collections
+        if !removed_from.is_empty() {
+            BATCH_COLLECTIONS.remove(deps.storage, &batch_denom);
         }
     }
 

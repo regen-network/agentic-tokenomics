@@ -132,3 +132,9 @@ pub const VALIDATORS: Map<&Addr, AuthorityValidator> = Map::new("validators");
 pub const PERFORMANCE_RECORDS: Map<(&Addr, u64), PerformanceRecord> =
     Map::new("performance_records");
 pub const NEXT_PERIOD: Item<u64> = Item::new("next_period");
+
+/// Index of currently-active validator addresses.
+/// Maintained by activate / probation / removal / term-end / restore handlers
+/// so that `distribute_compensation` and similar hot paths never need to scan
+/// the entire (unbounded) VALIDATORS map.
+pub const ACTIVE_VALIDATORS: Map<&Addr, bool> = Map::new("active_validators");
