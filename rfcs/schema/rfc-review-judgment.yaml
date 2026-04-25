@@ -1,0 +1,60 @@
+# RFC Review Judgment — output schema
+# Shape an agent or human reviewer emits after running rfc-review-schema.yaml
+# against an RFC. Persisted under koi:judgment:<rfc-id>:<gate>:<commit-sha>.
+
+# Example judgment (non-passing) for an RFC at the rfc-to-forum-posted gate:
+
+judgment:
+  schema_version: "0.1"
+  rfc_id: RFC-0001
+  rfc_path: rfcs/RFC-0001.md
+  rfc_commit_sha: <git-sha>             # snapshot reviewed
+  gate_evaluated: rfc-to-forum-posted   # which gate's rules were run
+  evaluated_by: agent-001-registry-reviewer    # agent ID or human handle
+  evaluated_at: 2026-04-25T19:30:00Z
+
+  # Verdict semantics:
+  #   pass            — every blocker rule passed; any warnings acknowledged
+  #   needs-revision  — at least one blocker failed but failure is fixable by author
+  #   fail            — at least one blocker failed and failure is structural (e.g., no sponsor exists)
+  verdict: needs-revision
+
+  findings:
+    - rule_id: R-HEADER-001
+      status: pass                       # pass | fail | n-a
+      citation: "Header §0 — all required fields present"
+
+    - rule_id: R-CLAIM-001
+      status: fail
+      severity: blocker
+      citation: "§1 reads 'this RFC investigates whether the M013 fee split should change' — exploratory framing"
+      excerpt: "This RFC investigates whether the M013 fee split should change to reflect the new distribution targets..."
+      recommendation: "Rewrite §1 as a decisive claim, e.g., 'M013's fee split should be 15/30/50/5, replacing the interim 28/25/45/2.'"
+
+    - rule_id: R-EVIDENCE-002
+      status: fail
+      severity: warning
+      citation: "Evidence row E2 has no URL or KOI IRI"
+      recommendation: "Add koi:onchain:fee-dist-q1-2026 IRI or a public URL to E2"
+
+    - rule_id: R-G-FP-002
+      status: fail
+      severity: blocker
+      citation: "§5 discussion deadline is 2026-04-28; forum-posted log entry is 2026-04-25 — only 3 days, minimum is 7"
+      recommendation: "Extend discussion deadline to >= 2026-05-02"
+
+  summary: |
+    RFC-0001 is structurally sound but cannot graduate to forum-posted yet.
+    Two blockers (R-CLAIM-001, R-G-FP-002) need author fix; one warning
+    (R-EVIDENCE-002) should be addressed but does not block. Estimated
+    revision effort: ~30 minutes.
+
+  next_action:
+    actor: sponsor                       # who needs to act next
+    action: "Revise §1 to a decisive claim and extend §5 deadline; re-request review"
+
+  audit_trail:
+    rules_evaluated: 14
+    rules_passed: 11
+    rules_failed: 3
+    rules_skipped: 0
