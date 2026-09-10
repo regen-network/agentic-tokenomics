@@ -175,6 +175,7 @@ The economic architecture described in this synthesis is formalized in four prot
 - [Economic Reboot Roadmap](https://forum.regen.network/t/regen-economic-reboot-roadmap/567)
 - [Network Coordination Architecture (forum/19#67)](https://forum.regen.network/t/regen-tokenomics-wg/19/67)
 - [Comprehensive Governance Proposal](https://www.notion.so/regennetwork/Draft-Comprehensive-Proposal-Regen-Network-Governance-Economic-Architecture-Upgrade-2fb25b77eda180af8742debdfaed0b3c)
+- [Monetary policy anchor (this repo)](../governance/monetary-policy-anchor.md) — how the 2026 interim measures (emissions to zero, the burn stream, community-pool spends) relate to M012–M015, and consistency rules for public text
 
 ---
 
