@@ -123,13 +123,16 @@ This repository contains the design specifications and implementation plans for 
 
 ## On-Chain Context
 
-Based on Regen Network mainnet (as of analysis):
+Token and governance state, verified 2026-09-10 against the public LCD (exact query paths in [`docs/governance/monetary-policy-anchor.md`](docs/governance/monetary-policy-anchor.md), section 2):
+- Emissions: zero since proposal #74 (`x/mint` inflation min, max and rate-change all 0)
+- ~239.8M REGEN total supply, fixed while emissions are zero
+- ~5.0M REGEN in the community pool; 15% of its inflow streams to a keyless burn address (proposal #66)
+- 11 bonded validators (proposal #73); 78 governance proposals to date
+
+Registry counts from the original analysis (early 2026):
 - 13 credit classes
 - 58+ registered projects
 - 78+ credit batches
-- 61+ governance proposals (historical)
-- ~3.2M REGEN in community pool
-- ~224M REGEN total supply
 
 ## Repository Structure
 
